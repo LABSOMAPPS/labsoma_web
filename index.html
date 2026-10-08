@@ -1024,7 +1024,6 @@
 
       .sidebar { display: none !important; }
       #sidebarToggle,
-      #themeToggle,
       #fullscreenToggle { display: none; }
       
       .main {
@@ -1550,7 +1549,7 @@
       <div class="modal-overlay" id="loginOverlay" style="background:var(--latar); z-index:2000;" hidden>
         <form class="modal" id="loginForm">
           <h2 style="text-align: center;">LABSOMA PPS</h2>
-          <p style="text-align: center;">Gunakan Akun Yang Terdaftar.</p>
+          <p style="text-align: center;">Gunakan Akun Terdaftar</p>
           <div class="field">
             <label for="loginUser">Username</label>
             <input id="loginUser" autocomplete="username" required>
@@ -1560,8 +1559,8 @@
             <input id="loginPass" type="password" autocomplete="current-password" required>
           </div>
           <div class="modal-error" id="loginError"></div>
-          <div class="modal-actions">
-            <button class="button" type="submit" id="loginTombol">Masuk</button>
+          <div class="modal-actions" style="width: 100%; margin-top: 15px;">
+            <button class="button" type="submit" id="loginTombol" style="width: 100%; display: block;">Masuk</button>
           </div>
         </form>
       </div>
