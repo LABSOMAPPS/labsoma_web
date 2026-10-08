@@ -1776,7 +1776,7 @@
 
   <script>
 
-  const API_URL = "https://labsomapps.github.io/labsoma_web/";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyWv87LQTDba_-Nb7-qG-QUgwXQwHNgeAe5S3k0Kb11VNZ5Edj7lhBbk8AkIO5Snf7b/exec";
   const KUNCI_TOKEN = 'labsomaToken';
 
   function ambilToken() { try { return localStorage.getItem(KUNCI_TOKEN) || ''; } catch (e) { return ''; } }
@@ -1828,8 +1828,10 @@
   })();
 
   function tampilkanLogin() {
-    document.getElementById('loginOverlay').hidden = false;
-    setTimeout(function () { document.getElementById('loginUser').focus(); }, 50);
+    const ov = document.getElementById('loginOverlay');
+    const sudahTampil = !ov.hidden;
+    ov.hidden = false;
+    if (!sudahTampil) setTimeout(function () { document.getElementById('loginUser').focus(); }, 50);
   }
 
   document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -2954,14 +2956,6 @@
 
   function mintaPin() {
     return Promise.resolve('sesi');
-  }
-
-    document.getElementById('pinOverlay').hidden = false;
-    document.getElementById('pinInput').focus();
-
-    return new Promise(function(resolve) {
-      penyelesaiPin = resolve;
-    });
   }
 
   document.getElementById('pinCancel').addEventListener('click', function() {
