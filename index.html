@@ -1187,6 +1187,7 @@
         <button class="toolbar-button icon-only" id="sidebarToggle" type="button" title="Tampilkan/sembunyikan menu" aria-label="Tampilkan atau sembunyikan menu">☰</button>
         <button class="toolbar-button icon-only" id="themeToggle" type="button" title="Ganti tema terang/gelap" aria-label="Ganti tema">☀️</button>
         <button class="toolbar-button icon-only" id="fullscreenToggle" type="button" title="Layar penuh" aria-label="Layar penuh">⛶</button>
+        <button class="toolbar-button icon-only" id="logoutBtn" type="button" title="Keluar" aria-label="Keluar">⎋</button>
         <button class="toolbar-button" id="tombolKembaliMobile" type="button">‹ Kembali</button>
       </div>
 
@@ -1544,6 +1545,25 @@
         <div id="daftarTugasDalamMenu"></div>
       </section>
 
+      <div class="modal-overlay" id="loginOverlay" style="background:var(--latar); z-index:2000;" hidden>
+        <form class="modal" id="loginForm">
+          <h2>Masuk Labsoma PPS</h2>
+          <p>Gunakan akun yang didaftarkan oleh admin.</p>
+          <div class="field">
+            <label for="loginUser">Username</label>
+            <input id="loginUser" autocomplete="username" required>
+          </div>
+          <div class="field" style="margin-top:10px;">
+            <label for="loginPass">Password</label>
+            <input id="loginPass" type="password" autocomplete="current-password" required>
+          </div>
+          <div class="modal-error" id="loginError"></div>
+          <div class="modal-actions">
+            <button class="button" type="submit" id="loginTombol">Masuk</button>
+          </div>
+        </form>
+      </div>
+
       <!-- MODAL POPUP EDIT TUGAS -->
       <div class="modal-overlay" id="editTugasOverlay" hidden>
         <form class="modal" id="formEditTugas" style="width: min(550px, 100%);">
@@ -1755,8 +1775,14 @@
   </div>
 
   <script>
-    // === ADAPTER: pengganti google.script.run (agar index berdiri sendiri) ===
-  const API_URL = "https://script.google.com/macros/s/AKfycbyWv87LQTDba_-Nb7-qG-QUgwXQwHNgeAe5S3k0Kb11VNZ5Edj7lhBbk8AkIO5Snf7b/exec";
+
+  const API_URL = "";
+  const KUNCI_TOKEN = 'labsomaToken';
+
+  function ambilToken() { try { return localStorage.getItem(KUNCI_TOKEN) || ''; } catch (e) { return ''; } }
+  function simpanToken(t) {
+    try { if (t) localStorage.setItem(KUNCI_TOKEN, t); else localStorage.removeItem(KUNCI_TOKEN); } catch (e) {}
+  }
 
   (function () {
     function buat(ok, gagal) {
@@ -1768,11 +1794,14 @@
 
           return function () {
             const args = Array.prototype.slice.call(arguments);
+            const token = ambilToken();
+
+            if (!token && nama !== 'login') { tampilkanLogin(); return; }
 
             fetch(API_URL, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({ action: nama, params: args })
+              body: JSON.stringify({ action: nama, params: args, token: token })
             })
             .then(function (r) { return r.json(); })
             .then(function (h) {
@@ -1781,7 +1810,14 @@
             })
             .then(
               function (data) { if (ok) ok(data); },
-              function (err) { if (gagal) gagal(err); else console.error(err); }
+              function (err) {
+                if (err && err.message === 'SESI_HABIS') {
+                  simpanToken('');
+                  tampilkanLogin();
+                  return;
+                }
+                if (gagal) gagal(err); else console.error(err);
+              }
             );
           };
         }
@@ -1789,7 +1825,42 @@
     }
 
     window.google = { script: { run: buat(null, null) } };
-  })();  
+  })();
+
+  function tampilkanLogin() {
+    document.getElementById('loginOverlay').hidden = false;
+    setTimeout(function () { document.getElementById('loginUser').focus(); }, 50);
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const tombol = document.getElementById('loginTombol');
+    const pesan = document.getElementById('loginError');
+    const user = document.getElementById('loginUser').value;
+    const pass = document.getElementById('loginPass').value;
+
+    tombol.disabled = true; tombol.textContent = 'Memeriksa…'; pesan.textContent = '';
+
+    google.script.run
+      .withSuccessHandler(function (h) {
+        simpanToken(h.token);
+        document.getElementById('loginPass').value = '';
+        document.getElementById('loginOverlay').hidden = true;
+        tombol.disabled = false; tombol.textContent = 'Masuk';
+        tampilkanNotifikasi('Selamat datang, ' + h.nama, 'success');
+        muatAplikasi();
+      })
+      .withFailureHandler(function (er) {
+        tombol.disabled = false; tombol.textContent = 'Masuk';
+        pesan.textContent = er && er.message ? er.message : String(er);
+      })
+      .login(user, pass);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    const selesai = function () { simpanToken(''); location.reload(); };
+    google.script.run.withSuccessHandler(selesai).withFailureHandler(selesai).logout();
+  });
 
   const SELISIH_ISTIWAK_MENIT = 39;
   const JUMLAH_ANGGOTA_PER_HALAMAN = 5;
@@ -2882,7 +2953,8 @@
   });
 
   function mintaPin() {
-    if (pinAdmin) return Promise.resolve(pinAdmin);
+    return Promise.resolve('sesi');
+  }
 
     document.getElementById('pinOverlay').hidden = false;
     document.getElementById('pinInput').focus();
