@@ -1149,6 +1149,16 @@
       .summary-grid { grid-template-columns: 1fr; }
       .main-clock { font-size: 48px; }
     }
+
+    .dokumen-blok { margin: 0 0 26px; }
+    .dokumen-judul { margin: 0 0 8px; text-align: center; color: var(--aksen); font-size: clamp(20px, 2.2vw, 30px); }
+    .dokumen-bagian { margin: 0 0 10px; text-align: center; color: var(--biru); font-size: clamp(17px, 1.8vw, 24px); }
+    .dokumen-sub { margin: 0 0 10px; text-align: center; color: var(--redup); }
+    .dokumen-tabel th, .dokumen-tabel td { padding: 7px 8px; border: 1px solid var(--garis); text-align: center; vertical-align: middle; font-size: 13px; }
+    .dokumen-tabel tr:last-child td { border-bottom: 1px solid var(--garis); }
+    .dokumen-tabel th { background: var(--panel2); color: var(--aksen); font-weight: 700; }
+    .dokumen-tabel .ar { font-family: 'Traditional Arabic', 'Noto Naskh Arabic', 'Amiri', serif; font-size: 17px; direction: rtl; }  
+
   </style>
 </head>
 
@@ -1167,6 +1177,11 @@
         <div class="nav-submenu" id="menu-pembuatanSoal" hidden>
           <button class="nav-button" data-page="tugas">Tambah Tugas</button>
           <button class="nav-button" data-page="rekap">Rekap</button>
+          <button class="nav-group-toggle" type="button" data-menu="dokumen">Dokumen <span>⌄</span></button>
+          <div class="nav-submenu" id="menu-dokumen" hidden>
+            <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
+            <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
+          </div>
           <button class="nav-button" data-page="korektor1">Korektor 1</button>
           <button class="nav-button" data-page="korektor2">Korektor 2</button>
           <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama</button>
@@ -1256,6 +1271,8 @@
       <section class="page" id="page-hubUjian">
         <h1 class="page-heading">Koreksi Hasil Ujian</h1>
         <div class="hub-grid">
+          <button class="hub-button" data-goto="batasPelajaran"><span class="hub-ikon">📖</span><span><strong>Batas Pelajaran</strong><small>Batas materi tiap dawr per kelas</small></span></button>
+          <button class="hub-button" data-goto="tipeSoal"><span class="hub-ikon">🧩</span><span><strong>Tipe Soal</strong><small>Mekanisme dan rincian soal per-IMDA</small></span></button>
           <button class="hub-button" data-goto="tugasUjian"><span class="hub-ikon">📝</span><span><strong>Tugas</strong><small>Tambah &amp; kelola tugas koreksi ujian</small></span></button>
           <button class="hub-button" data-goto="rekapUjian"><span class="hub-ikon">📊</span><span><strong>Rekap</strong><small>Rekap koreksi hasil ujian</small></span></button>
         </div>
@@ -1746,6 +1763,28 @@
           <input type="search" data-filter-group="rekapUjian" data-filter-key="tingkat" placeholder="Cari tingkat…">
         </div>
         <div id="daftarRekapUjian"></div>
+      </section>
+
+      <section class="page" id="page-batasPelajaran">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Batas Pelajaran</h1>
+            <p class="subheading">Batas materi tiap dawr (IMDA) per kelas.</p>
+          </div>
+          <button class="button secondary" type="button" data-muat-dokumen="batas">⟳ Muat ulang</button>
+        </div>
+        <div id="isiDokumenBatas"><div class="empty">Memuat dokumen…</div></div>
+      </section>
+
+      <section class="page" id="page-tipeSoal">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Tipe Soal</h1>
+            <p class="subheading">Mekanisme pembuatan soal dan rincian per-IMDA.</p>
+          </div>
+          <button class="button secondary" type="button" data-muat-dokumen="tipe">⟳ Muat ulang</button>
+        </div>
+        <div id="isiDokumenTipe"><div class="empty">Memuat dokumen…</div></div>
       </section>
     </main>
   </div>
@@ -3785,6 +3824,150 @@
   setInterval(perbaruiJamDashboard, 1000);
   setInterval(perbaruiHeaderPengumuman, 1000);
   setInterval(muatAplikasi, 60000);
+
+  /* ===== DOKUMEN: Batas Pelajaran & Tipe Soal ===== */
+  function teksSel(v) { return String(v == null ? '' : v).replace(/\u00a0/g, ' ').trim(); }
+  function selAngka(v) { return /^-?\d+([.,]\d+)?$/.test(teksSel(v)); }
+  function selArab(v) { return /[\u0600-\u06FF]/.test(teksSel(v)); }
+
+  function susunDokumen(nilai, gabung) {
+    const jumlahBaris = nilai.length;
+    const blok = [];
+    let awal = -1;
+    for (let i = 0; i <= jumlahBaris; i++) {
+      const kosong = i === jumlahBaris || nilai[i].every(function (v) { return teksSel(v) === ''; });
+      if (!kosong && awal < 0) awal = i;
+      if (kosong && awal >= 0) { blok.push([awal, i - 1]); awal = -1; }
+    }
+
+    const jangkar = {}, tertutup = {};
+    (gabung || []).forEach(function (g) {
+      jangkar[g[0] + ',' + g[1]] = [g[2], g[3]];
+      for (let r = g[0]; r < g[0] + g[2]; r++) {
+        for (let c = g[1]; c < g[1] + g[3]; c++) {
+          if (r !== g[0] || c !== g[1]) tertutup[r + ',' + c] = [g[0], g[1]];
+        }
+      }
+    });
+
+    return blok.map(function (b) {
+      let r1 = b[0];
+      const r2 = b[1];
+      const judul = [];
+
+      while (r1 <= r2) {
+        const terisi = nilai[r1].filter(function (v) { return teksSel(v) !== ''; });
+        if (terisi.length !== 1) break;
+        judul.push(teksSel(terisi[0]));
+        r1++;
+      }
+
+      let html = '';
+      const adaTabel = r1 <= r2;
+      judul.forEach(function (t, i) {
+        const terakhir = i === judul.length - 1;
+        if (adaTabel && terakhir) {
+          html += '<h3 class="dokumen-bagian" dir="auto">' + aman(t) + '</h3>';
+        } else if (i === 0) {
+          html += '<h2 class="dokumen-judul" dir="auto">' + aman(t) + '</h2>';
+        } else {
+          html += '<p class="dokumen-sub" dir="auto">' + aman(t) + '</p>';
+        }
+      });
+      if (!adaTabel) return '<section class="dokumen-blok">' + html + '</section>';
+
+      let cMin = Infinity, cMax = -1;
+      for (let r = r1; r <= r2; r++) {
+        nilai[r].forEach(function (v, c) {
+          if (teksSel(v) !== '') { if (c < cMin) cMin = c; if (c > cMax) cMax = c; }
+        });
+      }
+
+      let tinggiHeader = 0;
+      for (let r = r1; r <= r2; r++) {
+        if (nilai[r].some(selAngka)) break;
+        tinggiHeader++;
+      }
+
+      let isi = '';
+      for (let r = r1; r <= r2; r++) {
+        const tag = (r - r1) < tinggiHeader ? 'th' : 'td';
+        let tr = '';
+        for (let c = cMin; c <= cMax; c++) {
+          const k = r + ',' + c;
+          const t = tertutup[k];
+          if (t && t[0] >= r1 && t[0] <= r2 && t[1] >= cMin && t[1] <= cMax) continue;
+
+          let rs = 1, cs = 1;
+          if (jangkar[k]) {
+            rs = Math.min(jangkar[k][0], r2 - r + 1);
+            cs = Math.min(jangkar[k][1], cMax - c + 1);
+          }
+          const teks = teksSel(nilai[r][c]);
+          tr += '<' + tag +
+            (rs > 1 ? ' rowspan="' + rs + '"' : '') +
+            (cs > 1 ? ' colspan="' + cs + '"' : '') +
+            (selArab(teks) ? ' class="ar"' : '') + '>' +
+            aman(teks) + '</' + tag + '>';
+        }
+        isi += '<tr>' + tr + '</tr>';
+      }
+
+      const lebar = cMax - cMin + 1;
+      html += '<div class="table-wrap"><table class="dokumen-tabel" style="min-width:' +
+        Math.max(760, lebar * 46) + 'px">' + isi + '</table></div>';
+      return '<section class="dokumen-blok">' + html + '</section>';
+    }).join('');
+  }
+
+  const DOKUMEN = {
+    batas: { wadah: 'isiDokumenBatas', data: null },
+    tipe:  { wadah: 'isiDokumenTipe',  data: null }
+  };
+
+  function gambarDokumen(kode) {
+    const d = DOKUMEN[kode];
+    const wadah = document.getElementById(d.wadah);
+    if (!d.data || !d.data.nilai || !d.data.nilai.length) {
+      wadah.innerHTML = '<div class="card empty">Dokumen masih kosong.</div>';
+      return;
+    }
+    wadah.innerHTML = susunDokumen(d.data.nilai, d.data.gabung);
+  }
+
+  function muatDokumen(kode) {
+    const d = DOKUMEN[kode];
+    const wadah = document.getElementById(d.wadah);
+
+    if (d.data) gambarDokumen(kode);
+    else wadah.innerHTML = '<div class="empty">Memuat dokumen…</div>';
+
+    google.script.run
+      .withSuccessHandler(function (hasil) { d.data = hasil; gambarDokumen(kode); })
+      .withFailureHandler(function (er) {
+        const pesan = er && er.message ? er.message : String(er);
+        if (d.data) tampilkanNotifikasi(pesan, 'error');
+        else wadah.innerHTML = '<div class="card empty">' + aman(pesan) + '</div>';
+      })
+      .getDokumen(kode);
+  }
+
+  document.addEventListener('click', function (event) {
+    const tombol = event.target.closest('[data-muat-dokumen]');
+    if (tombol) muatDokumen(tombol.dataset.muatDokumen);
+  });
+
+  PETA_HALAMAN.batasPelajaran = { tab: 'kegiatan', induk: 'hubKegiatan' };
+  PETA_HALAMAN.tipeSoal       = { tab: 'kegiatan', induk: 'hubKegiatan' };
+
+  (function () {
+    const bukaAsli = bukaHalaman;
+    bukaHalaman = function (nama, dariRiwayat) {
+      bukaAsli(nama, dariRiwayat);
+      if (nama === 'batasPelajaran') muatDokumen('batas');
+      if (nama === 'tipeSoal') muatDokumen('tipe');
+    };
+  })();
 </script>
 </body>
 </html>
