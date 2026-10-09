@@ -1808,30 +1808,73 @@
       </div>
 
       <nav class="nav-list">
-        <button class="nav-button active" data-page="dashboard">Dashboard</button>
-        <button class="nav-button" data-page="pengumuman">Pengumuman</button>
-        <button class="nav-group-toggle" type="button" data-menu="pembuatanSoal">Pembuatan Soal <span>⌄</span></button>
+        <!-- 1. DASHBOARD -->
+        <button class="nav-button active" data-page="dashboard">
+          <svg class="nav-svg" style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dashboard
+        </button>
+
+        <!-- 2. PENGUMUMAN -->
+        <button class="nav-button" data-page="pengumuman">
+          <svg class="nav-svg" style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Pengumuman
+        </button>
+
+        <!-- 3. PENGGUNA (ADMIN/TU, KOREKTOR, SONIK) -->
+        <button class="nav-group-toggle" type="button" data-menu="pengguna">
+          <span>Pengguna</span>
+          <span>⌄</span>
+        </button>
+        <div class="nav-submenu" id="menu-pengguna" hidden>
+          <button class="nav-button" data-page="pengguna" data-role-filter="ADMIN/TU">ADMIN / TU</button>
+          <button class="nav-button" data-page="pengguna" data-role-filter="KOREKTOR">KOREKTOR</button>
+          <button class="nav-button" data-page="pengguna" data-role-filter="SONIK">SONIK</button>
+        </div>
+
+        <!-- 4. DOKUMEN -->
+        <button class="nav-group-toggle" type="button" data-menu="dokumen">
+          <span>Dokumen</span>
+          <span>⌄</span>
+        </button>
+        <div class="nav-submenu" id="menu-dokumen" hidden>
+          <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
+          <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
+        </div>
+
+        <!-- 5. PEMBUATAN SOAL -->
+        <button class="nav-group-toggle" type="button" data-menu="pembuatanSoal">
+          <span>Pembuatan Soal</span>
+          <span>⌄</span>
+        </button>
         <div class="nav-submenu" id="menu-pembuatanSoal" hidden>
           <button class="nav-button" data-page="tugas">Tambah Tugas</button>
           <button class="nav-button" data-page="rekap">Rekap</button>
-          <button class="nav-group-toggle" type="button" data-menu="dokumen">Dokumen <span>⌄</span></button>
-          <div class="nav-submenu" id="menu-dokumen" hidden>
-            <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
-            <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
-          </div>
           <button class="nav-button" data-page="korektor1">Korektor 1</button>
           <button class="nav-button" data-page="korektor2">Korektor 2</button>
           <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama</button>
         </div>
-        <button class="nav-group-toggle" type="button" data-menu="koreksiUjian">Koreksi Hasil Ujian <span>⌄</span></button>
+
+        <!-- 6. KOREKSI HASIL UJIAN -->
+        <button class="nav-group-toggle" type="button" data-menu="koreksiUjian">
+          <span>Koreksi Hasil Ujian</span>
+          <span>⌄</span>
+        </button>
         <div class="nav-submenu" id="menu-koreksiUjian" hidden>
           <button class="nav-button" data-page="tugasUjian">Tugas</button>
           <button class="nav-button" data-page="rekapUjian">Rekap</button>
         </div>
-        <button class="nav-button" data-page="agenda">Tambah Agenda</button>
-        <button class="nav-button" data-page="kalender">Kalender</button>
-        <button class="nav-button" data-page="catatan">Catatan</button>
-        <button class="nav-button" data-page="rapat">Rapat</button>
+
+        <!-- 7. KEGIATAN -->
+        <button class="nav-group-toggle" type="button" data-menu="kegiatan">
+          <span>Kegiatan</span>
+          <span>⌄</span>
+        </button>
+        <div class="nav-submenu" id="menu-kegiatan" hidden>
+          <button class="nav-button" data-page="kalender">Kalender</button>
+          <button class="nav-button" data-page="agenda">Agenda</button>
+          <button class="nav-button" data-page="rapat">Rapat</button>
+          <button class="nav-button" data-page="catatan">Catatan</button>
+        </div>
       </nav>
     </aside>
 
@@ -1982,6 +2025,72 @@
             <span><strong>Rapat</strong><small>Rapat, peserta, dan absensi</small></span>
           </button>
         </div>
+      </section>
+
+      <section class="page" id="page-pengguna">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Manajemen Pengguna</h1>
+            <p class="subheading">Kelola hak akses sistem Labsoma: ADMIN/TU, KOREKTOR, dan SONIK.</p>
+          </div>
+          <button class="button" id="tombolTambahPengguna" type="button">＋ Tambah Pengguna</button>
+        </div>
+
+        <!-- Form Tambah / Edit Pengguna -->
+        <form class="card form-card" id="formPengguna" hidden style="margin-bottom: 20px;">
+          <input id="penggunaNomorBaris" type="hidden">
+          <div class="form-grid">
+            <div class="field">
+              <label for="penggunaUser">Username / ID Login</label>
+              <input id="penggunaUser" name="username" required placeholder="Contoh: 4123">
+            </div>
+            <div class="field">
+              <label for="penggunaNama">Nama Lengkap</label>
+              <input id="penggunaNama" name="nama" required placeholder="Contoh: KARROR">
+            </div>
+            <div class="field">
+              <label for="penggunaRole">Role / Hak Akses</label>
+              <select id="penggunaRole" name="role" required>
+                <option value="ADMIN/TU">ADMIN / TU</option>
+                <option value="KOREKTOR">KOREKTOR</option>
+                <option value="SONIK">SONIK</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="penggunaPass">Password (Kosongkan jika tidak diubah)</label>
+              <input id="penggunaPass" name="password" type="password" placeholder="Minimal 4 karakter">
+            </div>
+            <div class="field full">
+              <label for="penggunaAktif">Status Akun</label>
+              <select id="penggunaAktif" name="aktif">
+                <option value="Ya">Aktif (Bisa Login)</option>
+                <option value="Tidak">Nonaktif (Diblokir)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="button" type="submit" id="simpanPenggunaBtn">Simpan Pengguna</button>
+            <button class="button secondary" id="batalPenggunaBtn" type="button">Batal</button>
+          </div>
+        </form>
+
+        <!-- Filter Pencarian & Kategori Role -->
+        <div class="search-filters">
+          <input type="search" id="filterPenggunaNama" placeholder="Cari nama / username..." aria-label="Cari pengguna">
+          <select id="filterPenggunaRole" aria-label="Filter role pengguna">
+            <option value="">Semua Role (ADMIN/TU, KOREKTOR, SONIK)</option>
+            <option value="ADMIN/TU">ADMIN / TU</option>
+            <option value="KOREKTOR">KOREKTOR</option>
+            <option value="SONIK">SONIK</option>
+          </select>
+          <select id="filterPenggunaStatus" aria-label="Filter status pengguna">
+            <option value="">Semua Status</option>
+            <option value="Ya">Aktif</option>
+            <option value="Tidak">Nonaktif</option>
+          </select>
+        </div>
+
+        <div id="daftarPenggunaTabel"></div>
       </section>
 
       <section class="page" id="page-pengumuman">
@@ -4713,6 +4822,160 @@
       if (nama === 'tipeSoal') muatDokumen('tipe');
     };
   })();
+
+  // State daftar pengguna
+  let daftarPenggunaTersimpan = [];
+
+  // Mapping role ke warna badge
+  function badgeRole(role) {
+    const r = String(role || '').toUpperCase();
+    if (r === 'ADMIN' || r === 'ADMIN/TU') {
+      return '<span class="badge" style="background:rgba(168,85,247,0.18); color:#c084fc; border:1px solid rgba(168,85,247,0.35);">ADMIN / TU</span>';
+    } else if (r === 'KOREKTOR') {
+      return '<span class="badge" style="background:rgba(45,212,191,0.18); color:var(--aksen); border:1px solid var(--aksen-border);">KOREKTOR</span>';
+    } else {
+      return '<span class="badge" style="background:rgba(251,191,36,0.18); color:var(--kuning); border:1px solid rgba(251,191,36,0.35);">SONIK</span>';
+    }
+  }
+
+  // Render tabel pengguna
+  function tampilkanDaftarPengguna() {
+    const cari = (document.getElementById('filterPenggunaNama').value || '').toLowerCase();
+    const filterRole = (document.getElementById('filterPenggunaRole').value || '').toUpperCase();
+    const filterStatus = document.getElementById('filterPenggunaStatus').value;
+
+    const filtered = daftarPenggunaTersimpan.filter(function(u) {
+      const cocokNama = (u.nama || '').toLowerCase().includes(cari) || (u.username || '').toLowerCase().includes(cari);
+      const cocokRole = !filterRole || u.role === filterRole || (filterRole === 'ADMIN/TU' && u.role === 'ADMIN');
+      const cocokStatus = !filterStatus || u.aktif === filterStatus;
+      return cocokNama && cocokRole && cocokStatus;
+    });
+
+    const rows = filtered.map(function(u, idx) {
+      const isAktif = u.aktif === 'Ya';
+      return `
+        <tr>
+          <td>${idx + 1}</td>
+          <td><code>${aman(u.username)}</code></td>
+          <td><strong>${aman(u.nama)}</strong></td>
+          <td>${badgeRole(u.role)}</td>
+          <td>
+            <span class="badge" style="background:${isAktif ? 'var(--hijau-soft)' : 'var(--merah-soft)'}; color:${isAktif ? 'var(--hijau)' : 'var(--merah)'};">
+              ${isAktif ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td>
+            <button class="button secondary small" data-action="editUser" data-row="${u.nomorBaris}">✎ Edit</button>
+            <button class="button small" style="background:#e05252; color:#fff;" data-action="hapusUser" data-row="${u.nomorBaris}">🗑 Hapus</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    document.getElementById('daftarPenggunaTabel').innerHTML = renderTabel(
+      ['No', 'Username', 'Nama Lengkap', 'Role', 'Status', 'Aksi'],
+      rows
+    );
+  }
+
+  // Handle Form Pengguna
+  document.getElementById('tombolTambahPengguna').addEventListener('click', function() {
+    const f = document.getElementById('formPengguna');
+    f.reset();
+    document.getElementById('penggunaNomorBaris').value = '';
+    document.getElementById('penggunaPass').required = true;
+    f.hidden = !f.hidden;
+  });
+
+  document.getElementById('batalPenggunaBtn').addEventListener('click', function() {
+    document.getElementById('formPengguna').hidden = true;
+  });
+
+  document.getElementById('formPengguna').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+    const baris = document.getElementById('penggunaNomorBaris').value;
+
+    mintaPin().then(function(pin) {
+      if (!pin) return;
+      google.script.run
+        .withSuccessHandler(function(pesan) {
+          tampilkanNotifikasi(pesan, 'success');
+          form.reset();
+          form.hidden = true;
+          muatAplikasi();
+        })
+        .withFailureHandler(function(err) {
+          tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
+        })
+        .simpanPengguna(data, baris, pin);
+    });
+  });
+
+  // Event klik tombol Edit & Hapus User
+  document.addEventListener('click', function(e) {
+    const editBtn = e.target.closest('[data-action="editUser"]');
+    const hapusBtn = e.target.closest('[data-action="hapusUser"]');
+
+    if (editBtn) {
+      const row = Number(editBtn.dataset.row);
+      const u = daftarPenggunaTersimpan.find(function(x) { return x.nomorBaris === row; });
+      if (!u) return;
+
+      document.getElementById('penggunaNomorBaris').value = u.nomorBaris;
+      document.getElementById('penggunaUser').value = u.username;
+      document.getElementById('penggunaNama').value = u.nama;
+      document.getElementById('penggunaRole').value = u.role === 'ADMIN' ? 'ADMIN/TU' : u.role;
+      document.getElementById('penggunaAktif').value = u.aktif;
+      document.getElementById('penggunaPass').value = '';
+      document.getElementById('penggunaPass').required = false;
+
+      const f = document.getElementById('formPengguna');
+      f.hidden = false;
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (hapusBtn) {
+      const row = Number(hapusBtn.dataset.row);
+      if (!confirm('Yakin ingin menghapus pengguna ini?')) return;
+
+      mintaPin().then(function(pin) {
+        if (!pin) return;
+        google.script.run
+          .withSuccessHandler(function(pesan) {
+            tampilkanNotifikasi(pesan, 'success');
+            muatAplikasi();
+          })
+          .withFailureHandler(function(err) {
+            tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
+          })
+          .hapusPengguna(row, pin);
+      });
+    }
+
+    // Klik submenu role di sidebar langsung memfilter tampilan pengguna
+    const roleNavBtn = e.target.closest('[data-role-filter]');
+    if (roleNavBtn) {
+      const role = roleNavBtn.dataset.roleFilter;
+      document.getElementById('filterPenggunaRole').value = role;
+      tampilkanDaftarPengguna();
+    }
+  });
+
+  // Filter events
+  ['filterPenggunaNama', 'filterPenggunaRole', 'filterPenggunaStatus'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', tampilkanDaftarPengguna);
+      el.addEventListener('change', tampilkanDaftarPengguna);
+    }
+  });
 </script>
 </body>
 </html>
+
+// Update data saat muatAplikasi() sukses
+// Di dalam success callback muatAplikasi(), tambahkan:
+// daftarPenggunaTersimpan = data.daftarPengguna || [];
+// tampilkanDaftarPengguna();
