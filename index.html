@@ -3514,14 +3514,9 @@
       '</div>';
   }
 
-
-  /* ===== EDIT TUGAS (MODAL) ===== */
   function isiPilihanTugasEdit(anggota, materi, item) {
     const namaSelect = document.getElementById('editTugasNama');
-    namaSelect.innerHTML = '<option value="">Pilih nama anggota</option>' +
-      (anggota || []).map(function(x) {
-        return '<option value="' + aman(x) + '">' + aman(x) + '</option>';
-      }).join('');
+    namaSelect.innerHTML = '<option value="">Pilih nama anggota</option>' + (anggota || []).map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
     namaSelect.value = item.nama || '';
     pastikanOpsi('editTugasNama', item.nama);
 
@@ -3533,7 +3528,6 @@
     updateMateriDropdown('editTugasTingkat', 'editTugasKelas', 'editTugasNamaTugas', materi);
     document.getElementById('editTugasNamaTugas').value = item.tugas || '';
 
-    // Jika nilai lama tidak ada di daftar pilihan, tambahkan agar tetap terpilih
     pastikanOpsi('editTugasKelas', item.kelas);
     pastikanOpsi('editTugasNamaTugas', item.tugas);
   }
@@ -3542,45 +3536,25 @@
     const sel = document.getElementById(id);
     if (!nilai || sel.value === nilai) return;
     const opsi = document.createElement('option');
-    opsi.value = nilai;
-    opsi.textContent = nilai;
-    sel.appendChild(opsi);
-    sel.value = nilai;
+    opsi.value = nilai; opsi.textContent = nilai; sel.appendChild(opsi); sel.value = nilai;
   }
 
-  document.getElementById('editTugasTingkat').addEventListener('change', function() {
-    updateMateriDropdown('editTugasTingkat', 'editTugasKelas', 'editTugasNamaTugas', materiTersimpan());
-  });
-
-  document.getElementById('editTugasKelas').addEventListener('change', function() {
-    updateMateriDropdown('editTugasTingkat', 'editTugasKelas', 'editTugasNamaTugas', materiTersimpan());
-  });
-
-  document.getElementById('batalEditTugas').addEventListener('click', function() {
-    document.getElementById('editTugasOverlay').hidden = true;
-  });
+  document.getElementById('editTugasTingkat').addEventListener('change', function() { updateMateriDropdown('editTugasTingkat', 'editTugasKelas', 'editTugasNamaTugas', materiTersimpan()); });
+  document.getElementById('editTugasKelas').addEventListener('change', function() { updateMateriDropdown('editTugasTingkat', 'editTugasKelas', 'editTugasNamaTugas', materiTersimpan()); });
+  document.getElementById('batalEditTugas').addEventListener('click', function() { document.getElementById('editTugasOverlay').hidden = true; });
 
   document.getElementById('formEditTugas').addEventListener('submit', function(e) {
     e.preventDefault();
-    const nomorBaris = document.getElementById('editTugasRow').value;
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
-
+    const nomorBaris = document.getElementById('editTugasRow').value, data = Object.fromEntries(new FormData(e.currentTarget).entries());
     mintaPin().then(function(pin) {
       if (!pin) return;
       google.script.run
-        .withSuccessHandler(function(pesan) {
-          tampilkanNotifikasi(pesan, 'success');
-          document.getElementById('editTugasOverlay').hidden = true;
-          muatAplikasi();
-        })
-        .withFailureHandler(function(err) {
-          tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
-        })
+        .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); document.getElementById('editTugasOverlay').hidden = true; muatAplikasi(); })
+        .withFailureHandler(function(err) { tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error'); })
         .editTugas(nomorBaris, data, pin);
     });
   });
 
-  // Klik tombol Edit & Hapus pada tabel tugas
   document.addEventListener('click', function(event) {
     const tombolEdit = event.target.closest('[data-action="editTugas"]');
     const tombolHapus = event.target.closest('[data-action="hapusTugas"]');
@@ -3589,19 +3563,12 @@
       const nomorBaris = Number(tombolEdit.dataset.row);
       const semuaTugas = (dataAplikasiTersimpan || {}).semuaTugas || [];
       const item = semuaTugas.find(function(x) { return Number(x.nomorBaris) === nomorBaris; });
-
       if (!item) return;
 
       document.getElementById('editTugasRow').value = nomorBaris;
       document.getElementById('editTugasMulai').value = item.mulai || '';
       document.getElementById('editTugasSelesai').value = item.selesai || '';
-
-      isiPilihanTugasEdit(
-        (dataAplikasiTersimpan || {}).dataAnggota || [],
-        materiTersimpan(),
-        item
-      );
-
+      isiPilihanTugasEdit((dataAplikasiTersimpan || {}).dataAnggota || [], materiTersimpan(), item);
       document.getElementById('editTugasOverlay').hidden = false;
       return;
     }
@@ -3615,43 +3582,26 @@
       if (confirm('Apakah Anda yakin ingin menghapus ' + namaTugas + '?')) {
         mintaPin().then(function(pin) {
           if (!pin) return;
-
           google.script.run
-            .withSuccessHandler(function(pesan) {
-              tampilkanNotifikasi(pesan, 'success');
-              muatAplikasi();
-            })
-            .withFailureHandler(function(err) {
-              tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
-            })
+            .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); muatAplikasi(); })
+            .withFailureHandler(function(err) { tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error'); })
             .hapusTugas(nomorBaris, pin);
         });
       }
     }
   });
 
-  document.getElementById('fullscreenToggle')
-    .addEventListener('click', async function() {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        } else {
-          await document.exitFullscreen();
-        }
-      } catch (error) {
-        tampilkanNotifikasi(
-          'Browser tidak mengizinkan mode layar penuh. Coba tekan F11.',
-          'error'
-        );
-      }
-    });
+  document.getElementById('fullscreenToggle').addEventListener('click', async function() {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (error) {
+      tampilkanNotifikasi('Browser tidak mengizinkan mode layar penuh. Coba tekan F11.', 'error');
+    }
+  });
 
-  document.addEventListener(
-    'fullscreenchange',
-    perbaruiTombolLayarPenuh
-  );
+  document.addEventListener('fullscreenchange', perbaruiTombolLayarPenuh);
 
-  /* ===== DAFTAR AGENDA, EDIT AGENDA / KALENDER / TUGAS UJIAN ===== */
   let dataUjianTersimpan = [];
   let dataRekapUjianTersimpan = [];
 
@@ -3662,8 +3612,7 @@
         '</td><td>' + aman(x.tingkat) + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
         '</td><td>' + formatTanggal(x.tanggalSelesaiPengerjaan) + '</td></tr>';
     });
-    document.getElementById('daftarRekapUjian').innerHTML = renderTabel(
-      ['Anggota', 'Tugas Koreksi Ujian', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai dikerjakan'], rows);
+    document.getElementById('daftarRekapUjian').innerHTML = renderTabel(['Anggota', 'Tugas Koreksi Ujian', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai dikerjakan'], rows);
   }
 
   function tampilkanDaftarAgendaMenu(daftar) {
@@ -3672,36 +3621,28 @@
       return '<tr><td>' + formatTanggal(x.tanggal) + '</td><td>' + aman(x.jam || '—') +
         '</td><td><strong>' + aman(x.agenda) + '</strong></td><td>' + aman(x.tempat || '–') +
         '</td><td>' + aman(x.penanggungJawab || '–') + '</td><td>' + aman(x.keterangan || '–') +
-        '</td><td><button class="button secondary small" data-action="editAgenda" data-row="' +
-        x.nomorBaris + '">✎ Edit</button></td></tr>';
+        '</td><td><button class="button secondary small" data-action="editAgenda" data-row="' + x.nomorBaris + '">✎ Edit</button></td></tr>';
     });
-    document.getElementById('daftarAgendaMenu').innerHTML = renderTabel(
-      ['Tanggal', 'Jam', 'Agenda', 'Tempat', 'Penanggung jawab', 'Keterangan', 'Aksi'], rows);
+    document.getElementById('daftarAgendaMenu').innerHTML = renderTabel(['Tanggal', 'Jam', 'Agenda', 'Tempat', 'Penanggung jawab', 'Keterangan', 'Aksi'], rows);
   }
 
   function tampilkanDaftarTugasUjian(daftar) {
     const data = saringDaftarTugas(daftar, 'ujian');
     gambarBaganPersentase('baganTugasUjian', data);
-
     const rows = data.map(function(x, i) {
       const selesai = String(x.status || '').toLowerCase() === 'selesai';
       return '<tr><td>' + (i + 1) + '</td><td>' + aman(x.nama) + '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.kelas) +
         '</td><td>' + aman(x.tingkat) + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
         '</td><td>' + aman(x.status) + '</td><td>' +
         '<button class="button secondary small" data-action="editUjian" data-row="' + x.nomorBaris + '">✎ Edit</button> ' +
-        (selesai
-          ? '<button class="button secondary small" data-action="belumUjian" data-row="' + x.nomorBaris + '">Belum</button>'
-          : '<button class="button small" data-action="selesaiUjian" data-row="' + x.nomorBaris + '">Tandai Selesai</button>') +
+        (selesai ? '<button class="button secondary small" data-action="belumUjian" data-row="' + x.nomorBaris + '">Belum</button>' : '<button class="button small" data-action="selesaiUjian" data-row="' + x.nomorBaris + '">Tandai Selesai</button>') +
         '</td></tr>';
     });
-    document.getElementById('daftarTugasUjian').innerHTML = renderTabel(
-      ['No', 'Anggota', 'Tugas', 'Kelas', 'Tingkat', 'Tanggal', 'Status', 'Aksi'], rows);
+    document.getElementById('daftarTugasUjian').innerHTML = renderTabel(['No', 'Anggota', 'Tugas', 'Kelas', 'Tingkat', 'Tanggal', 'Status', 'Aksi'], rows);
   }
 
   function isiNilai(id, nilai) { document.getElementById(id).value = nilai == null ? '' : nilai; }
-  function cariBaris(daftar, baris) {
-    return (daftar || []).find(function(x) { return Number(x.nomorBaris) === Number(baris); });
-  }
+  function cariBaris(daftar, baris) { return (daftar || []).find(function(x) { return Number(x.nomorBaris) === Number(baris); }); }
 
   document.addEventListener('click', function(event) {
     const tutup = event.target.closest('[data-tutup-modal]');
@@ -3710,42 +3651,28 @@
     const tombol = event.target.closest('[data-action]');
     if (!tombol) return;
 
-    const aksi = tombol.dataset.action;
-    const baris = Number(tombol.dataset.row);
-    const d = dataAplikasiTersimpan || {};
+    const aksi = tombol.dataset.action, baris = Number(tombol.dataset.row), d = dataAplikasiTersimpan || {};
 
     if (aksi === 'editAgenda') {
       const x = cariBaris(d.semuaAgenda, baris);
       if (!x) return;
-      isiNilai('editAgendaRow', baris);
-      isiNilai('editAgendaTanggal', x.tanggal);
-      isiNilai('editAgendaJam', x.jam);
-      isiNilai('editAgendaNama', x.agenda);
-      isiNilai('editAgendaTempat', x.tempat);
-      isiNilai('editAgendaPJ', x.penanggungJawab);
+      isiNilai('editAgendaRow', baris); isiNilai('editAgendaTanggal', x.tanggal); isiNilai('editAgendaJam', x.jam);
+      isiNilai('editAgendaNama', x.agenda); isiNilai('editAgendaTempat', x.tempat); isiNilai('editAgendaPJ', x.penanggungJawab);
       isiNilai('editAgendaKeterangan', x.keterangan);
       document.getElementById('editAgendaOverlay').hidden = false;
     } else if (aksi === 'editKalender') {
       const x = cariBaris(d.kalender, baris);
       if (!x) return;
-      isiNilai('editKalenderRow', baris);
-      isiNilai('editKalenderMulai', x.mulai);
-      isiNilai('editKalenderSelesai', x.selesai);
-      isiNilai('editKalenderJam', x.jam);
-      isiNilai('editKalenderPIC', x.pic);
-      isiNilai('editKalenderKegiatan', x.kegiatan);
+      isiNilai('editKalenderRow', baris); isiNilai('editKalenderMulai', x.mulai); isiNilai('editKalenderSelesai', x.selesai);
+      isiNilai('editKalenderJam', x.jam); isiNilai('editKalenderPIC', x.pic); isiNilai('editKalenderKegiatan', x.kegiatan);
       isiNilai('editKalenderKeterangan', x.keterangan);
       document.getElementById('editKalenderAgenda').checked = !!x.sebagaiAgenda;
       document.getElementById('editKalenderOverlay').hidden = false;
     } else if (aksi === 'editUjian') {
       const x = cariBaris(dataUjianTersimpan, baris);
       if (!x) return;
-      isiNilai('editUjianRow', baris);
-      isiNilai('editUjianNama', x.nama);
-      isiNilai('editUjianMulai', x.mulai);
-      isiNilai('editUjianSelesai', x.selesai);
-      isiNilai('editUjianKelas', x.kelas);
-      isiNilai('editUjianTingkat', x.tingkat);
+      isiNilai('editUjianRow', baris); isiNilai('editUjianNama', x.nama); isiNilai('editUjianMulai', x.mulai);
+      isiNilai('editUjianSelesai', x.selesai); isiNilai('editUjianKelas', x.kelas); isiNilai('editUjianTingkat', x.tingkat);
       isiNilai('editUjianTugas', x.tugas);
       document.getElementById('editUjianOverlay').hidden = false;
     } else if (aksi === 'belumUjian') {
@@ -3756,19 +3683,14 @@
   function sambungkanModalEdit(formId, overlayId, rowId, metode, olahData) {
     document.getElementById(formId).addEventListener('submit', function(event) {
       event.preventDefault();
-      const form = event.currentTarget;
-      const data = Object.fromEntries(new FormData(form).entries());
+      const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries());
       if (olahData) olahData(form, data);
       const baris = Number(document.getElementById(rowId).value);
 
       mintaPin().then(function(pin) {
         if (!pin) return;
         const runner = google.script.run
-          .withSuccessHandler(function(pesan) {
-            tampilkanNotifikasi(pesan || 'Perubahan berhasil disimpan.', 'success');
-            document.getElementById(overlayId).hidden = true;
-            muatAplikasi();
-          })
+          .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'Perubahan berhasil disimpan.', 'success'); document.getElementById(overlayId).hidden = true; muatAplikasi(); })
           .withFailureHandler(function(error) {
             const teks = error && error.message ? error.message : String(error);
             if (teks.toLowerCase().indexOf('pin') !== -1) pinAdmin = '';
@@ -3781,8 +3703,9 @@
 
   sambungkanModalEdit('formEditAgenda', 'editAgendaOverlay', 'editAgendaRow', 'editAgenda');
   sambungkanModalEdit('formEditUjian', 'editUjianOverlay', 'editUjianRow', 'editTugasKoreksiUjian');
-  sambungkanModalEdit('formEditKalender', 'editKalenderOverlay', 'editKalenderRow', 'editKegiatanKalender',
-    function(form, data) { data.tampilkanSebagaiAgenda = !!form.elements.tampilkanSebagaiAgenda.checked; });
+  sambungkanModalEdit('formEditKalender', 'editKalenderOverlay', 'editKalenderRow', 'editKegiatanKalender', function(form, data) {
+    data.tampilkanSebagaiAgenda = !!form.elements.tampilkanSebagaiAgenda.checked;
+  });
 
   document.getElementById('agendaTanggal').value = tanggalHariIniLokal();
   document.getElementById('tugasMulai').value = tanggalHariIniLokal();
@@ -3802,8 +3725,7 @@
   function selArab(v) { return /[\u0600-\u06FF]/.test(teksSel(v)); }
 
   function susunDokumen(nilai, gabung) {
-    const jumlahBaris = nilai.length;
-    const blok = [];
+    const jumlahBaris = nilai.length, blok = [];
     let awal = -1;
     for (let i = 0; i <= jumlahBaris; i++) {
       const kosong = i === jumlahBaris || nilai[i].every(function (v) { return teksSel(v) === ''; });
@@ -3823,8 +3745,7 @@
 
     return blok.map(function (b) {
       let r1 = b[0];
-      const r2 = b[1];
-      const judul = [];
+      const r2 = b[1], judul = [];
 
       while (r1 <= r2) {
         const terisi = nilai[r1].filter(function (v) { return teksSel(v) !== ''; });
@@ -3837,13 +3758,9 @@
       const adaTabel = r1 <= r2;
       judul.forEach(function (t, i) {
         const terakhir = i === judul.length - 1;
-        if (adaTabel && terakhir) {
-          html += '<h3 class="dokumen-bagian" dir="auto">' + aman(t) + '</h3>';
-        } else if (i === 0) {
-          html += '<h2 class="dokumen-judul" dir="auto">' + aman(t) + '</h2>';
-        } else {
-          html += '<p class="dokumen-sub" dir="auto">' + aman(t) + '</p>';
-        }
+        if (adaTabel && terakhir) html += '<h3 class="dokumen-bagian" dir="auto">' + aman(t) + '</h3>';
+        else if (i === 0) html += '<h2 class="dokumen-judul" dir="auto">' + aman(t) + '</h2>';
+        else html += '<p class="dokumen-sub" dir="auto">' + aman(t) + '</p>';
       });
       if (!adaTabel) return '<section class="dokumen-blok">' + html + '</section>';
 
@@ -3885,8 +3802,7 @@
       }
 
       const lebar = cMax - cMin + 1;
-      html += '<div class="table-wrap"><table class="dokumen-tabel" style="min-width:' +
-        Math.max(760, lebar * 46) + 'px">' + isi + '</table></div>';
+      html += '<div class="table-wrap"><table class="dokumen-tabel" style="min-width:' + Math.max(760, lebar * 46) + 'px">' + isi + '</table></div>';
       return '<section class="dokumen-blok">' + html + '</section>';
     }).join('');
   }
@@ -3897,8 +3813,7 @@
   };
 
   function gambarDokumen(kode) {
-    const d = DOKUMEN[kode];
-    const wadah = document.getElementById(d.wadah);
+    const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah);
     if (!d.data || !d.data.nilai || !d.data.nilai.length) {
       wadah.innerHTML = '<div class="card empty">Dokumen masih kosong.</div>';
       return;
@@ -3907,9 +3822,7 @@
   }
 
   function muatDokumen(kode) {
-    const d = DOKUMEN[kode];
-    const wadah = document.getElementById(d.wadah);
-
+    const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah);
     if (d.data) gambarDokumen(kode);
     else wadah.innerHTML = '<div class="empty">Memuat dokumen…</div>';
 
@@ -3926,167 +3839,6 @@
   document.addEventListener('click', function (event) {
     const tombol = event.target.closest('[data-muat-dokumen]');
     if (tombol) muatDokumen(tombol.dataset.muatDokumen);
-  });
-
-  PETA_HALAMAN.batasPelajaran = { tab: 'kegiatan', induk: 'hubKegiatan' };
-  PETA_HALAMAN.tipeSoal       = { tab: 'kegiatan', induk: 'hubKegiatan' };
-
-  (function () {
-    const bukaAsli = bukaHalaman;
-    bukaHalaman = function (nama, dariRiwayat) {
-      bukaAsli(nama, dariRiwayat);
-      if (nama === 'batasPelajaran') muatDokumen('batas');
-      if (nama === 'tipeSoal') muatDokumen('tipe');
-    };
-  })();
-
-  // State daftar pengguna
-  let daftarPenggunaTersimpan = [];
-
-  // Mapping role ke warna badge
-  function badgeRole(role) {
-    const r = String(role || '').toUpperCase();
-    if (r === 'ADMIN' || r === 'ADMIN/TU') {
-      return '<span class="badge" style="background:rgba(168,85,247,0.18); color:#c084fc; border:1px solid rgba(168,85,247,0.35);">ADMIN / TU</span>';
-    } else if (r === 'KOREKTOR') {
-      return '<span class="badge" style="background:rgba(45,212,191,0.18); color:var(--aksen); border:1px solid var(--aksen-border);">KOREKTOR</span>';
-    } else {
-      return '<span class="badge" style="background:rgba(251,191,36,0.18); color:var(--kuning); border:1px solid rgba(251,191,36,0.35);">SONIK</span>';
-    }
-  }
-
-  // Render tabel pengguna
-  function tampilkanDaftarPengguna() {
-    const cari = (document.getElementById('filterPenggunaNama').value || '').toLowerCase();
-    const filterRole = (document.getElementById('filterPenggunaRole').value || '').toUpperCase();
-    const filterStatus = document.getElementById('filterPenggunaStatus').value;
-
-    const filtered = daftarPenggunaTersimpan.filter(function(u) {
-      const cocokNama = (u.nama || '').toLowerCase().includes(cari) || (u.username || '').toLowerCase().includes(cari);
-      const cocokRole = !filterRole || u.role === filterRole || (filterRole === 'ADMIN/TU' && u.role === 'ADMIN');
-      const cocokStatus = !filterStatus || u.aktif === filterStatus;
-      return cocokNama && cocokRole && cocokStatus;
-    });
-
-    const rows = filtered.map(function(u, idx) {
-      const isAktif = u.aktif === 'Ya';
-      return `
-        <tr>
-          <td>${idx + 1}</td>
-          <td><code>${aman(u.username)}</code></td>
-          <td><strong>${aman(u.nama)}</strong></td>
-          <td>${badgeRole(u.role)}</td>
-          <td>
-            <span class="badge" style="background:${isAktif ? 'var(--hijau-soft)' : 'var(--merah-soft)'}; color:${isAktif ? 'var(--hijau)' : 'var(--merah)'};">
-              ${isAktif ? 'Aktif' : 'Nonaktif'}
-            </span>
-          </td>
-          <td>
-            <button class="button secondary small" data-action="editUser" data-row="${u.nomorBaris}">✎ Edit</button>
-            <button class="button small" style="background:#e05252; color:#fff;" data-action="hapusUser" data-row="${u.nomorBaris}">🗑 Hapus</button>
-          </td>
-        </tr>
-      `;
-    });
-
-    document.getElementById('daftarPenggunaTabel').innerHTML = renderTabel(
-      ['No', 'Username', 'Nama Lengkap', 'Role', 'Status', 'Aksi'],
-      rows
-    );
-  }
-
-  // Handle Form Pengguna
-  document.getElementById('tombolTambahPengguna').addEventListener('click', function() {
-    const f = document.getElementById('formPengguna');
-    f.reset();
-    document.getElementById('penggunaNomorBaris').value = '';
-    document.getElementById('penggunaPass').required = true;
-    f.hidden = !f.hidden;
-  });
-
-  document.getElementById('batalPenggunaBtn').addEventListener('click', function() {
-    document.getElementById('formPengguna').hidden = true;
-  });
-
-  document.getElementById('formPengguna').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    const baris = document.getElementById('penggunaNomorBaris').value;
-
-    mintaPin().then(function(pin) {
-      if (!pin) return;
-      google.script.run
-        .withSuccessHandler(function(pesan) {
-          tampilkanNotifikasi(pesan, 'success');
-          form.reset();
-          form.hidden = true;
-          muatAplikasi();
-        })
-        .withFailureHandler(function(err) {
-          tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
-        })
-        .simpanPengguna(data, baris, pin);
-    });
-  });
-
-  // Event klik tombol Edit & Hapus User
-  document.addEventListener('click', function(e) {
-    const editBtn = e.target.closest('[data-action="editUser"]');
-    const hapusBtn = e.target.closest('[data-action="hapusUser"]');
-
-    if (editBtn) {
-      const row = Number(editBtn.dataset.row);
-      const u = daftarPenggunaTersimpan.find(function(x) { return x.nomorBaris === row; });
-      if (!u) return;
-
-      document.getElementById('penggunaNomorBaris').value = u.nomorBaris;
-      document.getElementById('penggunaUser').value = u.username;
-      document.getElementById('penggunaNama').value = u.nama;
-      document.getElementById('penggunaRole').value = u.role === 'ADMIN' ? 'ADMIN/TU' : u.role;
-      document.getElementById('penggunaAktif').value = u.aktif;
-      document.getElementById('penggunaPass').value = '';
-      document.getElementById('penggunaPass').required = false;
-
-      const f = document.getElementById('formPengguna');
-      f.hidden = false;
-      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    if (hapusBtn) {
-      const row = Number(hapusBtn.dataset.row);
-      if (!confirm('Yakin ingin menghapus pengguna ini?')) return;
-
-      mintaPin().then(function(pin) {
-        if (!pin) return;
-        google.script.run
-          .withSuccessHandler(function(pesan) {
-            tampilkanNotifikasi(pesan, 'success');
-            muatAplikasi();
-          })
-          .withFailureHandler(function(err) {
-            tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error');
-          })
-          .hapusPengguna(row, pin);
-      });
-    }
-
-    // Klik submenu role di sidebar langsung memfilter tampilan pengguna
-    const roleNavBtn = e.target.closest('[data-role-filter]');
-    if (roleNavBtn) {
-      const role = roleNavBtn.dataset.roleFilter;
-      document.getElementById('filterPenggunaRole').value = role;
-      tampilkanDaftarPengguna();
-    }
-  });
-
-  // Filter events
-  ['filterPenggunaNama', 'filterPenggunaRole', 'filterPenggunaStatus'].forEach(function(id) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', tampilkanDaftarPengguna);
-      el.addEventListener('change', tampilkanDaftarPengguna);
-    }
   });
 
   /* ===== PENGGUNA & SIDEBAR ===== */
@@ -4135,10 +3887,8 @@
 
     document.getElementById('tabPeran').innerHTML = peran.map(function (p) {
       const jumlah = d.pengguna.filter(function (u) { return u.role === p.kode; }).length;
-      return '<button type="button" class="tab-peran-tombol' +
-        (p.kode === tabPeranAktif ? ' aktif' : '') +
-        '" data-tab-peran="' + aman(p.kode) + '">' + aman(p.label) +
-        ' <span>' + jumlah + '</span></button>';
+      return '<button type="button" class="tab-peran-tombol' + (p.kode === tabPeranAktif ? ' aktif' : '') +
+        '" data-tab-peran="' + aman(p.kode) + '">' + aman(p.label) + ' <span>' + jumlah + '</span></button>';
     }).join('');
 
     const baris = d.pengguna
@@ -4156,8 +3906,7 @@
           '</td></tr>';
       });
 
-    document.getElementById('isiPengguna').innerHTML =
-      renderTabel(['No', 'Nama', 'Username', 'Peran', 'Status', 'Aksi'], baris);
+    document.getElementById('isiPengguna').innerHTML = renderTabel(['No', 'Nama', 'Username', 'Peran', 'Status', 'Aksi'], baris);
   }
 
   function bukaFormPengguna(u) {
@@ -4178,22 +3927,15 @@
     document.getElementById('penggunaPeran').value = baru ? (tabPeranAktif === 'LAINNYA' ? '' : tabPeranAktif) : u.role;
     document.getElementById('penggunaSandi').value = '';
     document.getElementById('penggunaSandi').required = baru;
-    document.getElementById('labelSandi').textContent = baru
-      ? 'Password (minimal 6 karakter)'
-      : 'Password baru (kosongkan jika tidak diganti)';
+    document.getElementById('labelSandi').textContent = baru ? 'Password (minimal 6 karakter)' : 'Password baru (kosongkan jika tidak diganti)';
     document.getElementById('penggunaAktif').checked = baru ? true : !!u.aktif;
     document.getElementById('penggunaError').textContent = '';
     document.getElementById('penggunaOverlay').hidden = false;
     setTimeout(function () { document.getElementById('penggunaNama').focus(); }, 50);
   }
 
-  document.getElementById('tombolTambahPengguna').addEventListener('click', function () {
-    bukaFormPengguna(null);
-  });
-
-  document.getElementById('batalPengguna').addEventListener('click', function () {
-    document.getElementById('penggunaOverlay').hidden = true;
-  });
+  document.getElementById('tombolTambahPengguna').addEventListener('click', function () { bukaFormPengguna(null); });
+  document.getElementById('batalPengguna').addEventListener('click', function () { document.getElementById('penggunaOverlay').hidden = true; });
 
   document.getElementById('formPengguna').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -4209,9 +3951,7 @@
       aktif: document.getElementById('penggunaAktif').checked
     };
 
-    tombol.disabled = true;
-    pesan.textContent = '';
-
+    tombol.disabled = true; pesan.textContent = '';
     google.script.run
       .withSuccessHandler(function (hasil) {
         tombol.disabled = false;
@@ -4233,9 +3973,7 @@
     const aksi = event.target.closest('[data-pengguna]');
     if (!aksi) return;
 
-    const u = ((dataPengguna || {}).pengguna || []).find(function (x) {
-      return x.username === aksi.dataset.username;
-    });
+    const u = ((dataPengguna || {}).pengguna || []).find(function (x) { return x.username === aksi.dataset.username; });
     if (!u) return;
 
     if (aksi.dataset.pengguna === 'edit') {
@@ -4251,10 +3989,8 @@
     }
   });
 
-  /* Sorot grup sidebar yang berisi halaman aktif */
   function sorotSidebar() {
     document.querySelectorAll('.nav-group-toggle').forEach(function (t) { t.classList.remove('aktif'); });
-
     const aktif = document.querySelector('.sidebar .nav-submenu .nav-button.active');
     if (!aktif) return;
 
@@ -4264,16 +4000,16 @@
     const tombol = document.querySelector('.nav-group-toggle[data-menu="' + submenu.id.replace('menu-', '') + '"]');
     if (tombol) {
       tombol.classList.add('aktif');
-      tombol.querySelector('span').textContent = '⌃';
+      tombol.querySelector('.chev').textContent = '⌃';
     }
   }
-
-  PETA_HALAMAN.pengguna = { tab: 'kegiatan', induk: 'hubKegiatan' };
 
   (function () {
     const bukaSebelumnya = bukaHalaman;
     bukaHalaman = function (nama, dariRiwayat) {
       bukaSebelumnya(nama, dariRiwayat);
+      if (nama === 'batasPelajaran') muatDokumen('batas');
+      if (nama === 'tipeSoal') muatDokumen('tipe');
       if (nama === 'pengguna') muatPengguna();
       sorotSidebar();
     };
@@ -4295,4 +4031,3 @@
 </script>
 </body>
 </html>
-
