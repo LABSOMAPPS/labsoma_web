@@ -33,19 +33,19 @@
       --garis-terang: rgba(255, 255, 255, 0.16);
 
       /* Brand Accents */
-      --aksen: #2dd4bf;          /* Emerald/Teal cerah modern */
+      --aksen: #2dd4bf;
       --aksen-hover: #14b8a6;
       --aksen-soft: rgba(45, 212, 191, 0.12);
       --aksen-border: rgba(45, 212, 191, 0.28);
       --aksen-teks: #042f2e;
 
-      --biru: #38bdf8;           /* Sky Blue */
+      --biru: #38bdf8;
       --biru-soft: rgba(56, 189, 248, 0.12);
-      --kuning: #fbbf24;         /* Amber/Gold */
+      --kuning: #fbbf24;
       --kuning-soft: rgba(251, 191, 36, 0.14);
-      --merah: #f87171;          /* Rose Red */
+      --merah: #f87171;
       --merah-soft: rgba(248, 113, 113, 0.14);
-      --hijau: #34d399;          /* Mint Green */
+      --hijau: #34d399;
       --hijau-soft: rgba(52, 211, 153, 0.14);
 
       /* Surfaces & Elevation */
@@ -97,7 +97,6 @@
       --glow: 0 0 20px rgba(13, 148, 136, 0.15);
     }
 
-    /* Resets & Base Styles */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -127,6 +126,7 @@
       line-height: 1.55;
       letter-spacing: -0.01em;
       transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-x: clip;
     }
 
     button, input, textarea, select {
@@ -135,10 +135,9 @@
       color: inherit;
     }
 
-    /* Custom Scrollbars */
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
       background: transparent;
@@ -151,7 +150,6 @@
       background: var(--redup);
     }
 
-    /* Layout Skeleton */
     .app {
       display: flex;
       min-height: 100vh;
@@ -165,33 +163,37 @@
 
     /* Sidebar Navigation */
     .sidebar {
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      height: 100vh;
+      overflow-y: auto;
       width: 250px;
       flex: 0 0 250px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 24px 14px;
+      gap: 0;
+      padding: 16px 12px;
       border-right: 1px solid var(--garis);
       background: var(--panel);
       backdrop-filter: blur(12px);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 50;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1050;
+      scrollbar-width: thin;
     }
 
-    .brand {
-      padding: 6px 12px 20px;
+    .sidebar .brand {
+      margin-bottom: 8px;
+      padding: 6px 10px 14px;
+      border-bottom: 1px solid var(--garis);
       font-size: 21px;
       font-weight: 800;
       letter-spacing: -0.03em;
       color: var(--teks);
-      display: flex;
-      flex-direction: column;
-      border-bottom: 1px solid var(--garis);
-      margin-bottom: 8px;
     }
 
     .brand small {
-      display: inline-block;
+      display: block;
       margin-top: 4px;
       color: var(--aksen);
       font-size: 11px;
@@ -203,66 +205,69 @@
     .nav-list {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      overflow-y: auto;
-      padding-right: 2px;
+      gap: 3px;
+      flex: 1;
     }
 
-    .nav-button {
-      width: 100%;
+    .nav-list .nav-button,
+    .nav-list .nav-group-toggle {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 14px;
+      width: 100%;
+      padding: 10px 12px;
       border: 1px solid transparent;
-      border-radius: var(--radius-md);
+      border-radius: 10px;
       background: transparent;
       color: var(--redup);
-      cursor: pointer;
-      text-align: left;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 600;
+      text-align: left;
+      cursor: pointer;
       transition: all 0.18s ease;
     }
 
-    .nav-button:hover {
-      background: var(--panel2);
+    .nav-list .nav-group-toggle {
+      margin-top: 4px;
       color: var(--teks);
-      border-color: var(--garis);
-      transform: translateX(2px);
     }
 
-    .nav-button.active {
-      background: var(--aksen-soft);
-      border-color: var(--aksen-border);
+    .nav-list .nav-button:hover,
+    .nav-list .nav-group-toggle:hover {
+      background: var(--panel2);
+      color: var(--teks);
+    }
+
+    .nav-list .nav-button.active {
+      background: rgba(45, 212, 191, 0.14);
       color: var(--aksen);
       font-weight: 700;
+      box-shadow: inset 3px 0 0 var(--aksen);
     }
 
-    .nav-group-toggle {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
+    .nav-list .nav-group-toggle.aktif {
+      color: var(--aksen);
+    }
+
+    .nav-list .nav-icon-inline {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
       align-items: center;
-      padding: 10px 14px;
-      border: 1px solid var(--garis);
-      border-radius: var(--radius-md);
-      background: var(--latar-subtle);
-      color: var(--teks);
-      font-size: 13.5px;
-      font-weight: 700;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .nav-group-toggle:hover {
-      background: var(--panel2);
-      border-color: var(--garis-terang);
+    .nav-list .nav-icon-inline svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
     }
 
-    .nav-group-toggle span {
-      font-size: 14px;
+    .nav-group-toggle .chev {
+      order: 3;
+      margin-left: auto;
+      font-size: 12px;
       color: var(--redup);
       transition: transform 0.2s ease;
     }
@@ -270,26 +275,38 @@
     .nav-submenu {
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      padding-left: 12px;
-      margin: 3px 0 6px 6px;
+      margin: 2px 0 6px 18px;
+      padding-left: 10px;
+      gap: 2px;
       border-left: 2px solid var(--garis);
-      animation: appear 0.2s ease;
     }
 
     .nav-submenu .nav-button {
-      padding: 8px 12px;
-      font-size: 13px;
+      padding: 8px 10px;
+      font-size: 13.5px;
       font-weight: 500;
     }
 
-    .nav-section-title {
-      padding: 12px 14px 4px;
+    .sidebar-user {
+      margin-top: auto;
+      padding: 12px 10px 2px;
+      border-top: 1px solid var(--garis);
+    }
+
+    .sidebar-user strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .sidebar-user small {
       color: var(--aksen);
-      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-size: 11px;
+    }
+
+    @media (max-width: 1000px) {
+      .sidebar { width: 220px; flex-basis: 220px; }
     }
 
     /* Main Container */
@@ -302,7 +319,6 @@
       overflow-x: hidden;
     }
 
-    /* Topbar Controls */
     .topbar {
       display: flex;
       align-items: center;
@@ -339,10 +355,14 @@
       width: 40px;
       height: 40px;
       padding: 0;
-      font-size: 18px;
     }
 
-    /* Pages & Headings */
+    .toolbar-button.icon-only svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+
     .page {
       display: none;
       animation: appear 0.25s ease forwards;
@@ -366,7 +386,6 @@
       max-width: 780px;
     }
 
-    /* Card System */
     .card {
       padding: 22px;
       border: 1px solid var(--garis);
@@ -377,9 +396,7 @@
       position: relative;
     }
 
-    /* ==========================================================================
-       DASHBOARD TOP SECTION
-       ========================================================================== */
+    /* Dashboard */
     .dashboard-top {
       display: grid;
       grid-template-columns: minmax(310px, 0.95fr) minmax(0, 1.35fr);
@@ -488,7 +505,6 @@
       font-weight: 500;
     }
 
-    /* Dashboard Agenda & Carousel Shell */
     .dashboard-agenda-shell {
       position: relative;
       display: flex;
@@ -571,7 +587,6 @@
     .agenda-item {
       padding: 12px 6px;
       border-bottom: 1px solid var(--garis);
-      transition: background 0.15s ease;
     }
 
     .agenda-item:last-child {
@@ -609,7 +624,6 @@
       line-height: 1.45;
     }
 
-    /* Dashboard Announcement Slide */
     .dashboard-announcement-slide {
       height: 100%;
       overflow-y: auto;
@@ -647,9 +661,6 @@
       border: 1px solid var(--garis);
     }
 
-    /* ==========================================================================
-       DASHBOARD TASKS / ANGGOTA LABSOMA
-       ========================================================================== */
     .dashboard-tasks {
       margin-top: 24px;
     }
@@ -818,44 +829,16 @@
       letter-spacing: 0.04em;
     }
 
-    /* ==========================================================================
-       FORMS, INPUTS, AND CONTROLS
-       ========================================================================== */
-    .form-card {
-      max-width: 820px;
-    }
+    /* Forms */
+    .form-card { max-width: 820px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: var(--redup); font-size: 12.5px; font-weight: 600; letter-spacing: 0.01em; }
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      color: var(--redup);
-      font-size: 12.5px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-
-    .field input,
-    .field textarea,
-    .field select,
-    .search-filters input,
-    .search-filters select,
-    .modal input,
-    .modal select,
-    .modal textarea {
+    .field input, .field textarea, .field select,
+    .search-filters input, .search-filters select,
+    .modal input, .modal select, .modal textarea {
       width: 100%;
       padding: 10px 14px;
       border: 1px solid var(--garis);
@@ -867,31 +850,17 @@
       transition: all 0.18s ease;
     }
 
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus,
-    .search-filters input:focus,
-    .search-filters select:focus,
+    .field input:focus, .field textarea:focus, .field select:focus,
+    .search-filters input:focus, .search-filters select:focus,
     .modal input:focus {
       border-color: var(--aksen);
       box-shadow: 0 0 0 3px var(--aksen-soft);
       background: var(--panel2);
     }
 
-    .field textarea {
-      min-height: 95px;
-      resize: vertical;
-      line-height: 1.5;
-    }
+    .field textarea { min-height: 95px; resize: vertical; line-height: 1.5; }
+    .form-actions { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
 
-    .form-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    /* Search Filters */
     .search-filters {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -904,7 +873,6 @@
       box-shadow: var(--bayangan-sm);
     }
 
-    /* Button System */
     .button {
       display: inline-flex;
       align-items: center;
@@ -929,9 +897,7 @@
       box-shadow: 0 4px 14px rgba(45, 212, 191, 0.35);
     }
 
-    .button:active {
-      transform: translateY(0);
-    }
+    .button:active { transform: translateY(0); }
 
     .button.secondary {
       border: 1px solid var(--garis);
@@ -954,12 +920,8 @@
       font-weight: 600;
     }
 
-    .button.selected {
-      outline: 2px solid var(--kuning);
-      outline-offset: 1px;
-    }
+    .button.selected { outline: 2px solid var(--kuning); outline-offset: 1px; }
 
-    /* Table Styles */
     .table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -997,17 +959,8 @@
       z-index: 10;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    tbody tr {
-      transition: background 0.15s ease;
-    }
-
-    tbody tr:hover {
-      background: var(--aksen-soft);
-    }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: var(--aksen-soft); }
 
     .badge {
       display: inline-block;
@@ -1027,7 +980,6 @@
       border-color: rgba(251, 191, 36, 0.3);
     }
 
-    /* Summary Grid */
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1054,13 +1006,8 @@
       line-height: 1.1;
     }
 
-    .summary-card span {
-      color: var(--redup);
-      font-size: 12.5px;
-      font-weight: 600;
-    }
+    .summary-card span { color: var(--redup); font-size: 12.5px; font-weight: 600; }
 
-    /* Donut Progress Card */
     .bagan-persen {
       display: flex;
       align-items: center;
@@ -1097,38 +1044,11 @@
       color: var(--teks);
     }
 
-    .bagan-info {
-      display: grid;
-      gap: 6px;
-    }
-
-    .bagan-info h3 {
-      margin: 0 0 2px;
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--aksen);
-    }
-
-    .bagan-baris {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13.5px;
-      color: var(--teks);
-    }
-
-    .bagan-titik {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex: 0 0 auto;
-    }
-
-    .bagan-total {
-      color: var(--redup);
-      font-size: 12px;
-      margin-top: 4px;
-    }
+    .bagan-info { display: grid; gap: 6px; }
+    .bagan-info h3 { margin: 0 0 2px; font-size: 16px; font-weight: 800; color: var(--aksen); }
+    .bagan-baris { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--teks); }
+    .bagan-titik { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+    .bagan-total { color: var(--redup); font-size: 12px; margin-top: 4px; }
 
     /* Announcement Layout */
     .announcement-layout {
@@ -1139,231 +1059,40 @@
       align-items: stretch;
     }
 
-    .announcement-identity {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 28px;
-    }
-
-    .announcement-content {
-      padding: 24px;
-      overflow-y: auto;
-    }
-
-    .announcement-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--garis);
-    }
-
+    .announcement-identity { display: flex; flex-direction: column; justify-content: center; padding: 28px; }
+    .announcement-content { padding: 24px; overflow-y: auto; }
+    .announcement-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--garis); }
     .announcement-toolbar .page-heading { margin: 0; }
-
-    .announcement-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .announcement-item {
-      margin-top: 14px;
-      padding: 20px;
-      border: 1px solid var(--garis);
-      border-radius: var(--radius-md);
-      background: var(--panel2);
-      box-shadow: var(--bayangan-sm);
-    }
-
-    .announcement-title {
-      margin: 0 0 10px;
-      color: var(--aksen);
-      font-size: clamp(18px, 1.8vw, 26px);
-      font-weight: 800;
-      line-height: 1.25;
-    }
-
-    .announcement-text {
-      font-size: clamp(15px, 1.4vw, 19px);
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      color: var(--teks);
-    }
-
-    .announcement-target {
-      display: inline-block;
-      margin-top: 14px;
-      padding: 4px 12px;
-      border-radius: var(--radius-full);
-      background: var(--aksen-soft);
-      border: 1px solid var(--aksen-border);
-      color: var(--aksen);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .announcement-edit-list {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .announcement-edit-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 14px 16px;
-      border: 1px solid var(--garis);
-      border-radius: var(--radius-md);
-      background: var(--panel2);
-    }
-
-    .announcement-edit-copy strong {
-      display: block;
-      margin-bottom: 3px;
-      font-size: 14px;
-    }
-    .announcement-edit-copy span {
-      color: var(--redup);
-      font-size: 12.5px;
-    }
+    .announcement-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .announcement-item { margin-top: 14px; padding: 20px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); box-shadow: var(--bayangan-sm); }
+    .announcement-title { margin: 0 0 10px; color: var(--aksen); font-size: clamp(18px, 1.8vw, 26px); font-weight: 800; line-height: 1.25; }
+    .announcement-text { font-size: clamp(15px, 1.4vw, 19px); line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--teks); }
+    .announcement-target { display: inline-block; margin-top: 14px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--aksen-soft); border: 1px solid var(--aksen-border); color: var(--aksen); font-size: 12px; font-weight: 700; }
+    .announcement-edit-list { display: grid; gap: 10px; margin-bottom: 20px; }
+    .announcement-edit-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); }
+    .announcement-edit-copy strong { display: block; margin-bottom: 3px; font-size: 14px; }
+    .announcement-edit-copy span { color: var(--redup); font-size: 12.5px; }
 
     /* Rapat & Presensi */
-    .rapat-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-
-    .rapat-roster {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      margin: 14px 0 18px;
-    }
-
-    .rapat-roster-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border: 1px solid var(--garis);
-      border-radius: var(--radius-md);
-      background: var(--panel2);
-      cursor: pointer;
-      font-size: 13.5px;
-      font-weight: 500;
-    }
-
-    .rapat-roster-item input {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--aksen);
-    }
-
-    .rapat-peserta-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 6px;
-      border-bottom: 1px solid var(--garis);
-    }
+    .rapat-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .rapat-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 14px 0 18px; }
+    .rapat-roster-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); cursor: pointer; font-size: 13.5px; font-weight: 500; }
+    .rapat-roster-item input { width: 17px; height: 17px; accent-color: var(--aksen); }
+    .rapat-peserta-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 6px; border-bottom: 1px solid var(--garis); }
 
     /* Calendar Grid */
-    .calendar-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .calendar-toolbar h2 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .calendar-weekday {
-      min-height: auto;
-      text-align: center;
-      font-weight: 800;
-      color: var(--aksen);
-      background: transparent;
-      border: 0;
-      padding: 6px 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .calendar-cell {
-      min-height: 85px;
-      padding: 8px;
-      border: 1px solid var(--garis);
-      border-radius: var(--radius-md);
-      background: var(--panel2);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      transition: border-color 0.15s ease;
-    }
-
-    .calendar-cell.today {
-      border: 2px solid var(--aksen);
-      background: var(--aksen-soft);
-    }
-
-    .calendar-cell.muted {
-      opacity: 0.35;
-    }
-
-    .calendar-cell b {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--teks);
-    }
-
-    .calendar-event {
-      padding: 3px 6px;
-      border-radius: var(--radius-sm);
-      background: var(--aksen-soft);
-      border-left: 2px solid var(--aksen);
-      font-size: 11px;
-      font-weight: 600;
-      overflow-wrap: anywhere;
-      line-height: 1.25;
-      color: var(--teks);
-    }
+    .calendar-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .calendar-toolbar h2 { margin: 0; font-size: 20px; font-weight: 800; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+    .calendar-weekday { min-height: auto; text-align: center; font-weight: 800; color: var(--aksen); background: transparent; border: 0; padding: 6px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .calendar-cell { min-height: 85px; padding: 8px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); overflow: hidden; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.15s ease; }
+    .calendar-cell.today { border: 2px solid var(--aksen); background: var(--aksen-soft); }
+    .calendar-cell.muted { opacity: 0.35; }
+    .calendar-cell b { font-size: 12px; font-weight: 700; color: var(--teks); }
+    .calendar-event { padding: 3px 6px; border-radius: var(--radius-sm); background: var(--aksen-soft); border-left: 2px solid var(--aksen); font-size: 11px; font-weight: 600; overflow-wrap: anywhere; line-height: 1.25; color: var(--teks); }
 
     /* Hub Screen (Mobile Grid Menus) */
-    .hub-grid {
-      display: grid;
-      gap: 12px;
-      max-width: 680px;
-    }
-
-    .hub-grid {
-      display: grid;
-      gap: 12px;
-      max-width: 680px;
-    }
-
+    .hub-grid { display: grid; gap: 12px; max-width: 680px; }
     .hub-button {
       display: flex;
       align-items: center;
@@ -1379,15 +1108,12 @@
       cursor: pointer;
       transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .hub-button:hover,
-    .hub-button:active {
+    .hub-button:hover, .hub-button:active {
       border-color: var(--aksen);
       transform: translateY(-2px);
       box-shadow: var(--bayangan);
       background: var(--panel2);
     }
-
     .hub-button .hub-icon-box {
       width: 44px;
       height: 44px;
@@ -1401,31 +1127,14 @@
       border: 1px solid var(--aksen-border);
       transition: all 0.2s ease;
     }
-
-    .hub-button:hover .hub-icon-box,
-    .hub-button:active .hub-icon-box {
+    .hub-button:hover .hub-icon-box, .hub-button:active .hub-icon-box {
       background: var(--aksen);
       color: var(--aksen-teks);
       box-shadow: 0 0 14px var(--aksen-soft);
     }
-
-    .hub-button .hub-svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .hub-button strong {
-      display: block;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .hub-button small {
-      display: block;
-      margin-top: 3px;
-      color: var(--redup);
-      font-size: 12.5px;
-    }
+    .hub-button .hub-icon-box svg { width: 22px; height: 22px; stroke: currentColor; }
+    .hub-button strong { display: block; font-size: 15px; font-weight: 700; }
+    .hub-button small { display: block; margin-top: 3px; color: var(--redup); font-size: 12.5px; }
 
     /* Toast Messages */
     .toast-area {
@@ -1481,49 +1190,17 @@
       animation: scaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .modal h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
-      font-weight: 800;
-    }
+    .modal h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
+    .modal p { margin: 0 0 18px; color: var(--redup); font-size: 13.5px; }
+    .modal-error { min-height: 20px; margin-top: 8px; color: var(--merah); font-size: 12.5px; font-weight: 600; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
-    .modal p {
-      margin: 0 0 18px;
-      color: var(--redup);
-      font-size: 13.5px;
-    }
-
-    .modal-error {
-      min-height: 20px;
-      margin-top: 8px;
-      color: var(--merah);
-      font-size: 12.5px;
-      font-weight: 600;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .empty {
-      padding: 24px 10px;
-      color: var(--redup);
-      text-align: center;
-      font-size: 13.5px;
-    }
-
-    .message {
-      color: var(--redup);
-      font-size: 13px;
-      font-weight: 600;
-    }
+    .empty { padding: 24px 10px; color: var(--redup); text-align: center; font-size: 13.5px; }
+    .message { color: var(--redup); font-size: 13px; font-weight: 600; }
     .message.error { color: var(--merah); }
     .message.success { color: var(--hijau); }
 
-    /* Dokumen Batas Pelajaran & Tipe Soal */
+    /* Dokumen */
     .dokumen-blok { margin: 0 0 32px; }
     .dokumen-judul { margin: 0 0 8px; text-align: center; color: var(--aksen); font-size: clamp(22px, 2.2vw, 28px); font-weight: 800; }
     .dokumen-bagian { margin: 0 0 10px; text-align: center; color: var(--biru); font-size: clamp(17px, 1.8vw, 22px); font-weight: 700; }
@@ -1532,72 +1209,38 @@
     .dokumen-tabel th { background: var(--panel2); color: var(--aksen); font-weight: 700; }
     .dokumen-tabel .ar { font-family: var(--font-arabic); font-size: 19px; direction: rtl; }
 
-    /* Animations */
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(-10px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
+    /* Tab Peran Pengguna */
+    .tab-peran { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+    .tab-peran-tombol { padding: 9px 14px; border: 1px solid var(--garis); border-radius: 999px; background: var(--panel); color: var(--redup); font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
+    .tab-peran-tombol span { margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--panel2); font-size: 12px; }
+    .tab-peran-tombol.aktif { background: var(--aksen); border-color: var(--aksen); color: #06201d; }
+    .tab-peran-tombol.aktif span { background: rgba(0,0,0,.15); color: #06201d; }
 
-    /* ==========================================================================
-       FULLSCREEN MODE STYLES
-       ========================================================================== */
+    /* Khusus Admin Visibility */
+    body:not([data-peran="ADMIN"]) .khusus-admin { display: none !important; }
+
+    /* Fullscreen Mode */
     body.dashboard-fullscreen { overflow: hidden; }
     body.dashboard-fullscreen .sidebar { display: none; }
-    body.dashboard-fullscreen .main {
-      width: 100vw;
-      height: 100vh;
-      overflow: auto;
-      padding: 56px 20px 20px;
-    }
-    body.dashboard-fullscreen #page-dashboard.active {
-      min-height: calc(100vh - 76px);
-      display: flex;
-      flex-direction: column;
-    }
-    body.dashboard-fullscreen .dashboard-top {
-      flex: 0 0 44vh;
-      min-height: 0;
-    }
-    body.dashboard-fullscreen .dashboard-tasks {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    body.dashboard-fullscreen .member-grid {
-      flex: 1;
-      min-height: 0;
-    }
+    body.dashboard-fullscreen .main { width: 100vw; height: 100vh; overflow: auto; padding: 56px 20px 20px; }
+    body.dashboard-fullscreen #page-dashboard.active { min-height: calc(100vh - 76px); display: flex; flex-direction: column; }
+    body.dashboard-fullscreen .dashboard-top { flex: 0 0 44vh; min-height: 0; }
+    body.dashboard-fullscreen .dashboard-tasks { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    body.dashboard-fullscreen .member-grid { flex: 1; min-height: 0; }
     body.dashboard-fullscreen .member-card { min-height: 0; }
-    body.dashboard-fullscreen .topbar {
-      position: fixed;
-      z-index: 900;
-      top: 10px;
-      left: 14px;
-      margin: 0;
-      padding: 0;
-      border: none;
-    }
+    body.dashboard-fullscreen .topbar { position: fixed; z-index: 900; top: 10px; left: 14px; margin: 0; padding: 0; border: none; }
     body.sidebar-hidden .sidebar { display: none; }
 
+    /* Animations */
+    @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(-10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
     /* ==========================================================================
-       MOBILE & RESPONSIVE BREAKPOINTS
+       RESPONSIVE & MOBILE (HP) STYLES
        ========================================================================== */
-    .bottom-nav,
-    .mobile-only,
-    #tombolKembaliMobile { display: none; }
+    .bottom-nav, .mobile-only, #tombolKembaliMobile, .sidebar-backdrop { display: none; }
 
     @media (max-width: 1100px) {
       .member-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -1606,9 +1249,41 @@
 
     @media (max-width: 768px) {
       .app { display: block; width: 100%; max-width: 100vw; }
-      .sidebar { display: none !important; }
-      #sidebarToggle,
-      #fullscreenToggle { display: none; }
+      
+      /* Sidebar Off-canvas Drawer di Mobile */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 270px;
+        transform: translateX(-100%);
+        box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      body.sidebar-mobile-open .sidebar {
+        transform: translateX(0);
+      }
+
+      .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1040;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+
+      body.sidebar-mobile-open .sidebar-backdrop {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #sidebarToggle, #fullscreenToggle { display: none; }
 
       .main {
         width: 100%;
@@ -1616,32 +1291,12 @@
         padding: 14px 14px 96px;
       }
 
-      .topbar {
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-      }
-
-      .dashboard-top {
-        grid-template-columns: 1fr;
-        min-height: auto;
-        gap: 14px;
-      }
-
-      .identity {
-        padding: 18px;
-      }
-
-      .dashboard-agenda-slide {
-        grid-template-columns: 1fr;
-      }
-
-      .member-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
+      .topbar { margin-bottom: 16px; padding-bottom: 10px; }
+      .dashboard-top { grid-template-columns: 1fr; min-height: auto; gap: 14px; }
+      .identity { padding: 18px; }
+      .dashboard-agenda-slide { grid-template-columns: 1fr; }
+      .member-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
       .member-card { min-height: 185px; padding: 12px; }
-
       .form-grid { grid-template-columns: 1fr; }
       .search-filters { grid-template-columns: 1fr; gap: 8px; padding: 12px; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -1658,23 +1313,20 @@
         align-items: center;
       }
 
-      .announcement-layout {
-        grid-template-columns: 1fr;
-        min-height: auto;
-      }
+      .announcement-layout { grid-template-columns: 1fr; min-height: auto; }
 
-      /* Bottom Navigation (Floating Glow Pill / Dock seperti di Mockup Gambar) */
+      /* Bottom Navigation (Floating Glow Pill Dock di HP) */
       .bottom-nav {
         position: fixed;
         z-index: 1000;
-        left: 14px;
-        right: 14px;
-        bottom: 14px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
         margin: 0 auto;
         max-width: 520px;
         display: grid;
         grid-template-columns: repeat(5, 1fr);
-        padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+        padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: 22px;
         background: rgba(14, 23, 38, 0.88);
@@ -1695,8 +1347,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        padding: 6px 2px;
+        gap: 4px;
+        padding: 5px 2px;
         border: 0;
         border-radius: 14px;
         background: transparent;
@@ -1721,9 +1373,9 @@
         transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
-      .bottom-nav button .nav-svg {
-        width: 22px;
-        height: 22px;
+      .bottom-nav button .nav-icon-wrap svg {
+        width: 21px;
+        height: 21px;
         stroke: currentColor;
         transition: all 0.2s ease;
       }
@@ -1735,49 +1387,29 @@
         transition: color 0.2s ease;
       }
 
-      .bottom-nav button:hover {
-        color: var(--teks);
-      }
+      .bottom-nav button:hover { color: var(--teks); }
+      .bottom-nav button:active .nav-icon-wrap { transform: scale(0.9); }
 
-      .bottom-nav button:active .nav-icon-wrap {
-        transform: scale(0.9);
-      }
-
-      /* Active Glowing State (Sesuai Mockup Gambar) */
+      /* Active Glow State */
       .bottom-nav button.active {
         color: #38bdf8;
         font-weight: 700;
       }
 
-      body[data-theme="light"] .bottom-nav button.active {
-        color: #0284c7;
-      }
+      body[data-theme="light"] .bottom-nav button.active { color: #0284c7; }
 
-      .bottom-nav button.active .nav-icon-wrap {
-        transform: translateY(-2px);
-      }
+      .bottom-nav button.active .nav-icon-wrap { transform: translateY(-2px); }
+      .bottom-nav button.active .nav-icon-wrap svg { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8)); }
+      .bottom-nav button.active span.nav-label { font-weight: 700; color: #38bdf8; }
+      body[data-theme="light"] .bottom-nav button.active span.nav-label { color: #0284c7; }
 
-      .bottom-nav button.active .nav-svg {
-        filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
-      }
-
-      .bottom-nav button.active span.nav-label {
-        font-weight: 700;
-        color: #38bdf8;
-      }
-
-      body[data-theme="light"] .bottom-nav button.active span.nav-label {
-        color: #0284c7;
-      }
-
-      /* Cyan/Blue Neon Glow bar di atas tombol aktif */
       .bottom-nav button.active::before {
         content: "";
         position: absolute;
         top: -8px;
         left: 50%;
         transform: translateX(-50%);
-        width: 32px;
+        width: 30px;
         height: 3px;
         border-radius: 3px;
         background: #38bdf8;
@@ -1796,97 +1428,134 @@
       .calendar-event { font-size: 9.5px; }
     }
   </style>
-
 </head>
 
 <body>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
   <div class="app">
-    <aside class="sidebar">
+    <!-- SIDEBAR LAPTOP/DESKTOP/OFF-CANVAS MOBILE -->
+    <aside class="sidebar" id="sidebarMenu">
       <div class="brand">
         Labsoma PPS
         <small>Laboratorium Soal-soal Madrasah</small>
       </div>
 
       <nav class="nav-list">
-        <!-- 1. DASHBOARD -->
+        <!-- Dashboard -->
         <button class="nav-button active" data-page="dashboard">
-          <svg class="nav-svg" style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Dashboard
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </span>
+          <span>Dashboard</span>
         </button>
 
-        <!-- 2. PENGUMUMAN -->
+        <!-- Pengumuman -->
         <button class="nav-button" data-page="pengumuman">
-          <svg class="nav-svg" style="width:18px;height:18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          Pengumuman
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </span>
+          <span>Pengumuman</span>
         </button>
 
-        <!-- 3. PENGGUNA (ADMIN/TU, KOREKTOR, SONIK) -->
-        <button class="nav-group-toggle" type="button" data-menu="pengguna">
+        <!-- Pengguna (Khusus Admin/TU) -->
+        <button class="nav-button khusus-admin" data-page="pengguna">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
           <span>Pengguna</span>
-          <span>⌄</span>
         </button>
-        <div class="nav-submenu" id="menu-pengguna" hidden>
-          <button class="nav-button" data-page="pengguna" data-role-filter="ADMIN/TU">ADMIN / TU</button>
-          <button class="nav-button" data-page="pengguna" data-role-filter="KOREKTOR">KOREKTOR</button>
-          <button class="nav-button" data-page="pengguna" data-role-filter="SONIK">SONIK</button>
+
+        <!-- Dokumen -->
+        <div class="nav-grup">
+          <button class="nav-group-toggle" type="button" data-menu="dokumen">
+            <span class="chev">⌃</span>
+            <span class="nav-icon-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+            <span>Dokumen</span>
+          </button>
+          <div class="nav-submenu" id="menu-dokumen">
+            <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
+            <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
+          </div>
         </div>
 
-        <!-- 4. DOKUMEN -->
-        <button class="nav-group-toggle" type="button" data-menu="dokumen">
-          <span>Dokumen</span>
-          <span>⌄</span>
-        </button>
-        <div class="nav-submenu" id="menu-dokumen" hidden>
-          <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
-          <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
+        <!-- Pembuatan Soal -->
+        <div class="nav-grup">
+          <button class="nav-group-toggle" type="button" data-menu="pembuatanSoal">
+            <span class="chev">⌃</span>
+            <span class="nav-icon-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </span>
+            <span>Pembuatan Soal</span>
+          </button>
+          <div class="nav-submenu" id="menu-pembuatanSoal">
+            <button class="nav-button" data-page="tugas">Tugas</button>
+            <button class="nav-button" data-page="rekap">Rekap</button>
+            <button class="nav-button" data-page="korektor1">Korektor 1</button>
+            <button class="nav-button" data-page="korektor2">Korektor 2</button>
+            <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama</button>
+          </div>
         </div>
 
-        <!-- 5. PEMBUATAN SOAL -->
-        <button class="nav-group-toggle" type="button" data-menu="pembuatanSoal">
-          <span>Pembuatan Soal</span>
-          <span>⌄</span>
-        </button>
-        <div class="nav-submenu" id="menu-pembuatanSoal" hidden>
-          <button class="nav-button" data-page="tugas">Tambah Tugas</button>
-          <button class="nav-button" data-page="rekap">Rekap</button>
-          <button class="nav-button" data-page="korektor1">Korektor 1</button>
-          <button class="nav-button" data-page="korektor2">Korektor 2</button>
-          <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama</button>
+        <!-- Koreksi Hasil Ujian -->
+        <div class="nav-grup">
+          <button class="nav-group-toggle" type="button" data-menu="koreksiUjian">
+            <span class="chev">⌃</span>
+            <span class="nav-icon-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+            <span>Koreksi Hasil Ujian</span>
+          </button>
+          <div class="nav-submenu" id="menu-koreksiUjian">
+            <button class="nav-button" data-page="tugasUjian">Tugas</button>
+            <button class="nav-button" data-page="rekapUjian">Rekap</button>
+          </div>
         </div>
 
-        <!-- 6. KOREKSI HASIL UJIAN -->
-        <button class="nav-group-toggle" type="button" data-menu="koreksiUjian">
-          <span>Koreksi Hasil Ujian</span>
-          <span>⌄</span>
-        </button>
-        <div class="nav-submenu" id="menu-koreksiUjian" hidden>
-          <button class="nav-button" data-page="tugasUjian">Tugas</button>
-          <button class="nav-button" data-page="rekapUjian">Rekap</button>
-        </div>
-
-        <!-- 7. KEGIATAN -->
-        <button class="nav-group-toggle" type="button" data-menu="kegiatan">
-          <span>Kegiatan</span>
-          <span>⌄</span>
-        </button>
-        <div class="nav-submenu" id="menu-kegiatan" hidden>
-          <button class="nav-button" data-page="kalender">Kalender</button>
-          <button class="nav-button" data-page="agenda">Agenda</button>
-          <button class="nav-button" data-page="rapat">Rapat</button>
-          <button class="nav-button" data-page="catatan">Catatan</button>
+        <!-- Kegiatan -->
+        <div class="nav-grup">
+          <button class="nav-group-toggle" type="button" data-menu="kegiatan">
+            <span class="chev">⌃</span>
+            <span class="nav-icon-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <span>Kegiatan</span>
+          </button>
+          <div class="nav-submenu" id="menu-kegiatan">
+            <button class="nav-button" data-page="agenda">Agenda</button>
+            <button class="nav-button" data-page="kalender">Kalender</button>
+            <button class="nav-button" data-page="rapat">Rapat</button>
+            <button class="nav-button" data-page="catatan">Catatan</button>
+          </div>
         </div>
       </nav>
+
+      <div class="sidebar-user">
+        <strong id="namaPengguna">—</strong>
+        <small id="peranPengguna"></small>
+      </div>
     </aside>
 
     <main class="main">
       <div class="topbar">
-        <button class="toolbar-button icon-only" id="sidebarToggle" type="button" title="Tampilkan/sembunyikan menu" aria-label="Tampilkan atau sembunyikan menu">☰</button>
-        <button class="toolbar-button icon-only" id="themeToggle" type="button" title="Ganti tema terang/gelap" aria-label="Ganti tema">☀️</button>
-        <button class="toolbar-button icon-only" id="fullscreenToggle" type="button" title="Layar penuh" aria-label="Layar penuh">⛶</button>
-        <button class="toolbar-button icon-only" id="logoutBtn" type="button" title="Keluar" aria-label="Keluar">⎋</button>
+        <button class="toolbar-button icon-only" id="sidebarToggle" type="button" title="Tampilkan/sembunyikan menu" aria-label="Tampilkan atau sembunyikan menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <button class="toolbar-button icon-only" id="themeToggle" type="button" title="Ganti tema terang/gelap" aria-label="Ganti tema">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="toolbar-button icon-only" id="fullscreenToggle" type="button" title="Layar penuh" aria-label="Layar penuh">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+        <button class="toolbar-button icon-only" id="logoutBtn" type="button" title="Keluar" aria-label="Keluar">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
         <button class="toolbar-button" id="tombolKembaliMobile" type="button">‹ Kembali</button>
       </div>
 
+      <!-- PAGE: DASHBOARD -->
       <section class="page active" id="page-dashboard">
         <div class="dashboard-top">
           <header class="identity">
@@ -1909,8 +1578,12 @@
                 <div id="agendaHariIni"></div>
               </section>
               <section class="agenda-panel">
-                <div class="agenda-range-heading"><h2 class="section-title" id="judulAgendaRentang">Agenda Pekan Ini</h2>
-                  <div class="agenda-range-switch" role="group" aria-label="Rentang agenda"><button class="agenda-range-choice active" type="button" data-agenda-range="pekan">Pekan</button><button class="agenda-range-choice" type="button" data-agenda-range="bulan">Bulan</button></div>
+                <div class="agenda-range-heading">
+                  <h2 class="section-title" id="judulAgendaRentang">Agenda Pekan Ini</h2>
+                  <div class="agenda-range-switch" role="group" aria-label="Rentang agenda">
+                    <button class="agenda-range-choice active" type="button" data-agenda-range="pekan">Pekan</button>
+                    <button class="agenda-range-choice" type="button" data-agenda-range="bulan">Bulan</button>
+                  </div>
                 </div>
                 <div id="agendaRentang"></div>
               </section>
@@ -1925,7 +1598,10 @@
           </div>
         </div>
 
-        <button class="button mobile-only" type="button" data-goto="pengumuman">📢 Buka Pengumuman</button>
+        <button class="button mobile-only" type="button" data-goto="pengumuman">
+          <svg style="width:18px;height:18px;margin-right:6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          Buka Pengumuman
+        </button>
 
         <section class="dashboard-tasks">
           <div class="dashboard-task-heading">
@@ -1936,97 +1612,109 @@
         </section>
       </section>
 
-      <!-- HALAMAN MENU (HP) -->
+      <!-- PAGE HUB 1: PEMBUATAN SOAL (HP) -->
       <section class="page" id="page-hubSoal">
         <h1 class="page-heading">Pembuatan Soal</h1>
+        <p class="subheading">Akses modul tipe soal, batas pelajaran, tugas, dan tahapan koreksi.</p>
         <div class="hub-grid">
+          <button class="hub-button" data-goto="tipeSoal">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            </span>
+            <span><strong>Tipe Soal</strong><small>Mekanisme dan rincian soal per-IMDA</small></span>
+          </button>
+          <button class="hub-button" data-goto="batasPelajaran">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </span>
+            <span><strong>Batas Pelajaran</strong><small>Batas materi tiap dawr per kelas</small></span>
+          </button>
           <button class="hub-button" data-goto="tugas">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             </span>
-            <span><strong>Tambah Tugas</strong><small>Input &amp; daftar semua tugas</small></span>
+            <span><strong>Tugas</strong><small>Input &amp; daftar seluruh penugasan soal</small></span>
           </button>
           <button class="hub-button" data-goto="rekap">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </span>
-            <span><strong>Rekap</strong><small>Status semua tugas</small></span>
+            <span><strong>Rekap</strong><small>Status &amp; progres pembuatan soal</small></span>
           </button>
           <button class="hub-button" data-goto="korektor1">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
             </span>
-            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan pertama</small></span>
+            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
           </button>
           <button class="hub-button" data-goto="korektor2">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
             </span>
-            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan kedua</small></span>
+            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
           </button>
           <button class="hub-button" data-goto="koreksiBersama">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </span>
-            <span><strong>Koreksi Bersama</strong><small>Antrean koreksi lanjutan</small></span>
+            <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno bersama tim</small></span>
           </button>
         </div>
       </section>
 
+      <!-- PAGE HUB 2: KOREKSI HASIL UJIAN (HP) -->
       <section class="page" id="page-hubUjian">
         <h1 class="page-heading">Koreksi Hasil Ujian</h1>
+        <p class="subheading">Pengelolaan penugasan koreksi hasil ujian santri dan rekapitulasinya.</p>
         <div class="hub-grid">
-          <button class="hub-button" data-goto="batasPelajaran">
-            <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            </span>
-            <span><strong>Batas Pelajaran</strong><small>Batas materi tiap dawr per kelas</small></span>
-          </button>
-          <button class="hub-button" data-goto="tipeSoal">
-            <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            </span>
-            <span><strong>Tipe Soal</strong><small>Mekanisme dan rincian soal per-IMDA</small></span>
-          </button>
           <button class="hub-button" data-goto="tugasUjian">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
             </span>
             <span><strong>Tugas</strong><small>Tambah &amp; kelola tugas koreksi ujian</small></span>
           </button>
           <button class="hub-button" data-goto="rekapUjian">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </span>
-            <span><strong>Rekap</strong><small>Rekap koreksi hasil ujian</small></span>
+            <span><strong>Rekap</strong><small>Rekap hasil dan progres koreksi ujian</small></span>
           </button>
         </div>
       </section>
 
+      <!-- PAGE HUB 3: KEGIATAN (HP) -->
       <section class="page" id="page-hubKegiatan">
         <h1 class="page-heading">Kegiatan</h1>
+        <p class="subheading">Jadwal agenda, kalender aktivitas bulanan, rapat, dan notula catatan.</p>
         <div class="hub-grid">
           <button class="hub-button" data-goto="agenda">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </span>
-            <span><strong>Tambah Agenda</strong><small>Agenda untuk dashboard</small></span>
-          </button>
-          <button class="hub-button" data-goto="kalender">
-            <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            </span>
-            <span><strong>Kalender</strong><small>Kalender kegiatan bulanan</small></span>
+            <span><strong>Agenda</strong><small>Agenda harian, pekanan, dan bulanan</small></span>
           </button>
           <button class="hub-button" data-goto="rapat">
             <span class="hub-icon-box">
-              <svg class="hub-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
             </span>
-            <span><strong>Rapat</strong><small>Rapat, peserta, dan absensi</small></span>
+            <span><strong>Rapat</strong><small>Daftar rapat, presensi, dan kehadiran</small></span>
+          </button>
+          <button class="hub-button" data-goto="kalender">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <span><strong>Kalender</strong><small>Kalender aktivitas visual terpadu</small></span>
+          </button>
+          <button class="hub-button" data-goto="catatan">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
+            <span><strong>Catatan</strong><small>Notula penting &amp; rekam evaluasi rapat</small></span>
           </button>
         </div>
       </section>
 
+      <!-- PAGE: PENGGUNA -->
       <section class="page" id="page-pengguna">
         <div class="rapat-heading">
           <div>
@@ -2035,64 +1723,31 @@
           </div>
           <button class="button" id="tombolTambahPengguna" type="button">＋ Tambah Pengguna</button>
         </div>
-
-        <!-- Form Tambah / Edit Pengguna -->
-        <form class="card form-card" id="formPengguna" hidden style="margin-bottom: 20px;">
-          <input id="penggunaNomorBaris" type="hidden">
-          <div class="form-grid">
-            <div class="field">
-              <label for="penggunaUser">Username / ID Login</label>
-              <input id="penggunaUser" name="username" required placeholder="Contoh: 4123">
-            </div>
-            <div class="field">
-              <label for="penggunaNama">Nama Lengkap</label>
-              <input id="penggunaNama" name="nama" required placeholder="Contoh: KARROR">
-            </div>
-            <div class="field">
-              <label for="penggunaRole">Role / Hak Akses</label>
-              <select id="penggunaRole" name="role" required>
-                <option value="ADMIN/TU">ADMIN / TU</option>
-                <option value="KOREKTOR">KOREKTOR</option>
-                <option value="SONIK">SONIK</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="penggunaPass">Password (Kosongkan jika tidak diubah)</label>
-              <input id="penggunaPass" name="password" type="password" placeholder="Minimal 4 karakter">
-            </div>
-            <div class="field full">
-              <label for="penggunaAktif">Status Akun</label>
-              <select id="penggunaAktif" name="aktif">
-                <option value="Ya">Aktif (Bisa Login)</option>
-                <option value="Tidak">Nonaktif (Diblokir)</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="button" type="submit" id="simpanPenggunaBtn">Simpan Pengguna</button>
-            <button class="button secondary" id="batalPenggunaBtn" type="button">Batal</button>
-          </div>
-        </form>
-
-        <!-- Filter Pencarian & Kategori Role -->
-        <div class="search-filters">
-          <input type="search" id="filterPenggunaNama" placeholder="Cari nama / username..." aria-label="Cari pengguna">
-          <select id="filterPenggunaRole" aria-label="Filter role pengguna">
-            <option value="">Semua Role (ADMIN/TU, KOREKTOR, SONIK)</option>
-            <option value="ADMIN/TU">ADMIN / TU</option>
-            <option value="KOREKTOR">KOREKTOR</option>
-            <option value="SONIK">SONIK</option>
-          </select>
-          <select id="filterPenggunaStatus" aria-label="Filter status pengguna">
-            <option value="">Semua Status</option>
-            <option value="Ya">Aktif</option>
-            <option value="Tidak">Nonaktif</option>
-          </select>
-        </div>
-
-        <div id="daftarPenggunaTabel"></div>
+        <div class="tab-peran" id="tabPeran"></div>
+        <div id="isiPengguna"><div class="empty">Memuat pengguna…</div></div>
       </section>
 
+      <!-- MODAL PENGGUNA -->
+      <div class="modal-overlay" id="penggunaOverlay" hidden>
+        <form class="modal" id="formPengguna">
+          <h2 id="judulFormPengguna">Tambah Pengguna</h2>
+          <input id="penggunaLama" type="hidden">
+          <div class="form-grid" style="gap:10px; margin-top:10px;">
+            <div class="field full"><label for="penggunaNama">Nama lengkap</label><input id="penggunaNama" required></div>
+            <div class="field"><label for="penggunaUser">Username</label><input id="penggunaUser" autocomplete="off" required></div>
+            <div class="field"><label for="penggunaPeran">Peran</label><select id="penggunaPeran" required></select></div>
+            <div class="field full"><label for="penggunaSandi" id="labelSandi">Password</label><input id="penggunaSandi" type="password" autocomplete="new-password"></div>
+            <label class="field full"><span><input id="penggunaAktif" type="checkbox" checked style="width:auto"> Akun aktif (boleh masuk)</span></label>
+          </div>
+          <div class="modal-error" id="penggunaError"></div>
+          <div class="modal-actions">
+            <button class="button secondary" type="button" id="batalPengguna">Batal</button>
+            <button class="button" type="submit" id="simpanPenggunaTombol">Simpan</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PAGE: PENGUMUMAN -->
       <section class="page" id="page-pengumuman">
         <div class="announcement-layout">
           <header class="card announcement-identity">
@@ -2117,29 +1772,24 @@
 
             <form class="card form-card announcement-form" id="formPengumuman" hidden>
               <input id="pengumumanNomorBaris" type="hidden" value="">
-
               <div class="form-grid">
                 <div class="field">
                   <label for="pengumumanTanggal">Tanggal tampil</label>
                   <input id="pengumumanTanggal" name="tanggal" type="date" required>
                 </div>
-
                 <div class="field">
                   <label for="pengumumanSasaran">Sasaran (opsional)</label>
                   <input id="pengumumanSasaran" name="sasaran" type="text" placeholder="Contoh: Semua anggota">
                 </div>
-
                 <div class="field full">
                   <label for="pengumumanKeterangan">Judul pengumuman (Keterangan)</label>
                   <input id="pengumumanKeterangan" name="keterangan" type="text" placeholder="Contoh: Jadwal rapat">
                 </div>
-
                 <div class="field full">
                   <label for="pengumumanIsi">Isi pengumuman</label>
                   <textarea id="pengumumanIsi" name="isi" rows="4" required placeholder="Tulis pengumuman di sini"></textarea>
                 </div>
               </div>
-
               <div class="form-actions">
                 <button class="button" type="submit">Simpan Pengumuman</button>
                 <button class="button secondary" id="batalPengumuman" type="button">Batal</button>
@@ -2152,13 +1802,13 @@
         </div>
       </section>
 
+      <!-- PAGE: REKAP TUGAS -->
       <section class="page" id="page-rekap">
         <h1 class="page-heading">Rekap Tugas</h1>
         <p class="subheading">
           Semua tugas yang tanggal mulainya sudah tiba. Admin dapat mengubah
           status menjadi Selesai. Gunakan menu Korektor untuk mengembalikan tugas.
         </p>
-
         <div class="search-filters">
           <input type="search" id="filterRekapTugas" data-filter-group="rekap" data-filter-key="tugas" placeholder="Cari tugas/soal…" aria-label="Cari tugas di Rekap">
           <input type="search" id="filterRekapKelas" data-filter-group="rekap" data-filter-key="kelas" placeholder="Cari kelas…" aria-label="Cari kelas di Rekap">
@@ -2170,10 +1820,10 @@
             <option value="Telat/Belum">Telat/Belum</option>
           </select>
         </div>
-
         <div id="isiRekap"></div>
       </section>
 
+      <!-- PAGE: RAPAT -->
       <section class="page" id="page-rapat">
         <div class="rapat-heading">
           <div>
@@ -2218,10 +1868,10 @@
         </section>
       </section>
 
+      <!-- PAGE: KOREKTOR 1 -->
       <section class="page" id="page-korektor1">
         <h1 class="page-heading">Korektor 1</h1>
         <p class="subheading">Tugas selesai yang menunggu pemeriksaan Korektor 1.</p>
-
         <div class="search-filters">
           <input type="search" id="filterK1Tugas" data-filter-group="k1" data-filter-key="tugas" placeholder="Cari tugas/soal…" aria-label="Cari tugas di Korektor 1">
           <input type="search" id="filterK1Kelas" data-filter-group="k1" data-filter-key="kelas" placeholder="Cari kelas…" aria-label="Cari kelas di Korektor 1">
@@ -2230,10 +1880,10 @@
         <div id="isiKorektor1"></div>
       </section>
 
+      <!-- PAGE: KOREKTOR 2 -->
       <section class="page" id="page-korektor2">
         <h1 class="page-heading">Korektor 2</h1>
         <p class="subheading">Tugas yang sudah dikoreksi Korektor 1 dan menunggu Korektor 2.</p>
-
         <div class="search-filters">
           <input type="search" id="filterK2Tugas" data-filter-group="k2" data-filter-key="tugas" placeholder="Cari tugas/soal…" aria-label="Cari tugas di Korektor 2">
           <input type="search" id="filterK2Kelas" data-filter-group="k2" data-filter-key="kelas" placeholder="Cari kelas…" aria-label="Cari kelas di Korektor 2">
@@ -2242,43 +1892,37 @@
         <div id="isiKorektor2"></div>
       </section>
 
+      <!-- PAGE: AGENDA -->
       <section class="page" id="page-agenda">
-        <h1 class="page-heading">Tambah Agenda</h1>
-        <p class="subheading">Agenda juga disimpan ke tab Agenda di spreadsheet.</p>
-
+        <h1 class="page-heading">Agenda</h1>
+        <p class="subheading">Kelola dan jadwalkan agenda Labsoma secara terintegrasi.</p>
         <form class="card form-card" id="formAgenda">
           <div class="form-grid">
             <div class="field">
               <label for="agendaTanggal">Tanggal</label>
               <input id="agendaTanggal" name="tanggal" type="date" required>
             </div>
-
             <div class="field">
               <label for="agendaJam">Jam</label>
               <input id="agendaJam" name="jam" type="time">
             </div>
-
             <div class="field full">
               <label for="agendaNama">Nama agenda</label>
               <input id="agendaNama" name="agenda" type="text" required>
             </div>
-
             <div class="field">
               <label for="agendaTempat">Tempat</label>
               <input id="agendaTempat" name="tempat" type="text">
             </div>
-
             <div class="field">
               <label for="agendaPJ">Penanggung jawab</label>
               <input id="agendaPJ" name="penanggungJawab" type="text">
             </div>
-
             <div class="field full">
               <label for="agendaKeterangan">Keterangan</label>
               <textarea id="agendaKeterangan" name="keterangan"></textarea>
             </div>
           </div>
-
           <div class="form-actions">
             <button class="button" type="submit">Simpan Agenda</button>
             <span class="message" id="pesanAgenda"></span>
@@ -2295,11 +1939,10 @@
         <div id="daftarAgendaMenu"></div>
       </section>
 
-      <!-- MENU TAMBAH TUGAS -->
+      <!-- PAGE: TUGAS -->
       <section class="page" id="page-tugas">
-        <h1 class="page-heading">Tambah Tugas</h1>
-        <p class="subheading">Tugas juga disimpan ke tab Tugas di spreadsheet.</p>
-
+        <h1 class="page-heading">Tugas Pembuatan Soal</h1>
+        <p class="subheading">Input dan kelola penugasan pembuatan materi soal madrasah.</p>
         <form class="card form-card" id="formTugas">
           <div class="form-grid">
             <div class="field full">
@@ -2308,7 +1951,6 @@
                 <option value="">Pilih nama anggota</option>
               </select>
             </div>
-
             <div class="field">
               <label for="tugasTingkat">Tingkat</label>
               <select id="tugasTingkat" name="tingkat" required>
@@ -2319,32 +1961,27 @@
                 <option value="ALIYAH">ALIYAH</option>
               </select>
             </div>
-
             <div class="field">
               <label for="tugasKelas">Kelas</label>
               <select id="tugasKelas" name="kelas" required>
                 <option value="">Pilih kelas</option>
               </select>
             </div>
-
             <div class="field full">
               <label for="tugasNamaTugas">Fan/Nama Materi</label>
               <select id="tugasNamaTugas" name="tugas" required>
                 <option value="">Pilih Fan/Materi</option>
               </select>
             </div>
-
             <div class="field">
               <label for="tugasMulai">Tanggal mulai</label>
               <input id="tugasMulai" name="mulai" type="date" required>
             </div>
-
             <div class="field">
               <label for="tugasSelesai">Tanggal selesai</label>
               <input id="tugasSelesai" name="selesai" type="date" required>
             </div>
           </div>
-
           <div class="form-actions">
             <button class="button" type="submit">Simpan Tugas</button>
             <span class="message" id="pesanTugas"></span>
@@ -2365,10 +2002,10 @@
             <option value="Belum">Belum</option>
           </select>
         </div>
-
         <div id="daftarTugasDalamMenu"></div>
       </section>
 
+      <!-- MODAL LOGIN -->
       <div class="modal-overlay" id="loginOverlay" style="background:var(--latar); z-index:2000;" hidden>
         <form class="modal" id="loginForm">
           <h2 style="text-align: center;">LABSOMA PPS</h2>
@@ -2388,7 +2025,7 @@
         </form>
       </div>
 
-      <!-- MODAL POPUP EDIT TUGAS -->
+      <!-- MODAL EDIT TUGAS -->
       <div class="modal-overlay" id="editTugasOverlay" hidden>
         <form class="modal" id="formEditTugas" style="width: min(550px, 100%);">
           <h2>Edit Tugas / Soal</h2>
@@ -2452,7 +2089,7 @@
         </form>
       </div>
 
-      <!-- MODAL EDIT KEGIATAN KALENDER -->
+      <!-- MODAL EDIT KALENDER -->
       <div class="modal-overlay" id="editKalenderOverlay" hidden>
         <form class="modal" id="formEditKalender" style="width: min(550px, 100%);">
           <h2>Edit Kegiatan Kalender</h2>
@@ -2473,7 +2110,7 @@
         </form>
       </div>
 
-      <!-- MODAL EDIT TUGAS KOREKSI UJIAN -->
+      <!-- MODAL EDIT TUGAS UJIAN -->
       <div class="modal-overlay" id="editUjianOverlay" hidden>
         <form class="modal" id="formEditUjian" style="width: min(550px, 100%);">
           <h2>Edit Tugas Koreksi Ujian</h2>
@@ -2493,56 +2130,76 @@
         </form>
       </div>
 
+      <!-- PAGE: CATATAN -->
       <section class="page" id="page-catatan">
         <h1 class="page-heading">Catatan Rapat</h1>
-        <form class="card form-card" id="formCatatan"><div class="form-grid">
-          <div class="field"><label>Pokok masalah</label><input name="pokokMasalah" required></div>
-          <div class="field"><label>PIC</label><input name="pic"></div>
-          <div class="field full"><label>Notula rapat</label><textarea name="notula" rows="4"></textarea></div>
-          <div class="field full"><label>Keterangan</label><input name="ket"></div>
-        </div><div class="form-actions"><button class="button">Simpan Catatan</button></div></form>
+        <p class="subheading">Notula dan rangkuman poin-poin penting pembahasan rapat.</p>
+        <form class="card form-card" id="formCatatan">
+          <div class="form-grid">
+            <div class="field"><label>Pokok masalah</label><input name="pokokMasalah" required></div>
+            <div class="field"><label>PIC</label><input name="pic"></div>
+            <div class="field full"><label>Notula rapat</label><textarea name="notula" rows="4"></textarea></div>
+            <div class="field full"><label>Keterangan</label><input name="ket"></div>
+          </div>
+          <div class="form-actions"><button class="button">Simpan Catatan</button></div>
+        </form>
         <div id="daftarCatatan"></div>
       </section>
 
+      <!-- PAGE: KALENDER -->
       <section class="page" id="page-kalender">
         <h1 class="page-heading">Kalender Kegiatan</h1>
         <p class="subheading">Centang opsi agenda jika kegiatan juga ingin ditampilkan di dashboard.</p>
-        <form class="card form-card" id="formKalender"><div class="form-grid">
-          <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
-          <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date"></div>
-          <div class="field"><label>Jam</label><input name="jam" type="time"></div>
-          <div class="field"><label>PIC</label><input name="pic"></div>
-          <div class="field full"><label>Kegiatan</label><input name="kegiatan" required></div>
-          <div class="field full"><label>Keterangan</label><textarea name="keterangan" rows="3"></textarea></div>
-          <label class="field full"><input name="tampilkanSebagaiAgenda" type="checkbox" value="Ya"> Tampilkan sebagai agenda dashboard</label>
-        </div><div class="form-actions"><button class="button">Tambah Kegiatan</button></div></form>
-        <div class="card calendar-card"><div class="calendar-toolbar"><button class="button secondary" id="kalenderSebelumnya" type="button">‹</button><h2 id="judulBulanKalender"></h2><button class="button secondary" id="kalenderBerikutnya" type="button">›</button></div><div class="calendar-grid" id="gridKalender"></div></div>
+        <form class="card form-card" id="formKalender">
+          <div class="form-grid">
+            <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
+            <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date"></div>
+            <div class="field"><label>Jam</label><input name="jam" type="time"></div>
+            <div class="field"><label>PIC</label><input name="pic"></div>
+            <div class="field full"><label>Kegiatan</label><input name="kegiatan" required></div>
+            <div class="field full"><label>Keterangan</label><textarea name="keterangan" rows="3"></textarea></div>
+            <label class="field full"><input name="tampilkanSebagaiAgenda" type="checkbox" value="Ya"> Tampilkan sebagai agenda dashboard</label>
+          </div>
+          <div class="form-actions"><button class="button">Tambah Kegiatan</button></div>
+        </form>
+        <div class="card calendar-card">
+          <div class="calendar-toolbar">
+            <button class="button secondary" id="kalenderSebelumnya" type="button">‹</button>
+            <h2 id="judulBulanKalender"></h2>
+            <button class="button secondary" id="kalenderBerikutnya" type="button">›</button>
+          </div>
+          <div class="calendar-grid" id="gridKalender"></div>
+        </div>
         <div id="daftarKalender"></div>
       </section>
 
+      <!-- PAGE: KOREKSI BERSAMA -->
       <section class="page" id="page-koreksiBersama">
         <h1 class="page-heading">Koreksi Bersama</h1>
         <p class="subheading">Antrean lanjutan tugas yang sudah selesai dikoreksi oleh Korektor 2.</p>
-
         <div class="search-filters">
           <input type="search" data-filter-group="kb" data-filter-key="tugas" placeholder="Cari tugas/soal…">
           <input type="search" data-filter-group="kb" data-filter-key="kelas" placeholder="Cari kelas…">
           <input type="search" data-filter-group="kb" data-filter-key="tingkat" placeholder="Cari tingkat…">
         </div>
-
         <div id="isiKoreksiBersama"></div>
       </section>
 
+      <!-- PAGE: TUGAS UJIAN -->
       <section class="page" id="page-tugasUjian">
         <h1 class="page-heading">Tugas Koreksi Hasil Ujian</h1>
-        <form class="card form-card" id="formTugasUjian"><div class="form-grid">
-          <div class="field"><label>Nama anggota</label><input name="nama" required></div>
-          <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
-          <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date" required></div>
-          <div class="field"><label>Kelas</label><input name="kelas"></div>
-          <div class="field"><label>Tingkat</label><input name="tingkat"></div>
-          <div class="field full"><label>Tugas koreksi ujian</label><textarea name="tugas" required></textarea></div>
-        </div><div class="form-actions"><button class="button">Tambah Tugas</button></div></form>
+        <p class="subheading">Penugasan koreksi lembar jawaban ujian semester.</p>
+        <form class="card form-card" id="formTugasUjian">
+          <div class="form-grid">
+            <div class="field"><label>Nama anggota</label><input name="nama" required></div>
+            <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
+            <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date" required></div>
+            <div class="field"><label>Kelas</label><input name="kelas"></div>
+            <div class="field"><label>Tingkat</label><input name="tingkat"></div>
+            <div class="field full"><label>Tugas koreksi ujian</label><textarea name="tugas" required></textarea></div>
+          </div>
+          <div class="form-actions"><button class="button">Tambah Tugas</button></div>
+        </form>
         <h2 class="section-title">Daftar Tugas</h2>
         <div id="baganTugasUjian"></div>
         <div class="search-filters">
@@ -2559,6 +2216,7 @@
         <div id="daftarTugasUjian"></div>
       </section>
 
+      <!-- PAGE: REKAP UJIAN -->
       <section class="page" id="page-rekapUjian">
         <h1 class="page-heading">Rekap Koreksi Hasil Ujian</h1>
         <p class="subheading">Rekap ini khusus untuk koreksi hasil ujian dan terpisah dari Pembuatan Soal.</p>
@@ -2571,6 +2229,7 @@
         <div id="daftarRekapUjian"></div>
       </section>
 
+      <!-- PAGE: BATAS PELAJARAN -->
       <section class="page" id="page-batasPelajaran">
         <div class="rapat-heading">
           <div>
@@ -2582,6 +2241,7 @@
         <div id="isiDokumenBatas"><div class="empty">Memuat dokumen…</div></div>
       </section>
 
+      <!-- PAGE: TIPE SOAL -->
       <section class="page" id="page-tipeSoal">
         <div class="rapat-heading">
           <div>
@@ -2595,71 +2255,57 @@
     </main>
   </div>
 
-  <!-- NAVIGASI BAWAH (HP: FLOATING GLASS DOCK) -->
+  <!-- NAVIGASI BAWAH HP (5 MENU URUT DARI KIRI KE KANAN) -->
   <nav class="bottom-nav" id="bottomNav" aria-label="Menu utama">
+    <!-- 1. Pembuatan Soal -->
     <button type="button" data-tab="soal">
       <span class="nav-icon-wrap">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </span>
       <span class="nav-label">Pembuatan Soal</span>
     </button>
 
+    <!-- 2. Koreksi Hasil Ujian -->
     <button type="button" data-tab="ujian">
       <span class="nav-icon-wrap">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 11 12 14 22 4"/>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       </span>
       <span class="nav-label">Koreksi Ujian</span>
     </button>
 
+    <!-- 3. Dashboard -->
     <button type="button" data-tab="dashboard" class="active">
       <span class="nav-icon-wrap">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          <polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </span>
       <span class="nav-label">Dashboard</span>
     </button>
 
-    <button type="button" data-tab="catatan">
-      <span class="nav-icon-wrap">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          <line x1="8" y1="7" x2="16" y2="7"/>
-          <line x1="8" y1="11" x2="14" y2="11"/>
-        </svg>
-      </span>
-      <span class="nav-label">Catatan</span>
-    </button>
-
+    <!-- 4. Kegiatan -->
     <button type="button" data-tab="kegiatan">
       <span class="nav-icon-wrap">
-        <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       </span>
       <span class="nav-label">Kegiatan</span>
+    </button>
+
+    <!-- 5. Menu (Buka Drawer Sidebar) -->
+    <button type="button" id="tombolBukaDrawerMenu">
+      <span class="nav-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </span>
+      <span class="nav-label">Menu</span>
     </button>
   </nav>
 
   <div class="toast-area" id="toastArea" aria-live="polite"></div>
 
+  <!-- MODAL PIN ADMIN -->
   <div class="modal-overlay" id="pinOverlay" hidden>
     <form class="modal" id="pinForm">
       <h2>PIN Admin</h2>
       <p>Masukkan PIN untuk menyimpan perubahan.</p>
-      <input id="pinInput" type="password" inputmode="numeric"
-        autocomplete="current-password" placeholder="PIN admin" required>
+      <input id="pinInput" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN admin" required>
       <div class="modal-error" id="pinError"></div>
       <div class="modal-actions">
         <button class="button secondary" type="button" id="pinCancel">Batal</button>
@@ -2669,7 +2315,6 @@
   </div>
 
   <script>
-
   const API_URL = "https://script.google.com/macros/s/AKfycbwmZZR-DJbjII7kRayH23I_JobHM-vnjaZIG7-4aMAySIfsxTHVLQeP3FF_xMNfWx3V/exec";
   const KUNCI_TOKEN = 'labsomaToken';
 
@@ -2791,11 +2436,7 @@
     const tampilan = document.getElementById('hitungMundurSalat');
     if (!tampilan || !targetSalatMillis) return;
 
-    const sisa = Math.max(
-      0,
-      Math.floor((targetSalatMillis - Date.now()) / 1000)
-    );
-
+    const sisa = Math.max(0, Math.floor((targetSalatMillis - Date.now()) / 1000));
     if (sisa === 0) {
       tampilan.textContent = 'Waktunya salat';
       return;
@@ -2806,9 +2447,7 @@
     const detik = sisa % 60;
 
     tampilan.textContent = [jam, menit, detik]
-      .map(function(angka) {
-        return String(angka).padStart(2, '0');
-      })
+      .map(function(angka) { return String(angka).padStart(2, '0'); })
       .join(':');
   }
 
@@ -2831,41 +2470,25 @@
   }
 
   function statusTampilanRekap(item) {
-    if (String(item.status || '').toLowerCase() === 'selesai') {
-      return 'Selesai';
-    }
-
-    return tanggalHariIniLokal() > item.selesai
-      ? 'Telat/Belum'
-      : 'Proses';
+    if (String(item.status || '').toLowerCase() === 'selesai') return 'Selesai';
+    return tanggalHariIniLokal() > item.selesai ? 'Telat/Belum' : 'Proses';
   }
 
   function aman(teks) {
     return String(teks == null ? '' : teks).replace(/[&<>"']/g, function(c) {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[c];
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
 
   function tampilkanNotifikasi(pesan, jenis) {
     const area = document.getElementById('toastArea');
     const toast = document.createElement('div');
-
     toast.className = 'toast ' + (jenis || '');
     toast.textContent = pesan;
     area.appendChild(toast);
-
-    setTimeout(function() {
-      toast.remove();
-    }, 4000);
+    setTimeout(function() { toast.remove(); }, 4000);
   }
 
-  // Tanggal hari ini (YYYY-MM-DD) menurut zona waktu Asia/Jakarta
   function tanggalHariIniLokal() {
     return new Intl.DateTimeFormat('en-CA', {
       timeZone: ZONA_WAKTU,
@@ -2880,25 +2503,14 @@
   }
 
   function formatTanggalHijriyah(tanggal) {
-    const opsi = {
-      timeZone: ZONA_WAKTU,
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    };
-
+    const opsi = { timeZone: ZONA_WAKTU, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     try {
-      return new Intl.DateTimeFormat(
-        'id-ID-u-ca-islamic-umalqura',
-        opsi
-      ).format(tanggal);
+      return new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', opsi).format(tanggal);
     } catch (e) {
       try {
-        return new Intl.DateTimeFormat('id-ID-u-ca-islamic', opsi)
-          .format(tanggal);
+        return new Intl.DateTimeFormat('id-ID-u-ca-islamic', opsi).format(tanggal);
       } catch (err) {
-        return 'Tanggal Hijriyah tidak didukung browser';
+        return 'Tanggal Hijriyah tidak didukung';
       }
     }
   }
@@ -2913,12 +2525,8 @@
     }).formatToParts(tanggal);
 
     return bagian
-      .filter(function(item) {
-        return ['hour', 'minute', 'second'].includes(item.type);
-      })
-      .map(function(item) {
-        return item.value;
-      })
+      .filter(function(item) { return ['hour', 'minute', 'second'].includes(item.type); })
+      .map(function(item) { return item.value; })
       .join(':');
   }
 
@@ -2926,110 +2534,94 @@
     const istiwak = waktuIstiwak();
     perbaruiHitungMundurSalat();
 
-    document.getElementById('tanggalHijriyah').textContent =
-      formatTanggalHijriyah(istiwak);
-
-    document.getElementById('tanggalMasehi').textContent =
-      '' + new Intl.DateTimeFormat('id-ID', {
-        timeZone: ZONA_WAKTU,
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }).format(istiwak);
-
-    document.getElementById('jam').textContent =
-      formatWaktu12(istiwak) + ' WIS';
+    document.getElementById('tanggalHijriyah').textContent = formatTanggalHijriyah(istiwak);
+    document.getElementById('tanggalMasehi').textContent = '' + new Intl.DateTimeFormat('id-ID', {
+      timeZone: ZONA_WAKTU, day: 'numeric', month: 'long', year: 'numeric'
+    }).format(istiwak);
+    document.getElementById('jam').textContent = formatWaktu12(istiwak) + ' WIS';
   }
 
   function perbaruiHeaderPengumuman() {
-    const istiwak = new Date(
-      Date.now() + SELISIH_ISTIWAK_MENIT * 60000
-    );
+    const istiwak = new Date(Date.now() + SELISIH_ISTIWAK_MENIT * 60000);
     const wib = new Date();
     const hijri = document.getElementById('pengumumanHijriyah');
-
     if (!hijri) return;
 
     hijri.textContent = formatTanggalHijriyah(istiwak);
+    document.getElementById('pengumumanMasehi').textContent = new Intl.DateTimeFormat('id-ID', {
+      timeZone: ZONA_WAKTU, day: 'numeric', month: 'long', year: 'numeric'
+    }).format(istiwak);
 
-    document.getElementById('pengumumanMasehi').textContent =
-      new Intl.DateTimeFormat('id-ID', {
-        timeZone: ZONA_WAKTU,
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      }).format(istiwak);
+    document.getElementById('pengumumanJam').textContent = new Intl.DateTimeFormat('id-ID', {
+      timeZone: ZONA_WAKTU, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+    }).format(istiwak);
 
-    document.getElementById('pengumumanJam').textContent =
-      new Intl.DateTimeFormat('id-ID', {
-        timeZone: ZONA_WAKTU,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      }).format(istiwak);
-
-    document.getElementById('pengumumanWib').textContent =
-      new Intl.DateTimeFormat('id-ID', {
-        timeZone: ZONA_WAKTU,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      }).format(wib);
+    document.getElementById('pengumumanWib').textContent = new Intl.DateTimeFormat('id-ID', {
+      timeZone: ZONA_WAKTU, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+    }).format(wib);
   }
 
   function formatTanggal(iso) {
     if (!iso) return '—';
-
     const bagian = String(iso).split('-');
     if (bagian.length !== 3) return aman(iso);
-
     return bagian[2] + '/' + bagian[1] + '/' + bagian[0];
   }
 
-  /* ===== NAVIGASI HALAMAN ===== */
+  /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
   const PETA_HALAMAN = {
     hubSoal:        { tab: 'soal' },
-    tugas:          { tab: 'soal',      induk: 'hubSoal' },
-    rekap:          { tab: 'soal',      induk: 'hubSoal' },
-    korektor1:      { tab: 'soal',      induk: 'hubSoal' },
-    korektor2:      { tab: 'soal',      induk: 'hubSoal' },
-    koreksiBersama: { tab: 'soal',      induk: 'hubSoal' },
+    tipeSoal:       { tab: 'soal', induk: 'hubSoal' },
+    batasPelajaran: { tab: 'soal', induk: 'hubSoal' },
+    tugas:          { tab: 'soal', induk: 'hubSoal' },
+    rekap:          { tab: 'soal', induk: 'hubSoal' },
+    korektor1:      { tab: 'soal', induk: 'hubSoal' },
+    korektor2:      { tab: 'soal', induk: 'hubSoal' },
+    koreksiBersama: { tab: 'soal', induk: 'hubSoal' },
+
     hubUjian:       { tab: 'ujian' },
-    tugasUjian:     { tab: 'ujian',     induk: 'hubUjian' },
-    rekapUjian:     { tab: 'ujian',     induk: 'hubUjian' },
+    tugasUjian:     { tab: 'ujian', induk: 'hubUjian' },
+    rekapUjian:     { tab: 'ujian', induk: 'hubUjian' },
+
     dashboard:      { tab: 'dashboard' },
     pengumuman:     { tab: 'dashboard', induk: 'dashboard' },
-    catatan:        { tab: 'catatan' },
+
     hubKegiatan:    { tab: 'kegiatan' },
-    agenda:         { tab: 'kegiatan',  induk: 'hubKegiatan' },
-    kalender:       { tab: 'kegiatan',  induk: 'hubKegiatan' },
-    rapat:          { tab: 'kegiatan',  induk: 'hubKegiatan' }
+    agenda:         { tab: 'kegiatan', induk: 'hubKegiatan' },
+    rapat:          { tab: 'kegiatan', induk: 'hubKegiatan' },
+    kalender:       { tab: 'kegiatan', induk: 'hubKegiatan' },
+    catatan:        { tab: 'kegiatan', induk: 'hubKegiatan' },
+
+    pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' }
   };
 
   const HALAMAN_TAB = {
     soal: 'hubSoal',
     ujian: 'hubUjian',
     dashboard: 'dashboard',
-    catatan: 'catatan',
     kegiatan: 'hubKegiatan'
   };
 
   let riwayatOk = true;
 
+  function tutupSidebarMobile() {
+    document.body.classList.remove('sidebar-mobile-open');
+  }
+
   function bukaHalaman(nama, dariRiwayat) {
+    tutupSidebarMobile();
+
     document.querySelectorAll('.page').forEach(function(page) {
       page.classList.toggle('active', page.id === 'page-' + nama);
     });
 
-    document.querySelectorAll('.nav-button').forEach(function(button) {
+    document.querySelectorAll('.sidebar .nav-button').forEach(function(button) {
       button.classList.toggle('active', button.dataset.page === nama);
     });
 
     const info = PETA_HALAMAN[nama] || {};
 
-    document.querySelectorAll('#bottomNav button').forEach(function(b) {
+    document.querySelectorAll('#bottomNav button[data-tab]').forEach(function(b) {
       b.classList.toggle('active', b.dataset.tab === info.tab);
     });
 
@@ -3039,7 +2631,6 @@
 
     window.scrollTo(0, 0);
 
-    // Riwayat browser: gestur geser/tombol kembali HP naik satu tingkat
     if (!dariRiwayat) {
       try {
         if (info.induk) history.pushState({ h: nama }, '');
@@ -3058,39 +2649,29 @@
   function kembaliHalaman() {
     const tujuan = document.getElementById('tombolKembaliMobile').dataset.tujuan;
     if (!tujuan) return;
-
     const st = history.state && history.state.h;
     if (riwayatOk && st && PETA_HALAMAN[st] && PETA_HALAMAN[st].induk) history.back();
     else bukaHalaman(tujuan);
   }
 
-  // Cadangan: geser dari tepi kiri layar jika riwayat browser tidak bisa dipakai
-  (function() {
-    let x0 = null, y0 = 0;
-    document.addEventListener('touchstart', function(e) {
-      const t = e.touches[0];
-      x0 = t.clientX < 30 ? t.clientX : null;
-      y0 = t.clientY;
-    }, { passive: true });
-    document.addEventListener('touchend', function(e) {
-      if (x0 === null || riwayatOk) return;
-      const t = e.changedTouches[0];
-      if (t.clientX - x0 > 80 && Math.abs(t.clientY - y0) < 60) kembaliHalaman();
-      x0 = null;
-    }, { passive: true });
-  })();
-
-  document.querySelectorAll('.nav-button').forEach(function(button) {
+  document.querySelectorAll('.sidebar .nav-button').forEach(function(button) {
     button.addEventListener('click', function() {
       bukaHalaman(button.dataset.page);
     });
   });
 
-  document.querySelectorAll('#bottomNav button').forEach(function(b) {
+  document.querySelectorAll('#bottomNav button[data-tab]').forEach(function(b) {
     b.addEventListener('click', function() {
       bukaHalaman(HALAMAN_TAB[b.dataset.tab]);
     });
   });
+
+  // Tombol Menu ke-5 di Nav Bawah HP: Membuka Drawer Sidebar
+  document.getElementById('tombolBukaDrawerMenu').addEventListener('click', function() {
+    document.body.classList.toggle('sidebar-mobile-open');
+  });
+
+  document.getElementById('sidebarBackdrop').addEventListener('click', tutupSidebarMobile);
 
   document.addEventListener('click', function(event) {
     const tujuan = event.target.closest('[data-goto]');
@@ -3103,18 +2684,16 @@
     button.addEventListener('click', function() {
       const submenu = document.getElementById('menu-' + button.dataset.menu);
       submenu.hidden = !submenu.hidden;
-      button.querySelector('span').textContent = submenu.hidden ? '⌄' : '⌃';
+      button.querySelector('.chev').textContent = submenu.hidden ? '⌄' : '⌃';
     });
   });
 
   function tampilkanAgenda(id, daftar) {
     const wadah = document.getElementById(id);
-
     if (!daftar || daftar.length === 0) {
       wadah.innerHTML = '<div class="empty">Tidak ada agenda.</div>';
       return;
     }
-
     wadah.innerHTML = daftar.map(function(item) {
       const detail = [
         item.tempat ? '📍' + aman(item.tempat) : '',
@@ -3136,23 +2715,16 @@
 
   function tampilkanPengumuman(daftar) {
     const wadah = document.getElementById('isiPengumuman');
-
     if (!daftar || daftar.length === 0) {
-      wadah.innerHTML =
-        '<div class="empty">Tidak ada pengumuman untuk hari ini.</div>';
+      wadah.innerHTML = '<div class="empty">Tidak ada pengumuman untuk hari ini.</div>';
       return;
     }
-
     wadah.innerHTML = daftar.map(function(item) {
       return `
         <article class="announcement-item">
-          ${item.keterangan
-            ? `<h2 class="announcement-title">${aman(item.keterangan)}</h2>`
-            : ''}
+          ${item.keterangan ? `<h2 class="announcement-title">${aman(item.keterangan)}</h2>` : ''}
           <div class="announcement-text">${aman(item.isi)}</div>
-          ${item.sasaran
-            ? `<div class="announcement-target">Kepada: ${aman(item.sasaran)}</div>`
-            : ''}
+          ${item.sasaran ? `<div class="announcement-target">Kepada: ${aman(item.sasaran)}</div>` : ''}
         </article>
       `;
     }).join('');
@@ -3160,10 +2732,8 @@
 
   function gambarSlideAgendaDashboard() {
     const agendaSlide = document.getElementById('dashboardAgendaSlide');
-    const pengumumanSlide =
-      document.getElementById('dashboardPengumumanSlide');
-    const indikator =
-      document.getElementById('dashboardSlideIndicator');
+    const pengumumanSlide = document.getElementById('dashboardPengumumanSlide');
+    const indikator = document.getElementById('dashboardSlideIndicator');
     const totalSlide = 1 + pengumumanDashboard.length;
 
     if (indeksSlideAgenda >= totalSlide) indeksSlideAgenda = 0;
@@ -3173,43 +2743,28 @@
     pengumumanSlide.hidden = !sedangPengumuman;
 
     if (!sedangPengumuman) {
-      indikator.textContent = pengumumanDashboard.length
-        ? 'Halaman 1 dari ' + totalSlide
-        : '';
+      indikator.textContent = pengumumanDashboard.length ? 'Halaman 1 dari ' + totalSlide : '';
       return;
     }
 
     const item = pengumumanDashboard[indeksSlideAgenda - 1];
-
-    document.getElementById('judulDashboardPengumuman').textContent =
-      item.keterangan || 'Pengumuman';
-
+    document.getElementById('judulDashboardPengumuman').textContent = item.keterangan || 'Pengumuman';
     document.getElementById('dashboardPengumuman').innerHTML = `
       <article class="announcement-item">
         <div class="dashboard-announcement-copy">${aman(item.isi)}</div>
-        ${item.sasaran
-          ? `<div class="dashboard-announcement-target">Sasaran: ${aman(item.sasaran)}</div>`
-          : ''}
+        ${item.sasaran ? `<div class="dashboard-announcement-target">Sasaran: ${aman(item.sasaran)}</div>` : ''}
       </article>
     `;
-
-    indikator.textContent =
-      'Halaman ' + (indeksSlideAgenda + 1) + ' dari ' + totalSlide;
+    indikator.textContent = 'Halaman ' + (indeksSlideAgenda + 1) + ' dari ' + totalSlide;
   }
 
   function mulaiSlideAgendaDashboard() {
-    if (timerAgendaDashboard) {
-      clearInterval(timerAgendaDashboard);
-      timerAgendaDashboard = null;
-    }
-
+    if (timerAgendaDashboard) { clearInterval(timerAgendaDashboard); timerAgendaDashboard = null; }
     indeksSlideAgenda = 0;
     gambarSlideAgendaDashboard();
-
     if (pengumumanDashboard.length) {
       timerAgendaDashboard = setInterval(function() {
-        indeksSlideAgenda =
-          (indeksSlideAgenda + 1) % (1 + pengumumanDashboard.length);
+        indeksSlideAgenda = (indeksSlideAgenda + 1) % (1 + pengumumanDashboard.length);
         gambarSlideAgendaDashboard();
       }, INTERVAL_GANTI_ANGGOTA);
     }
@@ -3217,27 +2772,18 @@
 
   function tampilkanDaftarEditPengumuman(daftar) {
     const wadah = document.getElementById('daftarEditPengumuman');
-
     if (!daftar || !daftar.length) {
-      wadah.innerHTML =
-        '<div class="card empty">Belum ada pengumuman untuk diedit.</div>';
+      wadah.innerHTML = '<div class="card empty">Belum ada pengumuman untuk diedit.</div>';
       return;
     }
-
     wadah.innerHTML = daftar.map(function(item) {
       return `
         <article class="announcement-edit-row">
           <div class="announcement-edit-copy">
             <strong>${aman(item.keterangan || 'Tanpa judul')}</strong>
-            <span>
-              ${aman(item.isi)} · ${formatTanggal(item.tanggal)}
-              ${item.sasaran
-                ? ' · Sasaran: ' + aman(item.sasaran)
-                : ''}
-            </span>
+            <span>${aman(item.isi)} · ${formatTanggal(item.tanggal)} ${item.sasaran ? ' · Sasaran: ' + aman(item.sasaran) : ''}</span>
           </div>
-          <button class="button secondary" type="button"
-            data-edit-pengumuman="${Number(item.nomorBaris)}">Edit</button>
+          <button class="button secondary" type="button" data-edit-pengumuman="${Number(item.nomorBaris)}">Edit</button>
         </article>
       `;
     }).join('');
@@ -3247,10 +2793,7 @@
     const bagian = [];
     if (item.kelas) bagian.push(aman(item.kelas));
     if (item.tingkat) bagian.push(aman(item.tingkat));
-
-    return bagian.length
-      ? '<span class="task-meta">' + bagian.join(' · ') + '</span>'
-      : '';
+    return bagian.length ? '<span class="task-meta">' + bagian.join(' · ') + '</span>' : '';
   }
 
   function tampilkanDashboard(data) {
@@ -3260,62 +2803,37 @@
     tampilkanAgendaRentang(rentangAgendaTerpilih === 'bulan' ? data.agendaBulanIni : data.agendaPekanIni);
 
     const salat = data.waktuShalatBerikutnya;
-
     if (salat && salat.targetMillis) {
       targetSalatMillis = Number(salat.targetMillis);
-      document.getElementById('salatBerikutnya').textContent =
-        'Menuju waktu ' + salat.nama;
-      document.getElementById('jamSalatBerikutnya').textContent =
-        'Jadwal ' + salat.jam + ' WIB · Pasuruan';
+      document.getElementById('salatBerikutnya').textContent = 'Menuju waktu ' + salat.nama;
+      document.getElementById('jamSalatBerikutnya').textContent = 'Jadwal ' + salat.jam + ' WIB · Pasuruan';
       perbaruiHitungMundurSalat();
     } else {
-      document.getElementById('salatBerikutnya').textContent =
-        'Jadwal salat belum tersedia';
+      document.getElementById('salatBerikutnya').textContent = 'Jadwal salat belum tersedia';
       document.getElementById('jamSalatBerikutnya').textContent = '';
     }
 
     const anggota = data.anggota || [];
-    const totalHalaman = Math.max(
-      1,
-      Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN)
-    );
-
+    const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
     if (halamanAnggota >= totalHalaman) halamanAnggota = 0;
 
     const awal = halamanAnggota * JUMLAH_ANGGOTA_PER_HALAMAN;
-    const terlihat = anggota.slice(
-      awal,
-      awal + JUMLAH_ANGGOTA_PER_HALAMAN
-    );
+    const terlihat = anggota.slice(awal, awal + JUMLAH_ANGGOTA_PER_HALAMAN);
 
-    document.getElementById('pagerDashboard').textContent =
-      anggota.length
-        ? 'Anggota ' + (awal + 1) + '–' +
-          Math.min(awal + JUMLAH_ANGGOTA_PER_HALAMAN, anggota.length) +
-          ' dari ' + anggota.length
-        : '';
+    document.getElementById('pagerDashboard').textContent = anggota.length
+      ? 'Anggota ' + (awal + 1) + '–' + Math.min(awal + JUMLAH_ANGGOTA_PER_HALAMAN, anggota.length) + ' dari ' + anggota.length
+      : '';
 
     const wadah = document.getElementById('anggotaDashboard');
-
     if (!terlihat.length) {
-      wadah.innerHTML =
-        '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
+      wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
       wadah.innerHTML = terlihat.map(function(orang) {
         const daftar = (orang.daftarTugas || []).map(function(item) {
-          const kelasStatus = item.status === 'Selesai'
-            ? 'status-selesai'
-            : item.status === 'Proses'
-              ? 'status-proses'
-              : 'status-telat';
-
-          return '<li>' + aman(item.tugas) +
-            rincianKelasTingkat(item) +
-            '<span class="task-period">' +
-            formatTanggal(item.mulai) + ' – ' +
-            formatTanggal(item.selesai) + '</span>' +
-            '<span class="task-status ' + kelasStatus + '">' +
-            aman(item.status) + '</span></li>';
+          const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
+          return '<li>' + aman(item.tugas) + rincianKelasTingkat(item) +
+            '<span class="task-period">' + formatTanggal(item.mulai) + ' – ' + formatTanggal(item.selesai) + '</span>' +
+            '<span class="task-status ' + kelasStatus + '">' + aman(item.status) + '</span></li>';
         }).join('');
 
         return `
@@ -3324,18 +2842,9 @@
             <div class="task-label">Tugas hari ini</div>
             <ol class="task-list">${daftar}</ol>
             <div class="counts">
-              <div class="count-box">
-                <strong>${Number(orang.selesai || 0)}</strong>
-                <span>Selesai</span>
-              </div>
-              <div class="count-box">
-                <strong>${Number(orang.proses || 0)}</strong>
-                <span>Proses</span>
-              </div>
-              <div class="count-box">
-                <strong>${Number(orang.telat || 0)}</strong>
-                <span>Telat/Belum</span>
-              </div>
+              <div class="count-box"><strong>${Number(orang.selesai || 0)}</strong><span>Selesai</span></div>
+              <div class="count-box"><strong>${Number(orang.proses || 0)}</strong><span>Proses</span></div>
+              <div class="count-box"><strong>${Number(orang.telat || 0)}</strong><span>Telat/Belum</span></div>
             </div>
           </article>
         `;
@@ -3343,7 +2852,6 @@
     }
 
     if (timerAnggota) clearInterval(timerAnggota);
-
     if (totalHalaman > 1) {
       timerAnggota = setInterval(function() {
         halamanAnggota = (halamanAnggota + 1) % totalHalaman;
@@ -3356,30 +2864,25 @@
     const wadah = document.getElementById('agendaRentang');
     if (!daftar || !daftar.length) { wadah.innerHTML = '<div class="empty">Tidak ada agenda pada rentang ini.</div>'; return; }
     wadah.innerHTML = daftar.map(function(item) {
-      return '<article class="agenda-item"><div class="agenda-line"><span class="agenda-time">'+aman(item.jam||'')+'</span><span class="agenda-name">'+aman(item.agenda)+'</span></div><div class="agenda-detail">'+formatTanggal(item.tanggal)+(item.tempat?' · '+aman(item.tempat):'')+(item.penanggungJawab?' · '+aman(item.penanggungJawab):'')+(item.keterangan?' · '+aman(item.keterangan):'')+'</div></article>';
+      return '<article class="agenda-item"><div class="agenda-line"><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
     }).join('');
   }
 
   document.querySelectorAll('[data-agenda-range]').forEach(function(button) {
     button.addEventListener('click', function() {
       rentangAgendaTerpilih = button.dataset.agendaRange;
-      document.querySelectorAll('[data-agenda-range]').forEach(function(b){b.classList.toggle('active', b===button);});
+      document.querySelectorAll('[data-agenda-range]').forEach(function(b) { b.classList.toggle('active', b === button); });
       if (dataDashboardTersimpan) tampilkanDashboard(dataDashboardTersimpan);
     });
   });
 
   function renderTabel(headers, rows) {
-    if (!rows.length) {
-      return '<div class="card empty">Belum ada data.</div>';
-    }
-
+    if (!rows.length) return '<div class="card empty">Belum ada data.</div>';
     return `
       <div class="table-wrap">
         <table>
           <thead>
-            <tr>${headers.map(function(header) {
-              return '<th>' + header + '</th>';
-            }).join('')}</tr>
+            <tr>${headers.map(function(header) { return '<th>' + header + '</th>'; }).join('')}</tr>
           </thead>
           <tbody>${rows.join('')}</tbody>
         </table>
@@ -3388,63 +2891,46 @@
   }
 
   function tampilkanModulTambahan(data) {
-    const catatan=data.catatan||[], kalender=data.kalender||[], ujian=data.tugasKoreksiUjian||[], rekapUjian=data.rekapKoreksiUjian||[];
-    document.getElementById('daftarCatatan').innerHTML=renderTabel(['NO','POKOK MASALAH','NOTULA RAPAT','PIC','KET'],catatan.map(function(x){return '<tr><td>'+aman(x.no)+'</td><td>'+aman(x.pokokMasalah)+'</td><td>'+aman(x.notula)+'</td><td>'+aman(x.pic)+'</td><td>'+aman(x.ket)+'</td></tr>';}));
-    document.getElementById('daftarKalender').innerHTML=renderTabel(['Tanggal','Jam','Kegiatan','PIC','Ditampilkan sebagai','Aksi'],kalender.map(function(x){return '<tr><td>'+formatTanggal(x.mulai)+' – '+formatTanggal(x.selesai)+'</td><td>'+aman(x.jam||'—')+'</td><td>'+aman(x.kegiatan)+(x.keterangan?' · '+aman(x.keterangan):'')+'</td><td>'+aman(x.pic)+'</td><td>'+(x.sebagaiAgenda?'Agenda':'Kegiatan saja')+'</td><td><button class="button secondary small" data-action="editKalender" data-row="'+x.nomorBaris+'">✎ Edit</button></td></tr>';}));
+    const catatan = data.catatan || [], kalender = data.kalender || [], ujian = data.tugasKoreksiUjian || [], rekapUjian = data.rekapKoreksiUjian || [];
+    document.getElementById('daftarCatatan').innerHTML = renderTabel(['NO', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET'], catatan.map(function(x) { return '<tr><td>' + aman(x.no) + '</td><td>' + aman(x.pokokMasalah) + '</td><td>' + aman(x.notula) + '</td><td>' + aman(x.pic) + '</td><td>' + aman(x.ket) + '</td></tr>'; }));
+    document.getElementById('daftarKalender').innerHTML = renderTabel(['Tanggal', 'Jam', 'Kegiatan', 'PIC', 'Ditampilkan sebagai', 'Aksi'], kalender.map(function(x) { return '<tr><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) + '</td><td>' + aman(x.jam || '—') + '</td><td>' + aman(x.kegiatan) + (x.keterangan ? ' · ' + aman(x.keterangan) : '') + '</td><td>' + aman(x.pic) + '</td><td>' + (x.sebagaiAgenda ? 'Agenda' : 'Kegiatan saja') + '</td><td><button class="button secondary small" data-action="editKalender" data-row="' + x.nomorBaris + '">✎ Edit</button></td></tr>'; }));
     gambarKalender(kalender);
-    isiPilihanTugas(data.dataAnggota||[],data.materiPelajaran||[]);
-    tampilkanAntrianKoreksiBersama(data.antrianKoreksiBersama||[]);
+    isiPilihanTugas(data.dataAnggota || [], data.materiPelajaran || []);
+    tampilkanAntrianKoreksiBersama(data.antrianKoreksiBersama || []);
     dataUjianTersimpan = ujian;
     tampilkanDaftarTugasUjian(ujian);
     dataRekapUjianTersimpan = rekapUjian;
     tampilkanRekapUjian(rekapUjian);
   }
 
-  /* DROPDOWN NAMA, TINGKAT, KELAS, DAN FAN (FORM TAMBAH TUGAS) */
   function isiPilihanTugas(anggota, materi) {
     const namaSelect = document.getElementById('tugasNama');
     if (namaSelect) {
       const namaLama = namaSelect.value;
       namaSelect.innerHTML = '<option value="">Pilih nama anggota</option>' +
-        (anggota || []).map(function(x) {
-          return '<option value="' + aman(x) + '">' + aman(x) + '</option>';
-        }).join('');
+        (anggota || []).map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
       if (anggota && anggota.indexOf(namaLama) >= 0) namaSelect.value = namaLama;
     }
-
     updateMateriDropdown('tugasTingkat', 'tugasKelas', 'tugasNamaTugas', materi);
   }
 
-  // Mengisi dropdown Kelas dan Fan/Materi berdasarkan Tingkat (dan Kelas) yang dipilih
   function updateMateriDropdown(idTingkat, idKelas, idFan, materi) {
     const tingkatVal = norm(document.getElementById(idTingkat).value);
-    const dataFiltered = (materi || []).filter(function(x) {
-      return norm(x.tingkat) === tingkatVal;
-    });
-
+    const dataFiltered = (materi || []).filter(function(x) { return norm(x.tingkat) === tingkatVal; });
     const kelasSelect = document.getElementById(idKelas);
     const kelasSebelum = kelasSelect.value;
     const kelasList = [...new Set(dataFiltered.map(function(x) { return x.kelas; }).filter(Boolean))];
 
-    kelasSelect.innerHTML = '<option value="">Pilih kelas</option>' +
-      kelasList.map(function(x) {
-        return '<option value="' + aman(x) + '">' + aman(x) + '</option>';
-      }).join('');
+    kelasSelect.innerHTML = '<option value="">Pilih kelas</option>' + kelasList.map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
     if (kelasList.indexOf(kelasSebelum) >= 0) kelasSelect.value = kelasSebelum;
 
     const kelasVal = norm(kelasSelect.value);
-    const fanData = kelasVal
-      ? dataFiltered.filter(function(x) { return norm(x.kelas) === kelasVal; })
-      : dataFiltered;
-
+    const fanData = kelasVal ? dataFiltered.filter(function(x) { return norm(x.kelas) === kelasVal; }) : dataFiltered;
     const fanSelect = document.getElementById(idFan);
     const fanSebelum = fanSelect.value;
     const fanList = [...new Set(fanData.map(function(x) { return x.materi || x.kelas; }).filter(Boolean))];
 
-    fanSelect.innerHTML = '<option value="">Pilih Fan/Materi</option>' +
-      fanList.map(function(x) {
-        return '<option value="' + aman(x) + '">' + aman(x) + '</option>';
-      }).join('');
+    fanSelect.innerHTML = '<option value="">Pilih Fan/Materi</option>' + fanList.map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
     if (fanList.indexOf(fanSebelum) >= 0) fanSelect.value = fanSebelum;
   }
 
@@ -3459,70 +2945,64 @@
   });
 
   function gambarKalender(daftar) {
-    const y=bulanKalenderAktif.getFullYear(), m=bulanKalenderAktif.getMonth();
-    document.getElementById('judulBulanKalender').textContent=new Intl.DateTimeFormat('id-ID',{month:'long',year:'numeric'}).format(bulanKalenderAktif);
-    let html=['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map(function(n){return '<div class="calendar-cell calendar-weekday">'+n+'</div>';}).join('');
-    const offset=(new Date(y,m,1).getDay()+6)%7, total=new Date(y,m+1,0).getDate(), prev=new Date(y,m,0).getDate(), today=tanggalHariIniLokal();
-    for(let i=0;i<42;i++){let d,muted=false;if(i<offset){d=new Date(y,m-1,prev-offset+i+1);muted=true;}else if(i>=offset+total){d=new Date(y,m+1,i-offset-total+1);muted=true;}else d=new Date(y,m,i-offset+1);
-      const iso=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2),events=(daftar||[]).filter(function(x){return x.mulai<=iso&&x.selesai>=iso;}).slice(0,2);
-      html+='<div class="calendar-cell '+(muted?'muted ':'')+(iso===today?'today':'')+'"><b>'+d.getDate()+'</b>'+events.map(function(x){return '<div class="calendar-event" title="'+aman(x.kegiatan)+'">'+(x.jam?aman(x.jam)+' ':'')+aman(x.kegiatan)+'</div>';}).join('')+'</div>';
+    const y = bulanKalenderAktif.getFullYear(), m = bulanKalenderAktif.getMonth();
+    document.getElementById('judulBulanKalender').textContent = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(bulanKalenderAktif);
+    let html = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(function(n) { return '<div class="calendar-cell calendar-weekday">' + n + '</div>'; }).join('');
+    const offset = (new Date(y, m, 1).getDay() + 6) % 7, total = new Date(y, m + 1, 0).getDate(), prev = new Date(y, m, 0).getDate(), today = tanggalHariIniLokal();
+    for (let i = 0; i < 42; i++) {
+      let d, muted = false;
+      if (i < offset) { d = new Date(y, m - 1, prev - offset + i + 1); muted = true; }
+      else if (i >= offset + total) { d = new Date(y, m + 1, i - offset - total + 1); muted = true; }
+      else d = new Date(y, m, i - offset + 1);
+
+      const iso = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2),
+            events = (daftar || []).filter(function(x) { return x.mulai <= iso && x.selesai >= iso; }).slice(0, 2);
+      html += '<div class="calendar-cell ' + (muted ? 'muted ' : '') + (iso === today ? 'today' : '') + '"><b>' + d.getDate() + '</b>' + events.map(function(x) { return '<div class="calendar-event" title="' + aman(x.kegiatan) + '">' + (x.jam ? aman(x.jam) + ' ' : '') + aman(x.kegiatan) + '</div>'; }).join('') + '</div>';
     }
-    document.getElementById('gridKalender').innerHTML=html;
+    document.getElementById('gridKalender').innerHTML = html;
   }
 
-  document.getElementById('kalenderSebelumnya').addEventListener('click',function(){bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth()-1,1);gambarKalender((dataAplikasiTersimpan||{}).kalender||[]);});
-  document.getElementById('kalenderBerikutnya').addEventListener('click',function(){bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth()+1,1);gambarKalender((dataAplikasiTersimpan||{}).kalender||[]);});
+  document.getElementById('kalenderSebelumnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() - 1, 1); gambarKalender((dataAplikasiTersimpan || {}).kalender || []); });
+  document.getElementById('kalenderBerikutnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() + 1, 1); gambarKalender((dataAplikasiTersimpan || {}).kalender || []); });
 
   function sambungkanFormTambahan(id, method) {
-    document.getElementById(id).addEventListener('submit',function(event){event.preventDefault();const form=event.currentTarget,data=Object.fromEntries(new FormData(form).entries());
-      if(id==='formKalender')data.tampilkanSebagaiAgenda=!!form.elements.tampilkanSebagaiAgenda.checked;
-      mintaPin().then(function(pin){if(!pin)return;const runner=google.script.run.withSuccessHandler(function(msg){tampilkanNotifikasi(msg,'success');form.reset();muatAplikasi();}).withFailureHandler(function(e){tampilkanNotifikasi(e&&e.message?e.message:String(e),'error');});runner[method](data,pin);});
+    document.getElementById(id).addEventListener('submit', function(event) {
+      event.preventDefault();
+      const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries());
+      if (id === 'formKalender') data.tampilkanSebagaiAgenda = !!form.elements.tampilkanSebagaiAgenda.checked;
+      mintaPin().then(function(pin) {
+        if (!pin) return;
+        const runner = google.script.run.withSuccessHandler(function(msg) {
+          tampilkanNotifikasi(msg, 'success'); form.reset(); muatAplikasi();
+        }).withFailureHandler(function(e) {
+          tampilkanNotifikasi(e && e.message ? e.message : String(e), 'error');
+        });
+        runner[method](data, pin);
+      });
     });
   }
-  sambungkanFormTambahan('formCatatan','simpanCatatan');
-  sambungkanFormTambahan('formKalender','simpanKegiatanKalender');
-  sambungkanFormTambahan('formTugasUjian','simpanTugasKoreksiUjian');
+  sambungkanFormTambahan('formCatatan', 'simpanCatatan');
+  sambungkanFormTambahan('formKalender', 'simpanKegiatanKalender');
+  sambungkanFormTambahan('formTugasUjian', 'simpanTugasKoreksiUjian');
 
   function tampilkanRekap(daftar) {
     daftar = saringDaftarTugas(daftar, 'rekap');
-
-    const jumlahSelesai = daftar.filter(function(item) {
-      return statusTampilanRekap(item) === 'Selesai';
-    }).length;
-
-    const jumlahProses = daftar.filter(function(item) {
-      return statusTampilanRekap(item) === 'Proses';
-    }).length;
-
-    const jumlahTelat = daftar.filter(function(item) {
-      return statusTampilanRekap(item) === 'Telat/Belum';
-    }).length;
+    const jumlahSelesai = daftar.filter(function(item) { return statusTampilanRekap(item) === 'Selesai'; }).length;
+    const jumlahProses = daftar.filter(function(item) { return statusTampilanRekap(item) === 'Proses'; }).length;
+    const jumlahTelat = daftar.filter(function(item) { return statusTampilanRekap(item) === 'Telat/Belum'; }).length;
 
     const ringkasan = `
       <div class="summary-grid">
-        <div class="summary-card">
-          <strong>${daftar.length}</strong>
-          <span>Total tugas yang sudah dimulai</span>
-        </div>
-        <div class="summary-card">
-          <strong>${jumlahSelesai}</strong>
-          <span>Tugas selesai</span>
-        </div>
-        <div class="summary-card">
-          <strong>${jumlahProses}</strong>
-          <span>Proses</span>
-        </div>
-        <div class="summary-card">
-          <strong>${jumlahTelat}</strong>
-          <span>Telat/Belum</span>
-        </div>
+        <div class="summary-card"><strong>${daftar.length}</strong><span>Total tugas dimulai</span></div>
+        <div class="summary-card"><strong>${jumlahSelesai}</strong><span>Tugas selesai</span></div>
+        <div class="summary-card"><strong>${jumlahProses}</strong><span>Proses</span></div>
+        <div class="summary-card"><strong>${jumlahTelat}</strong><span>Telat/Belum</span></div>
       </div>
     `;
 
     const rows = daftar.map(function(item) {
       const selesai = String(item.status || '').toLowerCase() === 'selesai';
       const statusTampil = statusTampilanRekap(item);
-
       return `
         <tr>
           <td>${aman(item.nama)}</td>
@@ -3532,12 +3012,8 @@
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(statusTampil)}</td>
           <td>
-            <button class="button small ${selesai ? 'selected' : ''}"
-              data-action="ubahStatus" data-status="Selesai"
-              data-row="${item.nomorBaris}">Selesai</button>
-            <button class="button secondary small ${!selesai ? 'selected' : ''}"
-              data-action="ubahStatus" data-status="Belum"
-              data-row="${item.nomorBaris}">Belum</button>
+            <button class="button small ${selesai ? 'selected' : ''}" data-action="ubahStatus" data-status="Selesai" data-row="${item.nomorBaris}">Selesai</button>
+            <button class="button secondary small ${!selesai ? 'selected' : ''}" data-action="ubahStatus" data-status="Belum" data-row="${item.nomorBaris}">Belum</button>
           </td>
           <td>${aman(item.statusK1 || 'Menunggu')}</td>
           <td>${aman(item.statusK2 || 'Menunggu')}</td>
@@ -3546,25 +3022,11 @@
     });
 
     document.getElementById('isiRekap').innerHTML = ringkasan +
-      renderTabel(
-        [
-          'Anggota',
-          'Tugas/Soal',
-          'Kelas',
-          'Tingkat',
-          'Tanggal tugas (mulai–selesai)',
-          'Status',
-          'Ubah status (admin)',
-          'Korektor 1',
-          'Korektor 2'
-        ],
-        rows
-      );
+      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Status', 'Ubah status (admin)', 'Korektor 1', 'Korektor 2'], rows);
   }
 
   function tampilkanAntrianK1(daftar) {
     daftar = saringDaftarTugas(daftar, 'k1');
-
     const rows = daftar.map(function(item) {
       return `
         <tr>
@@ -3576,32 +3038,17 @@
           <td>${formatTanggal(item.tanggalSelesaiPengerjaan)}</td>
           <td><span class="badge waiting">Menunggu Korektor 1</span></td>
           <td>
-            <button class="button" data-action="k1"
-              data-row="${item.nomorBaris}">Tandai sudah dikoreksi</button>
+            <button class="button" data-action="k1" data-row="${item.nomorBaris}">Tandai sudah dikoreksi</button>
             <button class="button secondary" data-action="kembaliK1" data-row="${item.nomorBaris}">Kembalikan</button>
           </td>
         </tr>
       `;
     });
-
-    document.getElementById('isiKorektor1').innerHTML = renderTabel(
-      [
-        'Anggota',
-        'Tugas/Soal',
-        'Kelas',
-        'Tingkat',
-        'Tanggal tugas',
-        'Selesai dikerjakan',
-        'Status',
-        'Aksi'
-      ],
-      rows
-    );
+    document.getElementById('isiKorektor1').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai dikerjakan', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanAntrianK2(daftar) {
     daftar = saringDaftarTugas(daftar, 'k2');
-
     const rows = daftar.map(function(item) {
       return `
         <tr>
@@ -3613,33 +3060,17 @@
           <td>${formatTanggal(item.tanggalK1)}</td>
           <td><span class="badge waiting">Menunggu Korektor 2</span></td>
           <td>
-            <button class="button" data-action="k2"
-              data-row="${item.nomorBaris}">Tandai sudah dikoreksi</button>
+            <button class="button" data-action="k2" data-row="${item.nomorBaris}">Tandai sudah dikoreksi</button>
             <button class="button secondary" data-action="kembaliK2" data-row="${item.nomorBaris}">Kembalikan</button>
           </td>
         </tr>
       `;
     });
-
-    document.getElementById('isiKorektor2').innerHTML = renderTabel(
-      [
-        'Anggota',
-        'Tugas/Soal',
-        'Kelas',
-        'Tingkat',
-        'Tanggal tugas',
-        'Selesai Korektor 1',
-        'Status',
-        'Aksi'
-      ],
-      rows
-    );
+    document.getElementById('isiKorektor2').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai Korektor 1', 'Status', 'Aksi'], rows);
   }
 
-  // Antrean Koreksi Bersama (dari Korektor 2)
   function tampilkanAntrianKoreksiBersama(daftar) {
     const dataFiltered = saringDaftarTugas(daftar, 'kb');
-
     const rows = (dataFiltered || []).map(function(item) {
       return `
         <tr>
@@ -3657,130 +3088,63 @@
         </tr>
       `;
     });
-
-    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(
-      [
-        'Anggota',
-        'Tugas/Soal',
-        'Kelas',
-        'Tingkat',
-        'Tanggal Tugas',
-        'Selesai Korektor 2',
-        'Status',
-        'Aksi'
-      ],
-      rows
-    );
+    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal Tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanDaftarRapat(daftar) {
     const target = document.getElementById('daftarRapat');
-
     if (!daftar || daftar.length === 0) {
-      target.innerHTML =
-        '<div class="card empty">Belum ada rapat. Tekan “Tambah Rapat” untuk membuat rapat.</div>';
+      target.innerHTML = '<div class="card empty">Belum ada rapat. Tekan “Tambah Rapat” untuk membuat rapat.</div>';
       return;
     }
-
     target.innerHTML = '<div class="table-wrap"><table>' +
       '<thead><tr><th>No</th><th>Jenis</th><th>Nama Rapat</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>' +
       daftar.map(function(rapat, indeks) {
-        return '<tr>' +
-          '<td>' + (indeks + 1) + '</td>' +
-          '<td>' + aman(rapat.jenis) + '</td>' +
-          '<td><strong>' + aman(rapat.nama) + '</strong></td>' +
-          '<td>' + formatTanggal(rapat.tanggal) + '</td>' +
-          '<td>' +
-            '<button class="button small" data-rapat-action="absen" data-row="' +
-              rapat.nomorBaris + '">Absen</button> ' +
-            '<button class="button secondary small" data-rapat-action="peserta" data-row="' +
-              rapat.nomorBaris + '">Peserta</button> ' +
-            '<button class="button secondary small" data-rapat-action="rekap" data-row="' +
-              rapat.nomorBaris + '">Rekap</button> ' +
-            '<button class="button secondary small" data-rapat-action="edit" data-row="' +
-              rapat.nomorBaris + '">Edit</button>' +
-          '</td>' +
-        '</tr>';
-      }).join('') +
-      '</tbody></table></div>';
+        return '<tr><td>' + (indeks + 1) + '</td><td>' + aman(rapat.jenis) + '</td><td><strong>' + aman(rapat.nama) + '</strong></td><td>' + formatTanggal(rapat.tanggal) + '</td><td>' +
+          '<button class="button small" data-rapat-action="absen" data-row="' + rapat.nomorBaris + '">Absen</button> ' +
+          '<button class="button secondary small" data-rapat-action="peserta" data-row="' + rapat.nomorBaris + '">Peserta</button> ' +
+          '<button class="button secondary small" data-rapat-action="rekap" data-row="' + rapat.nomorBaris + '">Rekap</button> ' +
+          '<button class="button secondary small" data-rapat-action="edit" data-row="' + rapat.nomorBaris + '">Edit</button>' +
+        '</td></tr>';
+      }).join('') + '</tbody></table></div>';
   }
 
   function bukaPanelPesertaRapat(rapat, mode) {
     rapatTerpilih = Number(rapat.nomorBaris);
-
     const panel = document.getElementById('panelPesertaRapat');
     const pilihan = document.getElementById('pilihanNamaPesertaRapat');
     const tombolSimpan = document.getElementById('simpanPesertaRapat');
     const daftarPeserta = rapat.peserta || [];
 
     panel.hidden = false;
-
-    document.getElementById('judulPanelRapat').textContent =
-      mode === 'absen'
-        ? 'Absensi: ' + rapat.nama
-        : mode === 'rekap'
-          ? 'Rekap: ' + rapat.nama
-          : 'Daftarkan Peserta: ' + rapat.nama;
-
+    document.getElementById('judulPanelRapat').textContent = mode === 'absen' ? 'Absensi: ' + rapat.nama : mode === 'rekap' ? 'Rekap: ' + rapat.nama : 'Daftarkan Peserta: ' + rapat.nama;
     pilihan.hidden = mode !== 'peserta';
     tombolSimpan.hidden = mode !== 'peserta';
 
     if (mode === 'peserta') {
       const sudahTerdaftar = {};
-
-      daftarPeserta.forEach(function(item) {
-        sudahTerdaftar[String(item.nama).toLocaleLowerCase('id')] = true;
-      });
-
+      daftarPeserta.forEach(function(item) { sudahTerdaftar[String(item.nama).toLocaleLowerCase('id')] = true; });
       if (!daftarAnggotaRapatTersimpan.length) {
-        pilihan.innerHTML =
-          '<div class="empty">Daftar anggota belum terbaca. Periksa tab Anggota Rapat di spreadsheet.</div>';
+        pilihan.innerHTML = '<div class="empty">Daftar anggota belum terbaca. Periksa tab Anggota Rapat di spreadsheet.</div>';
       } else {
         pilihan.innerHTML = daftarAnggotaRapatTersimpan.map(function(nama) {
-          const kunci = String(nama).toLocaleLowerCase('id');
-          const dicentang = sudahTerdaftar[kunci] ? ' checked' : '';
-
-          return '<label class="rapat-roster-item">' +
-            '<input type="checkbox" name="pesertaRapat" value="' +
-            aman(nama) + '"' + dicentang + '>' +
-            '<span>' + aman(nama) + '</span>' +
-            '</label>';
+          const kunci = String(nama).toLocaleLowerCase('id'), dicentang = sudahTerdaftar[kunci] ? ' checked' : '';
+          return '<label class="rapat-roster-item"><input type="checkbox" name="pesertaRapat" value="' + aman(nama) + '"' + dicentang + '><span>' + aman(nama) + '</span></label>';
         }).join('');
       }
-
       document.getElementById('isiPesertaRapat').innerHTML = '';
     } else {
-      const jumlahHadir = daftarPeserta.filter(function(item) {
-        return item.kehadiran === 'Hadir';
-      }).length;
-
-      const ringkasan = mode === 'rekap'
-        ? '<p><b>' + jumlahHadir + ' hadir</b> · ' +
-          (daftarPeserta.length - jumlahHadir) +
-          ' belum · ' + daftarPeserta.length + ' peserta</p>'
-        : '';
-
+      const jumlahHadir = daftarPeserta.filter(function(item) { return item.kehadiran === 'Hadir'; }).length;
+      const ringkasan = mode === 'rekap' ? '<p><b>' + jumlahHadir + ' hadir</b> · ' + (daftarPeserta.length - jumlahHadir) + ' belum · ' + daftarPeserta.length + ' peserta</p>' : '';
       const barisPeserta = daftarPeserta.length
         ? daftarPeserta.map(function(item) {
-            return '<div class="rapat-peserta-row">' +
-              '<span>' + aman(item.nama) + ' — <b>' +
-              aman(item.kehadiran) + '</b></span>' +
-              (mode === 'absen'
-                ? '<span>' +
-                  '<button class="button small" data-rapat-presensi="Hadir" data-nama="' +
-                    aman(item.nama) + '">Hadir</button>' +
-                  '<button class="button secondary small" data-rapat-presensi="Belum Absen" data-nama="' +
-                    aman(item.nama) + '">Belum</button>' +
-                  '</span>'
-                : '') +
+            return '<div class="rapat-peserta-row"><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
+              (mode === 'absen' ? '<span><button class="button small" data-rapat-presensi="Hadir" data-nama="' + aman(item.nama) + '">Hadir</button> <button class="button secondary small" data-rapat-presensi="Belum Absen" data-nama="' + aman(item.nama) + '">Belum</button></span>' : '') +
               '</div>';
           }).join('')
         : '<div class="empty">Belum ada peserta yang didaftarkan ke rapat ini.</div>';
-
-      document.getElementById('isiPesertaRapat').innerHTML =
-        ringkasan + barisPeserta;
+      document.getElementById('isiPesertaRapat').innerHTML = ringkasan + barisPeserta;
     }
-
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -3790,17 +3154,14 @@
         halamanAnggota = 0;
         dataAplikasiTersimpan = data;
 
-        // Simpan data ke state global (dipakai filter pencarian, rapat, dan edit)
         dataRekapTersimpan = data.rekapSelesai || [];
         dataK1Tersimpan = data.antrianKorektor1 || [];
         dataK2Tersimpan = data.antrianKorektor2 || [];
         dataKBTersimpan = data.antrianKoreksiBersama || [];
         daftarRapatTersimpan = data.rapat || [];
-        daftarAnggotaRapatTersimpan =
-          data.anggotaRapat || data.daftarAnggotaRapat || data.dataAnggota || [];
+        daftarAnggotaRapatTersimpan = data.anggotaRapat || data.daftarAnggotaRapat || data.dataAnggota || [];
         semuaPengumumanTersimpan = data.semuaPengumuman || [];
-        pengumumanDashboard =
-          data.pengumumanDashboard || data.pengumumanHariIni || [];
+        pengumumanDashboard = data.pengumumanDashboard || data.pengumumanHariIni || [];
 
         tampilkanTugasDiMenuTambah(data.semuaTugas || []);
         tampilkanDaftarAgendaMenu(data.semuaAgenda || []);
@@ -3824,11 +3185,7 @@
     document.getElementById('pinOverlay').hidden = true;
     document.getElementById('pinInput').value = '';
     document.getElementById('pinError').textContent = '';
-
-    if (penyelesaiPin) {
-      penyelesaiPin(nilai);
-      penyelesaiPin = null;
-    }
+    if (penyelesaiPin) { penyelesaiPin(nilai); penyelesaiPin = null; }
   }
 
   document.querySelectorAll('[data-filter-group]').forEach(function(input) {
@@ -3843,114 +3200,62 @@
       if (grup === 'ujian') tampilkanDaftarTugasUjian(dataUjianTersimpan);
       if (grup === 'rekapUjian') tampilkanRekapUjian(dataRekapUjianTersimpan);
     };
-
     input.addEventListener('input', perbaruiFilter);
     input.addEventListener('change', perbaruiFilter);
   });
 
-  function mintaPin() {
-    return Promise.resolve('sesi');
-  }
+  function mintaPin() { return Promise.resolve('sesi'); }
 
-  document.getElementById('pinCancel').addEventListener('click', function() {
-    tutupModalPin(null);
-  });
-
-  document.getElementById('pinOverlay').addEventListener('click', function(event) {
-    if (event.target.id === 'pinOverlay') tutupModalPin(null);
-  });
+  document.getElementById('pinCancel').addEventListener('click', function() { tutupModalPin(null); });
+  document.getElementById('pinOverlay').addEventListener('click', function(event) { if (event.target.id === 'pinOverlay') tutupModalPin(null); });
 
   document.getElementById('pinForm').addEventListener('submit', function(event) {
     event.preventDefault();
-
     const pin = document.getElementById('pinInput').value;
-
     google.script.run
       .withSuccessHandler(function(valid) {
-        if (valid) {
-          pinAdmin = pin;
-          tutupModalPin(pin);
-        } else {
-          document.getElementById('pinError').textContent = 'PIN admin salah.';
-          document.getElementById('pinInput').select();
-        }
+        if (valid) { pinAdmin = pin; tutupModalPin(pin); }
+        else { document.getElementById('pinError').textContent = 'PIN admin salah.'; document.getElementById('pinInput').select(); }
       })
-      .withFailureHandler(function() {
-        document.getElementById('pinError').textContent =
-          'PIN tidak dapat diperiksa. Coba lagi.';
-      })
+      .withFailureHandler(function() { document.getElementById('pinError').textContent = 'PIN tidak dapat diperiksa. Coba lagi.'; })
       .validasiPin(pin);
   });
 
   function jalankanAksi(method, args) {
     mintaPin().then(function(pin) {
       if (!pin) return;
-
-      const berhasil = function(pesan) {
-        tampilkanNotifikasi(
-          pesan || 'Perubahan berhasil disimpan.',
-          'success'
-        );
-        muatAplikasi();
-      };
-
+      const berhasil = function(pesan) { tampilkanNotifikasi(pesan || 'Perubahan berhasil disimpan.', 'success'); muatAplikasi(); };
       const gagal = function(error) {
-        const pesan = error && error.message
-          ? error.message
-          : String(error);
-
+        const pesan = error && error.message ? error.message : String(error);
         if (pesan.toLowerCase().indexOf('pin') !== -1) pinAdmin = '';
         tampilkanNotifikasi(pesan, 'error');
       };
+      const runner = google.script.run.withSuccessHandler(berhasil).withFailureHandler(gagal);
 
-      const runner = google.script.run
-        .withSuccessHandler(berhasil)
-        .withFailureHandler(gagal);
-
-      if (method === 'ubahStatusTugas') {
-        runner.ubahStatusTugas(args[0], args[1], pin);
-      } else if (method === 'tandaiKorektor1Selesai') {
-        runner.tandaiKorektor1Selesai(args[0], pin);
-      } else if (method === 'tandaiKorektor2Selesai') {
-        runner.tandaiKorektor2Selesai(args[0], pin);
-      } else if (method === 'kembalikanDariKorektor') {
-        runner.kembalikanDariKorektor(args[0], args[1], pin);
-      } else if (method === 'ubahStatusKoreksiBersama') {
-        runner.ubahStatusKoreksiBersama(args[0], args[1], pin);
-      } else if (method === 'tandaiKoreksiBersamaSelesai') {
-        runner.tandaiKoreksiBersamaSelesai(args[0], pin);
-      } else if (method === 'ubahStatusKoreksiUjian') {
-        runner.ubahStatusKoreksiUjian(args[0], args[1], pin);
-      } else if (method === 'tambahAgenda') {
-        runner.tambahAgenda(args[0], pin);
-      } else if (method === 'tambahTugas') {
-        runner.tambahTugas(args[0], pin);
-      }
+      if (method === 'ubahStatusTugas') runner.ubahStatusTugas(args[0], args[1], pin);
+      else if (method === 'tandaiKorektor1Selesai') runner.tandaiKorektor1Selesai(args[0], pin);
+      else if (method === 'tandaiKorektor2Selesai') runner.tandaiKorektor2Selesai(args[0], pin);
+      else if (method === 'kembalikanDariKorektor') runner.kembalikanDariKorektor(args[0], args[1], pin);
+      else if (method === 'ubahStatusKoreksiBersama') runner.ubahStatusKoreksiBersama(args[0], args[1], pin);
+      else if (method === 'tandaiKoreksiBersamaSelesai') runner.tandaiKoreksiBersamaSelesai(args[0], pin);
+      else if (method === 'ubahStatusKoreksiUjian') runner.ubahStatusKoreksiUjian(args[0], args[1], pin);
+      else if (method === 'tambahAgenda') runner.tambahAgenda(args[0], pin);
+      else if (method === 'tambahTugas') runner.tambahTugas(args[0], pin);
     });
   }
 
   document.addEventListener('click', function(event) {
     const tombol = event.target.closest('[data-action]');
     if (!tombol) return;
+    const baris = Number(tombol.dataset.row), aksi = tombol.dataset.action;
 
-    const baris = Number(tombol.dataset.row);
-    const aksi = tombol.dataset.action;
-
-    if (aksi === 'ubahStatus') {
-      jalankanAksi('ubahStatusTugas', [baris, tombol.dataset.status]);
-    } else if (aksi === 'k1') {
-      jalankanAksi('tandaiKorektor1Selesai', [baris]);
-    } else if (aksi === 'k2') {
-      jalankanAksi('tandaiKorektor2Selesai', [baris]);
-    } else if (aksi === 'kembaliK1' || aksi === 'kembaliK2') {
-      jalankanAksi('kembalikanDariKorektor', [baris, aksi === 'kembaliK1' ? 1 : 2]);
-    } else if (aksi === 'selesaiBersama') {
-      jalankanAksi('tandaiKoreksiBersamaSelesai', [baris]);
-    } else if (aksi === 'kembaliKB') {
-      jalankanAksi('kembalikanDariKorektor', [baris, 3]);
-    } else if (aksi === 'selesaiUjian') {
-      jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Selesai']);
-    }
+    if (aksi === 'ubahStatus') jalankanAksi('ubahStatusTugas', [baris, tombol.dataset.status]);
+    else if (aksi === 'k1') jalankanAksi('tandaiKorektor1Selesai', [baris]);
+    else if (aksi === 'k2') jalankanAksi('tandaiKorektor2Selesai', [baris]);
+    else if (aksi === 'kembaliK1' || aksi === 'kembaliK2') jalankanAksi('kembalikanDariKorektor', [baris, aksi === 'kembaliK1' ? 1 : 2]);
+    else if (aksi === 'selesaiBersama') jalankanAksi('tandaiKoreksiBersamaSelesai', [baris]);
+    else if (aksi === 'kembaliKB') jalankanAksi('kembalikanDariKorektor', [baris, 3]);
+    else if (aksi === 'selesaiUjian') jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Selesai']);
   });
 
   document.getElementById('tombolTambahRapat').addEventListener('click', function() {
@@ -3958,386 +3263,211 @@
     form.reset();
     document.getElementById('rapatNomorBaris').value = '';
     form.hidden = !form.hidden;
-
-    if (!form.hidden) {
-      document.getElementById('rapatTanggal').value =
-        tanggalHariIniLokal();
-    }
+    if (!form.hidden) document.getElementById('rapatTanggal').value = tanggalHariIniLokal();
   });
 
-  document.getElementById('batalRapat').addEventListener('click', function() {
-    document.getElementById('formRapat').hidden = true;
-  });
+  document.getElementById('batalRapat').addEventListener('click', function() { document.getElementById('formRapat').hidden = true; });
 
   document.getElementById('formRapat').addEventListener('submit', function(event) {
     event.preventDefault();
-
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    const nomorBaris = document.getElementById('rapatNomorBaris').value;
-
+    const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries()), nomorBaris = document.getElementById('rapatNomorBaris').value;
     mintaPin().then(function(pin) {
       if (!pin) return;
-
       google.script.run
         .withSuccessHandler(function(pesan) {
-          tampilkanNotifikasi(pesan, 'success');
-          form.reset();
-          form.hidden = true;
-          document.getElementById('rapatNomorBaris').value = '';
-          muatAplikasi();
+          tampilkanNotifikasi(pesan, 'success'); form.reset(); form.hidden = true; document.getElementById('rapatNomorBaris').value = ''; muatAplikasi();
         })
-        .withFailureHandler(function(error) {
-          tampilkanNotifikasi(
-            error && error.message ? error.message : String(error),
-            'error'
-          );
-        })
+        .withFailureHandler(function(error) { tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); })
         .simpanRapat(data, nomorBaris, pin);
     });
   });
 
-  document.getElementById('tutupPanelRapat').addEventListener('click', function() {
-    document.getElementById('panelPesertaRapat').hidden = true;
-  });
+  document.getElementById('tutupPanelRapat').addEventListener('click', function() { document.getElementById('panelPesertaRapat').hidden = true; });
 
-  document.getElementById('simpanPesertaRapat')
-  .addEventListener('click', function() {
-    const daftarNama = Array.from(
-      document.querySelectorAll(
-        '#pilihanNamaPesertaRapat input[name="pesertaRapat"]:checked'
-      )
-    ).map(function(input) {
-      return input.value;
-    });
-
+  document.getElementById('simpanPesertaRapat').addEventListener('click', function() {
+    const daftarNama = Array.from(document.querySelectorAll('#pilihanNamaPesertaRapat input[name="pesertaRapat"]:checked')).map(function(i) { return i.value; });
     mintaPin().then(function(pin) {
       if (!pin) return;
-
       google.script.run
-        .withSuccessHandler(function(pesan) {
-          tampilkanNotifikasi(pesan, 'success');
-          muatAplikasi();
-        })
-        .withFailureHandler(function(error) {
-          tampilkanNotifikasi(
-            error && error.message ? error.message : String(error),
-            'error'
-          );
-        })
+        .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); muatAplikasi(); })
+        .withFailureHandler(function(error) { tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); })
         .simpanPesertaRapat(rapatTerpilih, daftarNama, pin);
     });
   });
 
   document.addEventListener('click', function(event) {
     const tombolAksi = event.target.closest('[data-rapat-action]');
-
     if (tombolAksi) {
-      const rapat = daftarRapatTersimpan.find(function(item) {
-        return Number(item.nomorBaris) === Number(tombolAksi.dataset.row);
-      });
-
+      const rapat = daftarRapatTersimpan.find(function(item) { return Number(item.nomorBaris) === Number(tombolAksi.dataset.row); });
       if (!rapat) return;
-
       if (tombolAksi.dataset.rapatAction === 'edit') {
         document.getElementById('rapatNomorBaris').value = rapat.nomorBaris;
         document.getElementById('rapatJenis').value = rapat.jenis;
         document.getElementById('rapatNama').value = rapat.nama;
         document.getElementById('rapatTanggal').value = rapat.tanggal;
         document.getElementById('formRapat').hidden = false;
-        document.getElementById('formRapat').scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+        document.getElementById('formRapat').scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-        bukaPanelPesertaRapat(
-          rapat,
-          tombolAksi.dataset.rapatAction
-        );
+        bukaPanelPesertaRapat(rapat, tombolAksi.dataset.rapatAction);
       }
-
       return;
     }
 
     const tombolHadir = event.target.closest('[data-rapat-presensi]');
     if (!tombolHadir) return;
-
-    const namaPeserta = tombolHadir.dataset.nama;
-    const status = tombolHadir.dataset.rapatPresensi;
-
+    const namaPeserta = tombolHadir.dataset.nama, status = tombolHadir.dataset.rapatPresensi;
     mintaPin().then(function(pin) {
       if (!pin) return;
-
       google.script.run
         .withSuccessHandler(function(pesan) {
           tampilkanNotifikasi(pesan, 'success');
-
-          const rapat = daftarRapatTersimpan.find(function(item) {
-            return Number(item.nomorBaris) === rapatTerpilih;
-          });
-
+          const rapat = daftarRapatTersimpan.find(function(item) { return Number(item.nomorBaris) === rapatTerpilih; });
           if (rapat) {
-            const peserta = rapat.peserta.find(function(item) {
-              return item.nama === namaPeserta;
-            });
-
+            const peserta = rapat.peserta.find(function(item) { return item.nama === namaPeserta; });
             if (peserta) peserta.kehadiran = status;
             bukaPanelPesertaRapat(rapat, 'absen');
           }
-
           muatAplikasi();
         })
-        .withFailureHandler(function(error) {
-          tampilkanNotifikasi(
-            error && error.message ? error.message : String(error),
-            'error'
-          );
-        })
-        .tandaiKehadiranRapat(
-          rapatTerpilih,
-          namaPeserta,
-          status,
-          pin
-        );
+        .withFailureHandler(function(error) { tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); })
+        .tandaiKehadiranRapat(rapatTerpilih, namaPeserta, status, pin);
     });
   });
 
   document.getElementById('formAgenda').addEventListener('submit', function(event) {
     event.preventDefault();
-
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    const pesan = document.getElementById('pesanAgenda');
-
-    pesan.className = 'message';
-    pesan.textContent = 'Meminta PIN admin…';
+    const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries()), pesan = document.getElementById('pesanAgenda');
+    pesan.className = 'message'; pesan.textContent = 'Meminta PIN admin…';
 
     mintaPin().then(function(pin) {
-      if (!pin) {
-        pesan.textContent = 'Penyimpanan dibatalkan.';
-        return;
-      }
-
+      if (!pin) { pesan.textContent = 'Penyimpanan dibatalkan.'; return; }
       google.script.run
         .withSuccessHandler(function(hasil) {
-          pesan.className = 'message success';
-          pesan.textContent = hasil || 'Agenda berhasil ditambahkan.';
-          form.reset();
-          document.getElementById('agendaTanggal').value =
-            tanggalHariIniLokal();
-          muatAplikasi();
+          pesan.className = 'message success'; pesan.textContent = hasil || 'Agenda berhasil ditambahkan.'; form.reset();
+          document.getElementById('agendaTanggal').value = tanggalHariIniLokal(); muatAplikasi();
         })
-        .withFailureHandler(function(error) {
-          pesan.className = 'message error';
-          pesan.textContent = error && error.message
-            ? error.message
-            : String(error);
-        })
+        .withFailureHandler(function(error) { pesan.className = 'message error'; pesan.textContent = error && error.message ? error.message : String(error); })
         .tambahAgenda(data, pin);
     });
   });
 
-  document.getElementById('tombolTambahPengumuman')
-    .addEventListener('click', function() {
-      const form = document.getElementById('formPengumuman');
-      barisPengumumanEdit = '';
-      document.getElementById('pengumumanNomorBaris').value = '';
-      form.reset();
-      form.querySelector('[type="submit"]').textContent =
-        'Simpan Pengumuman';
-      form.hidden = !form.hidden;
+  document.getElementById('tombolTambahPengumuman').addEventListener('click', function() {
+    const form = document.getElementById('formPengumuman');
+    barisPengumumanEdit = '';
+    document.getElementById('pengumumanNomorBaris').value = '';
+    form.reset();
+    form.querySelector('[type="submit"]').textContent = 'Simpan Pengumuman';
+    form.hidden = !form.hidden;
+    if (!form.hidden) {
+      document.getElementById('pengumumanTanggal').value = tanggalHariIniLokal();
+      document.getElementById('pengumumanIsi').focus();
+    }
+  });
 
-      if (!form.hidden) {
-        document.getElementById('pengumumanTanggal').value =
-          tanggalHariIniLokal();
-        document.getElementById('pengumumanIsi').focus();
-      }
+  document.getElementById('tombolEditPengumuman').addEventListener('click', function() {
+    const daftar = document.getElementById('daftarEditPengumuman');
+    daftar.hidden = !daftar.hidden;
+    this.textContent = daftar.hidden ? '✎ Edit Pengumuman' : 'Tutup Daftar Edit';
+  });
+
+  document.getElementById('daftarEditPengumuman').addEventListener('click', function(event) {
+    const tombol = event.target.closest('[data-edit-pengumuman]');
+    if (!tombol) return;
+    const nomor = Number(tombol.dataset.editPengumuman);
+    const item = semuaPengumumanTersimpan.find(function(pengumuman) { return Number(pengumuman.nomorBaris) === nomor; });
+    if (!item) return;
+
+    barisPengumumanEdit = String(nomor);
+    document.getElementById('pengumumanNomorBaris').value = barisPengumumanEdit;
+    document.getElementById('pengumumanTanggal').value = item.tanggal;
+    document.getElementById('pengumumanIsi').value = item.isi;
+    document.getElementById('pengumumanSasaran').value = item.sasaran || '';
+    document.getElementById('pengumumanKeterangan').value = item.keterangan || '';
+    document.querySelector('#formPengumuman [type="submit"]').textContent = 'Simpan Perubahan';
+    document.getElementById('formPengumuman').hidden = false;
+    document.getElementById('pesanPengumuman').textContent = 'Mengedit pengumuman tanggal ' + formatTanggal(item.tanggal) + '.';
+    document.getElementById('formPengumuman').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.getElementById('batalPengumuman').addEventListener('click', function() {
+    const form = document.getElementById('formPengumuman');
+    form.hidden = true; form.reset();
+    document.getElementById('pengumumanNomorBaris').value = '';
+    form.querySelector('[type="submit"]').textContent = 'Simpan Pengumuman';
+    document.getElementById('pesanPengumuman').textContent = '';
+    barisPengumumanEdit = '';
+  });
+
+  document.getElementById('formPengumuman').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = event.currentTarget, pesan = document.getElementById('pesanPengumuman'), data = Object.fromEntries(new FormData(form).entries());
+    pesan.className = 'message'; pesan.textContent = 'Meminta PIN admin…';
+
+    mintaPin().then(function(pin) {
+      if (!pin) { pesan.textContent = 'Penyimpanan dibatalkan.'; return; }
+      const runner = google.script.run
+        .withSuccessHandler(function(hasil) {
+          tampilkanNotifikasi(hasil || 'Pengumuman berhasil disimpan.', 'success');
+          form.reset(); form.hidden = true; barisPengumumanEdit = '';
+          document.getElementById('pengumumanNomorBaris').value = '';
+          form.querySelector('[type="submit"]').textContent = 'Simpan Pengumuman';
+          pesan.textContent = ''; muatAplikasi();
+        })
+        .withFailureHandler(function(error) {
+          const teks = error && error.message ? error.message : String(error);
+          pesan.className = 'message error'; pesan.textContent = teks; tampilkanNotifikasi(teks, 'error');
+        });
+
+      if (barisPengumumanEdit) runner.ubahPengumuman(Number(barisPengumumanEdit), data, pin);
+      else runner.tambahPengumuman(data, pin);
     });
-
-  document.getElementById('tombolEditPengumuman')
-    .addEventListener('click', function() {
-      const daftar = document.getElementById('daftarEditPengumuman');
-      daftar.hidden = !daftar.hidden;
-      this.textContent = daftar.hidden
-        ? '✎ Edit Pengumuman'
-        : 'Tutup Daftar Edit';
-    });
-
-  document.getElementById('daftarEditPengumuman')
-    .addEventListener('click', function(event) {
-      const tombol = event.target.closest('[data-edit-pengumuman]');
-      if (!tombol) return;
-
-      const nomor = Number(tombol.dataset.editPengumuman);
-      const item = semuaPengumumanTersimpan.find(function(pengumuman) {
-        return Number(pengumuman.nomorBaris) === nomor;
-      });
-
-      if (!item) return;
-
-      barisPengumumanEdit = String(nomor);
-      document.getElementById('pengumumanNomorBaris').value =
-        barisPengumumanEdit;
-      document.getElementById('pengumumanTanggal').value = item.tanggal;
-      document.getElementById('pengumumanIsi').value = item.isi;
-      document.getElementById('pengumumanSasaran').value =
-        item.sasaran || '';
-      document.getElementById('pengumumanKeterangan').value =
-        item.keterangan || '';
-
-      document.querySelector('#formPengumuman [type="submit"]')
-        .textContent = 'Simpan Perubahan';
-      document.getElementById('formPengumuman').hidden = false;
-      document.getElementById('pesanPengumuman').textContent =
-        'Mengedit pengumuman tanggal ' +
-        formatTanggal(item.tanggal) + '.';
-      document.getElementById('formPengumuman').scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    });
-
-  document.getElementById('batalPengumuman')
-    .addEventListener('click', function() {
-      const form = document.getElementById('formPengumuman');
-      form.hidden = true;
-      form.reset();
-      document.getElementById('pengumumanNomorBaris').value = '';
-      form.querySelector('[type="submit"]').textContent =
-        'Simpan Pengumuman';
-      document.getElementById('pesanPengumuman').textContent = '';
-      barisPengumumanEdit = '';
-    });
-
-  document.getElementById('formPengumuman')
-    .addEventListener('submit', function(event) {
-      event.preventDefault();
-
-      const form = event.currentTarget;
-      const pesan = document.getElementById('pesanPengumuman');
-      const data = Object.fromEntries(new FormData(form).entries());
-
-      pesan.className = 'message';
-      pesan.textContent = 'Meminta PIN admin…';
-
-      mintaPin().then(function(pin) {
-        if (!pin) {
-          pesan.textContent = 'Penyimpanan dibatalkan.';
-          return;
-        }
-
-        const runner = google.script.run
-          .withSuccessHandler(function(hasil) {
-            tampilkanNotifikasi(
-              hasil || 'Pengumuman berhasil disimpan.',
-              'success'
-            );
-            form.reset();
-            form.hidden = true;
-            barisPengumumanEdit = '';
-            document.getElementById('pengumumanNomorBaris').value = '';
-            form.querySelector('[type="submit"]').textContent =
-              'Simpan Pengumuman';
-            pesan.textContent = '';
-            muatAplikasi();
-          })
-          .withFailureHandler(function(error) {
-            const teks = error && error.message
-              ? error.message
-              : String(error);
-
-            pesan.className = 'message error';
-            pesan.textContent = teks;
-            tampilkanNotifikasi(teks, 'error');
-          });
-
-        if (barisPengumumanEdit) {
-          runner.ubahPengumuman(
-            Number(barisPengumumanEdit),
-            data,
-            pin
-          );
-        } else {
-          runner.tambahPengumuman(data, pin);
-        }
-      });
-    });
+  });
 
   document.getElementById('formTugas').addEventListener('submit', function(event) {
     event.preventDefault();
-
-    const form = event.currentTarget;
-    const data = Object.fromEntries(new FormData(form).entries());
-    const pesan = document.getElementById('pesanTugas');
-
-    pesan.className = 'message';
-    pesan.textContent = 'Meminta PIN admin…';
+    const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries()), pesan = document.getElementById('pesanTugas');
+    pesan.className = 'message'; pesan.textContent = 'Meminta PIN admin…';
 
     mintaPin().then(function(pin) {
-      if (!pin) {
-        pesan.textContent = 'Penyimpanan dibatalkan.';
-        return;
-      }
-
+      if (!pin) { pesan.textContent = 'Penyimpanan dibatalkan.'; return; }
       google.script.run
         .withSuccessHandler(function(hasil) {
-          pesan.className = 'message success';
-          pesan.textContent = hasil || 'Tugas berhasil ditambahkan.';
-          form.reset();
-          document.getElementById('tugasMulai').value =
-            tanggalHariIniLokal();
-          document.getElementById('tugasSelesai').value =
-            tanggalHariIniLokal();
+          pesan.className = 'message success'; pesan.textContent = hasil || 'Tugas berhasil ditambahkan.'; form.reset();
+          document.getElementById('tugasMulai').value = tanggalHariIniLokal();
+          document.getElementById('tugasSelesai').value = tanggalHariIniLokal();
           muatAplikasi();
         })
-        .withFailureHandler(function(error) {
-          pesan.className = 'message error';
-          pesan.textContent = error && error.message
-            ? error.message
-            : String(error);
-        })
+        .withFailureHandler(function(error) { pesan.className = 'message error'; pesan.textContent = error && error.message ? error.message : String(error); })
         .tambahTugas(data, pin);
     });
   });
 
   document.getElementById('sidebarToggle').addEventListener('click', function() {
-    const hidden = document.body.classList.toggle('sidebar-hidden');
-    this.textContent = hidden ? '☰' : '×';
-    this.title = hidden ? 'Tampilkan menu' : 'Sembunyikan menu';
+    document.body.classList.toggle('sidebar-hidden');
   });
 
   function aturTombolTema() {
     const terang = document.body.dataset.theme === 'light';
-    document.getElementById('themeToggle').textContent = terang ? '🌙' : '☀️';
+    document.getElementById('themeToggle').title = terang ? 'Ganti ke tema gelap' : 'Ganti ke tema terang';
   }
 
   let temaTersimpan = 'dark';
-  try {
-    temaTersimpan = localStorage.getItem('labsoma-theme') || 'dark';
-  } catch (e) {}
-
+  try { temaTersimpan = localStorage.getItem('labsoma-theme') || 'dark'; } catch (e) {}
   document.body.dataset.theme = temaTersimpan;
   aturTombolTema();
 
   document.getElementById('themeToggle').addEventListener('click', function() {
-    const temaBaru =
-      document.body.dataset.theme === 'light' ? 'dark' : 'light';
+    const temaBaru = document.body.dataset.theme === 'light' ? 'dark' : 'light';
     document.body.dataset.theme = temaBaru;
-
-    try {
-      localStorage.setItem('labsoma-theme', temaBaru);
-    } catch (e) {}
-
+    try { localStorage.setItem('labsoma-theme', temaBaru); } catch (e) {}
     aturTombolTema();
   });
 
   function perbaruiTombolLayarPenuh() {
     const penuh = Boolean(document.fullscreenElement);
     document.body.classList.toggle('dashboard-fullscreen', penuh);
-    document.getElementById('fullscreenToggle').textContent = penuh ? '↙' : '⛶';
   }
 
-  /* ===== DAFTAR SEMUA TUGAS DI MENU TAMBAH TUGAS ===== */
   function tampilkanTugasDiMenuTambah(semuaTugas) {
     const dataFiltered = saringDaftarTugas(semuaTugas, 'tugasMenu');
     gambarBaganPersentase('baganTugasMenu', dataFiltered);
@@ -4359,44 +3489,31 @@
         </tr>
       `;
     });
-
-    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(
-      ['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal Tugas', 'Status', 'Aksi'],
-      rows
-    );
+    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
   }
 
-  // Bagan persentase penyelesaian (mengikuti data hasil filter)
   function gambarBaganPersentase(idWadah, daftar) {
     const wadah = document.getElementById(idWadah);
     if (!wadah) return;
-
     const total = daftar.length;
-    const selesai = daftar.filter(function(x) {
-      return String(x.status || '').toLowerCase() === 'selesai';
-    }).length;
+    const selesai = daftar.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
     const belum = total - selesai;
     const ps = total ? Math.round(selesai / total * 100) : 0;
     const pb = total ? 100 - ps : 0;
-    const latar = total
-      ? 'conic-gradient(var(--aksen) 0 ' + ps + '%, #e6ad35 ' + ps + '% 100%)'
-      : 'var(--garis)';
+    const latar = total ? 'conic-gradient(var(--aksen) 0 ' + ps + '%, #e6ad35 ' + ps + '% 100%)' : 'var(--garis)';
 
     wadah.innerHTML =
       '<div class="bagan-persen">' +
-        '<div class="bagan-donut" style="background:' + latar + '">' +
-          '<div class="bagan-donut-isi">' + ps + '%</div>' +
-        '</div>' +
+        '<div class="bagan-donut" style="background:' + latar + '"><div class="bagan-donut-isi">' + ps + '%</div></div>' +
         '<div class="bagan-info">' +
           '<h3>Persentase Penyelesaian</h3>' +
-          '<div class="bagan-baris"><span class="bagan-titik" style="background:var(--aksen)"></span>' +
-            'Selesai: <b>' + ps + '%</b> (' + selesai + ' tugas)</div>' +
-          '<div class="bagan-baris"><span class="bagan-titik" style="background:#e6ad35"></span>' +
-            'Belum: <b>' + pb + '%</b> (' + belum + ' tugas)</div>' +
+          '<div class="bagan-baris"><span class="bagan-titik" style="background:var(--aksen)"></span>Selesai: <b>' + ps + '%</b> (' + selesai + ' tugas)</div>' +
+          '<div class="bagan-baris"><span class="bagan-titik" style="background:#e6ad35"></span>Belum: <b>' + pb + '%</b> (' + belum + ' tugas)</div>' +
           '<div class="bagan-total">' + (total ? 'Total ' + total + ' tugas (sesuai filter)' : 'Tidak ada data untuk filter ini') + '</div>' +
         '</div>' +
       '</div>';
   }
+
 
   /* ===== EDIT TUGAS (MODAL) ===== */
   function isiPilihanTugasEdit(anggota, materi, item) {
@@ -4971,11 +4088,211 @@
       el.addEventListener('change', tampilkanDaftarPengguna);
     }
   });
+
+  /* ===== PENGGUNA & SIDEBAR ===== */
+  let dataPengguna = null;
+  let tabPeranAktif = '';
+
+  function muatSesi() {
+    google.script.run
+      .withSuccessHandler(terapkanPeran)
+      .withFailureHandler(function () {})
+      .getSesi();
+  }
+
+  function terapkanPeran(sesi) {
+    document.body.dataset.peran = sesi.role || '';
+    document.getElementById('namaPengguna').textContent = sesi.nama || '';
+    document.getElementById('peranPengguna').textContent = sesi.label || sesi.role || '';
+  }
+
+  function muatPengguna() {
+    const wadah = document.getElementById('isiPengguna');
+    if (!dataPengguna) wadah.innerHTML = '<div class="empty">Memuat pengguna…</div>';
+
+    google.script.run
+      .withSuccessHandler(function (hasil) { dataPengguna = hasil; gambarPengguna(); })
+      .withFailureHandler(function (er) {
+        const pesan = er && er.message ? er.message : String(er);
+        if (dataPengguna) tampilkanNotifikasi(pesan, 'error');
+        else wadah.innerHTML = '<div class="card empty">' + aman(pesan) + '</div>';
+      })
+      .getPengguna();
+  }
+
+  function labelPeran(kode) {
+    const p = ((dataPengguna || {}).peran || []).find(function (x) { return x.kode === kode; });
+    return p ? p.label : kode;
+  }
+
+  function gambarPengguna() {
+    const d = dataPengguna;
+    const peran = d.peran || [];
+
+    if (!peran.some(function (p) { return p.kode === tabPeranAktif; })) {
+      tabPeranAktif = peran.length ? peran[0].kode : '';
+    }
+
+    document.getElementById('tabPeran').innerHTML = peran.map(function (p) {
+      const jumlah = d.pengguna.filter(function (u) { return u.role === p.kode; }).length;
+      return '<button type="button" class="tab-peran-tombol' +
+        (p.kode === tabPeranAktif ? ' aktif' : '') +
+        '" data-tab-peran="' + aman(p.kode) + '">' + aman(p.label) +
+        ' <span>' + jumlah + '</span></button>';
+    }).join('');
+
+    const baris = d.pengguna
+      .filter(function (u) { return u.role === tabPeranAktif; })
+      .map(function (u, i) {
+        const saya = u.username === d.saya;
+        return '<tr>' +
+          '<td>' + (i + 1) + '</td>' +
+          '<td><strong>' + aman(u.nama) + '</strong>' + (saya ? ' <span class="badge">Anda</span>' : '') + '</td>' +
+          '<td>' + aman(u.username) + '</td>' +
+          '<td>' + aman(labelPeran(u.role)) + '</td>' +
+          '<td>' + (u.aktif ? '<span class="badge">Aktif</span>' : '<span class="badge waiting">Nonaktif</span>') + '</td>' +
+          '<td><button class="button secondary small" data-pengguna="edit" data-username="' + aman(u.username) + '">✎ Edit</button>' +
+          (saya ? '' : ' <button class="button small" style="background:#e05252;color:#fff;" data-pengguna="hapus" data-username="' + aman(u.username) + '">🗑 Hapus</button>') +
+          '</td></tr>';
+      });
+
+    document.getElementById('isiPengguna').innerHTML =
+      renderTabel(['No', 'Nama', 'Username', 'Peran', 'Status', 'Aksi'], baris);
+  }
+
+  function bukaFormPengguna(u) {
+    const baru = !u;
+    const peran = (dataPengguna || {}).peran || [];
+
+    document.getElementById('penggunaPeran').innerHTML =
+      '<option value="">Pilih peran…</option>' +
+      peran.filter(function (p) { return p.kode !== 'LAINNYA'; }).map(function (p) {
+        return '<option value="' + aman(p.kode) + '">' + aman(p.label) + '</option>';
+      }).join('');
+
+    document.getElementById('judulFormPengguna').textContent = baru ? 'Tambah Pengguna' : 'Edit Pengguna';
+    document.getElementById('penggunaLama').value = baru ? '' : u.username;
+    document.getElementById('penggunaNama').value = baru ? '' : u.nama;
+    document.getElementById('penggunaUser').value = baru ? '' : u.username;
+    document.getElementById('penggunaUser').readOnly = !baru;
+    document.getElementById('penggunaPeran').value = baru ? (tabPeranAktif === 'LAINNYA' ? '' : tabPeranAktif) : u.role;
+    document.getElementById('penggunaSandi').value = '';
+    document.getElementById('penggunaSandi').required = baru;
+    document.getElementById('labelSandi').textContent = baru
+      ? 'Password (minimal 6 karakter)'
+      : 'Password baru (kosongkan jika tidak diganti)';
+    document.getElementById('penggunaAktif').checked = baru ? true : !!u.aktif;
+    document.getElementById('penggunaError').textContent = '';
+    document.getElementById('penggunaOverlay').hidden = false;
+    setTimeout(function () { document.getElementById('penggunaNama').focus(); }, 50);
+  }
+
+  document.getElementById('tombolTambahPengguna').addEventListener('click', function () {
+    bukaFormPengguna(null);
+  });
+
+  document.getElementById('batalPengguna').addEventListener('click', function () {
+    document.getElementById('penggunaOverlay').hidden = true;
+  });
+
+  document.getElementById('formPengguna').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const tombol = document.getElementById('simpanPenggunaTombol');
+    const pesan = document.getElementById('penggunaError');
+    const lama = document.getElementById('penggunaLama').value;
+
+    const data = {
+      nama: document.getElementById('penggunaNama').value,
+      username: document.getElementById('penggunaUser').value,
+      role: document.getElementById('penggunaPeran').value,
+      password: document.getElementById('penggunaSandi').value,
+      aktif: document.getElementById('penggunaAktif').checked
+    };
+
+    tombol.disabled = true;
+    pesan.textContent = '';
+
+    google.script.run
+      .withSuccessHandler(function (hasil) {
+        tombol.disabled = false;
+        document.getElementById('penggunaOverlay').hidden = true;
+        tampilkanNotifikasi(hasil || 'Pengguna disimpan.', 'success');
+        muatPengguna();
+      })
+      .withFailureHandler(function (er) {
+        tombol.disabled = false;
+        pesan.textContent = er && er.message ? er.message : String(er);
+      })
+      .simpanPengguna(data, lama);
+  });
+
+  document.addEventListener('click', function (event) {
+    const tab = event.target.closest('[data-tab-peran]');
+    if (tab) { tabPeranAktif = tab.dataset.tabPeran; gambarPengguna(); return; }
+
+    const aksi = event.target.closest('[data-pengguna]');
+    if (!aksi) return;
+
+    const u = ((dataPengguna || {}).pengguna || []).find(function (x) {
+      return x.username === aksi.dataset.username;
+    });
+    if (!u) return;
+
+    if (aksi.dataset.pengguna === 'edit') {
+      bukaFormPengguna(u);
+    } else if (aksi.dataset.pengguna === 'hapus') {
+      if (!confirm('Hapus akun ' + u.nama + ' (' + u.username + ')? Tindakan ini tidak bisa dibatalkan.')) return;
+      google.script.run
+        .withSuccessHandler(function (hasil) { tampilkanNotifikasi(hasil, 'success'); muatPengguna(); })
+        .withFailureHandler(function (er) {
+          tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
+        })
+        .hapusPengguna(u.username);
+    }
+  });
+
+  /* Sorot grup sidebar yang berisi halaman aktif */
+  function sorotSidebar() {
+    document.querySelectorAll('.nav-group-toggle').forEach(function (t) { t.classList.remove('aktif'); });
+
+    const aktif = document.querySelector('.sidebar .nav-submenu .nav-button.active');
+    if (!aktif) return;
+
+    const submenu = aktif.closest('.nav-submenu');
+    submenu.hidden = false;
+
+    const tombol = document.querySelector('.nav-group-toggle[data-menu="' + submenu.id.replace('menu-', '') + '"]');
+    if (tombol) {
+      tombol.classList.add('aktif');
+      tombol.querySelector('span').textContent = '⌃';
+    }
+  }
+
+  PETA_HALAMAN.pengguna = { tab: 'kegiatan', induk: 'hubKegiatan' };
+
+  (function () {
+    const bukaSebelumnya = bukaHalaman;
+    bukaHalaman = function (nama, dariRiwayat) {
+      bukaSebelumnya(nama, dariRiwayat);
+      if (nama === 'pengguna') muatPengguna();
+      sorotSidebar();
+    };
+
+    const loginSebelumnya = tampilkanLogin;
+    tampilkanLogin = function () {
+      delete document.body.dataset.peran;
+      loginSebelumnya();
+    };
+
+    const aplikasiSebelumnya = muatAplikasi;
+    muatAplikasi = function () {
+      if (!document.body.dataset.peran) muatSesi();
+      aplikasiSebelumnya();
+    };
+  })();
+
+  if (ambilToken()) muatSesi();
 </script>
 </body>
 </html>
 
-// Update data saat muatAplikasi() sukses
-// Di dalam success callback muatAplikasi(), tambahkan:
-// daftarPenggunaTersimpan = data.daftarPengguna || [];
-// tampilkanDaftarPengguna();
