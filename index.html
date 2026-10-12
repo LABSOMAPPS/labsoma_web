@@ -1217,7 +1217,124 @@
     .tab-peran-tombol.aktif span { background: rgba(0,0,0,.15); color: #06201d; }
 
     /* Khusus Admin Visibility */
-    body:not([data-peran="ADMIN"]) .khusus-admin { display: none !important; }
+
+    /* Hak akses tampilan: ADMIN = semua, KOREKTOR = sama dengan admin (kecuali Pengguna), SONIK = tampilan ringkas */
+    body:not([data-peran="ADMIN"]) .hanya-admin { display: none !important; }
+    body:not([data-peran="ADMIN"]):not([data-peran="KOREKTOR"]) .staf-only { display: none !important; }
+    body:not([data-peran]) .sidebar, body:not([data-peran]) .bottom-nav { visibility: hidden; }
+
+    /* ===== Manajemen Tugas ===== */
+    .mt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; flex-wrap: wrap; margin-bottom: 8px; }
+    .mt-sisi { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; min-width: 230px; }
+    .mt-mode { padding: 8px 14px; border-radius: var(--radius-md); border: 1px solid var(--garis); background: var(--biru-soft); color: var(--biru); font-size: 12px; font-weight: 800; letter-spacing: 0.05em; }
+    .mt-progres { width: 100%; }
+    .mt-progres-label { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 700; color: var(--redup); margin-bottom: 5px; }
+    .mt-progres-label b { color: var(--aksen); }
+    .mt-progres-bar { height: 6px; border-radius: 99px; background: var(--panel3); overflow: hidden; }
+    .mt-progres-bar i { display: block; height: 100%; border-radius: 99px; background: var(--aksen); transition: width 0.4s ease; }
+    .search-filters.mt-tools { grid-template-columns: minmax(0, 1fr) 240px; margin-bottom: 16px; }
+    .mt-table { border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan); overflow: hidden; margin-bottom: 24px; }
+    .mt-thead, .mt-row { display: grid; grid-template-columns: minmax(170px, 1.1fr) minmax(0, 3.2fr) 110px 150px; gap: 16px; align-items: center; padding: 14px 20px; }
+    .mt-thead { background: var(--panel2); color: var(--aksen); font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+    .mt-row { border-top: 1px solid var(--garis); }
+    .mt-row:nth-child(even) { background: var(--latar-subtle); }
+    .mt-nama strong { display: block; font-size: 13.5px; font-weight: 800; text-transform: uppercase; }
+    .mt-nama small { display: block; margin-top: 2px; color: var(--redup); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; }
+    .mt-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mt-chip { min-width: 150px; padding: 8px 10px; border: 1px solid var(--garis); border-radius: var(--radius-sm); background: var(--panel2); }
+    .mt-chip-top { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; }
+    .mt-pct { padding: 1px 7px; border-radius: 6px; font-size: 11.5px; font-weight: 800; }
+    .mt-pct.p0 { background: var(--biru-soft); color: var(--biru); }
+    .mt-pct.pmid { background: var(--kuning-soft); color: var(--kuning); }
+    .mt-pct.p100 { background: var(--hijau-soft); color: var(--hijau); }
+    .mt-x { margin-left: auto; padding: 0 4px; border: 0; background: transparent; color: var(--merah); font-size: 16px; font-weight: 800; line-height: 1; cursor: pointer; }
+    .mt-x:hover { transform: scale(1.25); }
+    .mt-chip-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 5px; color: var(--redup); font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .mt-tag { padding: 0 6px; border-radius: 4px; background: var(--panel3); }
+    .mt-tag.ok { background: var(--hijau-soft); color: var(--hijau); }
+    .mt-kosong { color: var(--redup); font-size: 12.5px; font-style: italic; }
+    .mt-prog { text-align: center; }
+    .mt-prog b { display: block; font-size: 16px; font-weight: 800; color: var(--hijau); }
+    .mt-prog small { color: var(--redup); font-size: 11.5px; font-weight: 600; }
+    .mt-aksi { text-align: right; }
+    .mt-tujuan { display: flex; flex-wrap: wrap; gap: 8px 18px; padding-top: 4px; }
+    .mt-tujuan label { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+    .mt-tujuan input { width: auto !important; }
+    .info-tambah { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+    .info-tambah p { color: var(--redup); font-size: 13.5px; max-width: 640px; }
+    .badge.telat { background: var(--merah-soft); color: var(--merah); border-color: rgba(248, 113, 113, 0.35); }
+    @media (max-width: 900px) {
+      .mt-sisi { align-items: stretch; width: 100%; }
+      .mt-thead { display: none; }
+      .mt-row { grid-template-columns: 1fr; gap: 10px; }
+      .mt-prog, .mt-aksi { text-align: left; }
+      .search-filters.mt-tools { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Tampilan SONIK / Anggota (hanya lihat, aksen emas) ===== */
+    .sonik-salam, .sonik-nav { display: none; }
+    body[data-peran="SONIK"] {
+      --aksen: #f59e0b; --aksen-hover: #d97706; --aksen-soft: rgba(245, 158, 11, 0.13);
+      --aksen-border: rgba(245, 158, 11, 0.32); --aksen-teks: #2b1700; --glow: 0 0 24px rgba(245, 158, 11, 0.22);
+    }
+    body[data-peran="SONIK"][data-theme="light"] {
+      --aksen: #d97706; --aksen-hover: #b45309; --aksen-soft: rgba(217, 119, 6, 0.1);
+      --aksen-border: rgba(217, 119, 6, 0.28); --aksen-teks: #ffffff; --glow: 0 0 20px rgba(217, 119, 6, 0.15);
+    }
+    body[data-peran="SONIK"] .app {
+      background: radial-gradient(circle at 12% 0%, rgba(245, 158, 11, 0.07) 0%, transparent 42%),
+                  radial-gradient(circle at 92% 92%, rgba(244, 114, 182, 0.04) 0%, transparent 40%), var(--latar);
+    }
+    body[data-peran="SONIK"] .sidebar,
+    body[data-peran="SONIK"] .sidebar-backdrop,
+    body[data-peran="SONIK"] .bottom-nav,
+    body[data-peran="SONIK"] #sidebarToggle,
+    body[data-peran="SONIK"] #tombolKembaliMobile { display: none !important; }
+    body[data-peran="SONIK"] .main { width: 100%; max-width: 1180px; margin: 0 auto; padding-bottom: 130px; }
+    body[data-peran="SONIK"] .sonik-salam { display: block; margin-right: auto; color: var(--aksen); font-size: 14px; font-weight: 700; }
+    body[data-peran="SONIK"] .sonik-nav {
+      display: grid; direction: rtl; grid-template-columns: repeat(5, 1fr);
+      position: fixed; z-index: 1000; left: 12px; right: 12px; bottom: 12px; margin: 0 auto; max-width: 560px;
+      padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+      border: 1px solid var(--aksen-border); border-radius: 26px;
+      background: rgba(22, 17, 10, 0.9);
+      backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 20px 40px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05), var(--glow);
+    }
+    body[data-peran="SONIK"][data-theme="light"] .sonik-nav { background: rgba(255, 255, 255, 0.95); box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.05); }
+    .sonik-nav button {
+      position: relative; direction: ltr; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;
+      padding: 7px 2px; border: 0; border-radius: 18px; background: transparent; color: var(--redup);
+      font-size: 10px; font-weight: 600; line-height: 1.15; text-align: center; cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1); -webkit-tap-highlight-color: transparent;
+    }
+    .sonik-nav button svg { width: 21px; height: 21px; stroke: currentColor; fill: none; }
+    .sonik-nav button:active { transform: scale(0.94); }
+    .sonik-nav .nav-label { white-space: nowrap; }
+    .sonik-nav button.active { color: var(--aksen); background: var(--aksen-soft); }
+    .sonik-nav button.active .nav-label { font-weight: 800; }
+    .sonik-nav button.active::before {
+      content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+      width: 30px; height: 3px; border-radius: 3px; background: var(--aksen);
+      box-shadow: 0 0 12px 2px var(--aksen-border), 0 0 24px 6px var(--aksen-soft);
+    }
+    body.dashboard-fullscreen .sonik-nav { display: none !important; }
+    @media (max-width: 420px) {
+      .sonik-nav .nav-label { white-space: normal; min-height: 2.3em; }
+    }
+
+    /* ===== Tugas Terkait (Sonik) ===== */
+    .tt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+    .tt-card { padding: 16px 18px; border: 1px solid var(--garis); border-left: 4px solid var(--aksen); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan-sm); }
+    .tt-card.selesai { border-left-color: var(--hijau); }
+    .tt-card.telat { border-left-color: var(--merah); }
+    .tt-judul { font-size: 15px; font-weight: 800; line-height: 1.3; }
+    .tt-meta { margin-top: 3px; color: var(--aksen); font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    .tt-periode { margin-top: 2px; color: var(--redup); font-size: 12.5px; }
+    .tt-tahap { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+    .tt-tahap-baris { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--panel2); font-size: 12.5px; font-weight: 600; }
+    .tt-tahap-baris > span:first-child { color: var(--redup); }
+
 
     /* Fullscreen Mode */
     body.dashboard-fullscreen { overflow: hidden; }
@@ -1458,8 +1575,15 @@
           <span>Pengumuman</span>
         </button>
 
+        <!-- Manajemen Tugas (Admin & Korektor) -->
+        <button class="nav-button staf-only" data-page="manajemenTugas">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </span>
+          <span>Manajemen Tugas</span>
+        </button>
         <!-- Pengguna (Khusus Admin/TU) -->
-        <button class="nav-button khusus-admin" data-page="pengguna">
+        <button class="nav-button hanya-admin" data-page="pengguna">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </span>
@@ -1540,6 +1664,7 @@
 
     <main class="main">
       <div class="topbar">
+        <span class="sonik-salam" id="sonikSalam"></span>
         <button class="toolbar-button icon-only" id="sidebarToggle" type="button" title="Tampilkan/sembunyikan menu" aria-label="Tampilkan atau sembunyikan menu">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
@@ -1762,7 +1887,7 @@
           <section class="card announcement-content">
             <div class="announcement-toolbar">
               <h1 class="page-heading">Pengumuman Hari Ini</h1>
-              <div class="announcement-actions">
+              <div class="announcement-actions staf-only">
                 <button class="button secondary" id="tombolEditPengumuman" type="button">✎ Edit Pengumuman</button>
                 <button class="button" id="tombolTambahPengumuman" type="button">＋ Tambah Pengumuman</button>
               </div>
@@ -1942,52 +2067,11 @@
       <!-- PAGE: TUGAS -->
       <section class="page" id="page-tugas">
         <h1 class="page-heading">Tugas Pembuatan Soal</h1>
-        <p class="subheading">Input dan kelola penugasan pembuatan materi soal madrasah.</p>
-        <form class="card form-card" id="formTugas">
-          <div class="form-grid">
-            <div class="field full">
-              <label for="tugasNama">Nama anggota</label>
-              <select id="tugasNama" name="nama" required>
-                <option value="">Pilih nama anggota</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="tugasTingkat">Tingkat</label>
-              <select id="tugasTingkat" name="tingkat" required>
-                <option value="">Pilih tingkatan</option>
-                <option value="IBTIDAIYAH">IBTIDAIYAH</option>
-                <option value="TSANAWIYAH">TSANAWIYAH</option>
-                <option value="IDADIYAH">IDADIYAH</option>
-                <option value="ALIYAH">ALIYAH</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="tugasKelas">Kelas</label>
-              <select id="tugasKelas" name="kelas" required>
-                <option value="">Pilih kelas</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="tugasNamaTugas">Fan/Nama Materi</label>
-              <select id="tugasNamaTugas" name="tugas" required>
-                <option value="">Pilih Fan/Materi</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="tugasMulai">Tanggal mulai</label>
-              <input id="tugasMulai" name="mulai" type="date" required>
-            </div>
-            <div class="field">
-              <label for="tugasSelesai">Tanggal selesai</label>
-              <input id="tugasSelesai" name="selesai" type="date" required>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="button" type="submit">Simpan Tugas</button>
-            <span class="message" id="pesanTugas"></span>
-          </div>
-        </form>
-
+        <p class="subheading">Daftar dan status penugasan pembuatan materi soal madrasah.</p>
+        <div class="card info-tambah staf-only">
+          <p>Menambah tugas kini dilakukan di menu <b>Manajemen Tugas</b>. Tugas yang ditambahkan di sana otomatis muncul di sini dan di menu satunya (Pembuatan Soal &amp; Koreksi Hasil Ujian).</p>
+          <button class="button" type="button" data-goto="manajemenTugas">Buka Manajemen Tugas</button>
+        </div>
         <h2 class="section-title" style="margin-top: 28px;">Daftar Semua Tugas</h2>
         <div id="baganTugasMenu"></div>
 
@@ -2130,6 +2214,84 @@
         </form>
       </div>
 
+      <!-- PAGE: MANAJEMEN TUGAS -->
+      <section class="page" id="page-manajemenTugas">
+        <div class="mt-head">
+          <div>
+            <h1 class="page-heading">Manajemen Tugas</h1>
+            <p class="subheading">Daftar tugas setiap anggota. Tugas yang ditambahkan di sini otomatis terdaftar di menu Pembuatan Soal dan Koreksi Hasil Ujian.</p>
+          </div>
+          <div class="mt-sisi">
+            <div class="mt-mode" id="mtMode">MODE ADMINISTRATOR</div>
+            <div class="mt-progres">
+              <div class="mt-progres-label"><span>Progres</span><b id="mtProgresTeks">0% (0/0)</b></div>
+              <div class="mt-progres-bar"><i id="mtProgresBar" style="width:0%"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="search-filters mt-tools">
+          <input type="search" id="mtCari" placeholder="Cari anggota atau tugas…" aria-label="Cari anggota atau tugas">
+          <select id="mtFilterTingkat" aria-label="Filter tingkat"><option value="">Semua tingkat</option></select>
+        </div>
+        <div class="mt-table">
+          <div class="mt-thead"><div>Anggota</div><div>Daftar tugas (model kartu)</div><div style="text-align:center">Progres</div><div style="text-align:right">Aksi</div></div>
+          <div id="isiManajemenTugas"><div class="empty">Memuat daftar tugas…</div></div>
+        </div>
+      </section>
+      <!-- MODAL TAMBAH TUGAS (MANAJEMEN) -->
+      <div class="modal-overlay" id="mtOverlay" hidden>
+        <form class="modal" id="formMtTambah" style="width: min(550px, 100%);">
+          <h2>Tambah Tugas</h2>
+          <p>Untuk: <b id="mtNamaTampil"></b></p>
+          <input id="mtNama" type="hidden">
+          <div class="form-grid" style="gap: 10px; margin-top: 10px;">
+            <div class="field">
+              <label for="mtTingkat">Tingkat</label>
+              <select id="mtTingkat" required>
+                <option value="">Pilih tingkatan</option>
+                <option value="IBTIDAIYAH">IBTIDAIYAH</option>
+                <option value="TSANAWIYAH">TSANAWIYAH</option>
+                <option value="IDADIYAH">IDADIYAH</option>
+                <option value="ALIYAH">ALIYAH</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="mtKelas">Kelas</label>
+              <select id="mtKelas" required><option value="">Pilih kelas</option></select>
+            </div>
+            <div class="field full">
+              <label for="mtFan">Fan/Nama Materi</label>
+              <select id="mtFan" required><option value="">Pilih Fan/Materi</option></select>
+            </div>
+            <div class="field">
+              <label for="mtMulai">Tanggal mulai</label>
+              <input id="mtMulai" type="date" required>
+            </div>
+            <div class="field">
+              <label for="mtSelesai">Tanggal selesai</label>
+              <input id="mtSelesai" type="date" required>
+            </div>
+            <div class="field full">
+              <label>Daftarkan ke</label>
+              <div class="mt-tujuan">
+                <label><input type="checkbox" id="mtKeSoal" checked> Pembuatan Soal</label>
+                <label><input type="checkbox" id="mtKeUjian" checked> Koreksi Hasil Ujian</label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-error" id="mtError"></div>
+          <div class="modal-actions" style="margin-top:16px;">
+            <button class="button secondary" type="button" id="mtBatal">Batal</button>
+            <button class="button" type="submit" id="mtSimpan">Simpan Tugas</button>
+          </div>
+        </form>
+      </div>
+      <!-- PAGE: TUGAS TERKAIT (SONIK) -->
+      <section class="page" id="page-tugasTerkait">
+        <h1 class="page-heading">Tugas Terkait</h1>
+        <p class="subheading">Tugas Pembuatan Soal dan Koreksi Hasil Ujian yang diberikan kepada Anda. Halaman ini hanya untuk dilihat.</p>
+        <div id="isiTugasTerkait"><div class="empty">Memuat tugas…</div></div>
+      </section>
       <!-- PAGE: CATATAN -->
       <section class="page" id="page-catatan">
         <h1 class="page-heading">Catatan Rapat</h1>
@@ -2188,18 +2350,11 @@
       <!-- PAGE: TUGAS UJIAN -->
       <section class="page" id="page-tugasUjian">
         <h1 class="page-heading">Tugas Koreksi Hasil Ujian</h1>
-        <p class="subheading">Penugasan koreksi lembar jawaban ujian semester.</p>
-        <form class="card form-card" id="formTugasUjian">
-          <div class="form-grid">
-            <div class="field"><label>Nama anggota</label><input name="nama" required></div>
-            <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
-            <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date" required></div>
-            <div class="field"><label>Kelas</label><input name="kelas"></div>
-            <div class="field"><label>Tingkat</label><input name="tingkat"></div>
-            <div class="field full"><label>Tugas koreksi ujian</label><textarea name="tugas" required></textarea></div>
-          </div>
-          <div class="form-actions"><button class="button">Tambah Tugas</button></div>
-        </form>
+        <p class="subheading">Daftar dan status penugasan koreksi lembar jawaban ujian semester.</p>
+        <div class="card info-tambah staf-only">
+          <p>Menambah tugas kini dilakukan di menu <b>Manajemen Tugas</b>. Tugas yang ditambahkan di sana otomatis muncul di sini dan di menu satunya (Pembuatan Soal &amp; Koreksi Hasil Ujian).</p>
+          <button class="button" type="button" data-goto="manajemenTugas">Buka Manajemen Tugas</button>
+        </div>
         <h2 class="section-title">Daftar Tugas</h2>
         <div id="baganTugasUjian"></div>
         <div class="search-filters">
@@ -2295,6 +2450,30 @@
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </span>
       <span class="nav-label">Menu</span>
+    </button>
+  </nav>
+
+  <!-- NAVIGASI SONIK / ANGGOTA: urutan dari KANAN ke KIRI = Tugas Terkait, Pengumuman, Dashboard, Batas Pelajaran, Tipe -->
+  <nav class="sonik-nav" id="sonikNav" aria-label="Menu anggota">
+    <button type="button" data-page="tugasTerkait">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+      <span class="nav-label">Tugas Terkait</span>
+    </button>
+    <button type="button" data-page="pengumuman">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+      <span class="nav-label">Pengumuman</span>
+    </button>
+    <button type="button" data-page="dashboard" class="active">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      <span class="nav-label">Dashboard</span>
+    </button>
+    <button type="button" data-page="batasPelajaran">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+      <span class="nav-label">Batas Pelajaran</span>
+    </button>
+    <button type="button" data-page="tipeSoal">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></span>
+      <span class="nav-label">Tipe</span>
     </button>
   </nav>
 
@@ -2592,7 +2771,9 @@
     kalender:       { tab: 'kegiatan', induk: 'hubKegiatan' },
     catatan:        { tab: 'kegiatan', induk: 'hubKegiatan' },
 
-    pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' }
+    pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' },
+    manajemenTugas: { tab: 'dashboard', induk: 'dashboard' },
+    tugasTerkait:   { tab: 'tugasTerkait' }
   };
 
   const HALAMAN_TAB = {
@@ -2625,6 +2806,9 @@
       b.classList.toggle('active', b.dataset.tab === info.tab);
     });
 
+    document.querySelectorAll('#sonikNav button[data-page]').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.page === nama);
+    });
     const kembali = document.getElementById('tombolKembaliMobile');
     kembali.classList.toggle('tampil', !!info.induk);
     kembali.dataset.tujuan = info.induk || '';
@@ -2904,16 +3088,9 @@
   }
 
   function isiPilihanTugas(anggota, materi) {
-    const namaSelect = document.getElementById('tugasNama');
-    if (namaSelect) {
-      const namaLama = namaSelect.value;
-      namaSelect.innerHTML = '<option value="">Pilih nama anggota</option>' +
-        (anggota || []).map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
-      if (anggota && anggota.indexOf(namaLama) >= 0) namaSelect.value = namaLama;
-    }
-    updateMateriDropdown('tugasTingkat', 'tugasKelas', 'tugasNamaTugas', materi);
+    const modal = document.getElementById('mtOverlay');
+    if (modal && !modal.hidden) updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materi);
   }
-
   function updateMateriDropdown(idTingkat, idKelas, idFan, materi) {
     const tingkatVal = norm(document.getElementById(idTingkat).value);
     const dataFiltered = (materi || []).filter(function(x) { return norm(x.tingkat) === tingkatVal; });
@@ -2936,14 +3113,12 @@
 
   function materiTersimpan() { return (dataAplikasiTersimpan || {}).materiPelajaran || []; }
 
-  document.getElementById('tugasTingkat').addEventListener('change', function() {
-    updateMateriDropdown('tugasTingkat', 'tugasKelas', 'tugasNamaTugas', materiTersimpan());
+  document.getElementById('mtTingkat').addEventListener('change', function() {
+    updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
   });
-
-  document.getElementById('tugasKelas').addEventListener('change', function() {
-    updateMateriDropdown('tugasTingkat', 'tugasKelas', 'tugasNamaTugas', materiTersimpan());
+  document.getElementById('mtKelas').addEventListener('change', function() {
+    updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
   });
-
   function gambarKalender(daftar) {
     const y = bulanKalenderAktif.getFullYear(), m = bulanKalenderAktif.getMonth();
     document.getElementById('judulBulanKalender').textContent = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(bulanKalenderAktif);
@@ -2983,7 +3158,6 @@
   }
   sambungkanFormTambahan('formCatatan', 'simpanCatatan');
   sambungkanFormTambahan('formKalender', 'simpanKegiatanKalender');
-  sambungkanFormTambahan('formTugasUjian', 'simpanTugasKoreksiUjian');
 
   function tampilkanRekap(daftar) {
     daftar = saringDaftarTugas(daftar, 'rekap');
@@ -3174,6 +3348,8 @@
         tampilkanAntrianK2(dataK2Tersimpan);
         tampilkanDaftarRapat(daftarRapatTersimpan);
         tampilkanModulTambahan(data);
+        renderManajemenTugas();
+        renderTugasTerkait();
       })
       .withFailureHandler(function(error) {
         console.error('Gagal memuat data:', error);
@@ -3420,25 +3596,6 @@
 
       if (barisPengumumanEdit) runner.ubahPengumuman(Number(barisPengumumanEdit), data, pin);
       else runner.tambahPengumuman(data, pin);
-    });
-  });
-
-  document.getElementById('formTugas').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries()), pesan = document.getElementById('pesanTugas');
-    pesan.className = 'message'; pesan.textContent = 'Meminta PIN admin…';
-
-    mintaPin().then(function(pin) {
-      if (!pin) { pesan.textContent = 'Penyimpanan dibatalkan.'; return; }
-      google.script.run
-        .withSuccessHandler(function(hasil) {
-          pesan.className = 'message success'; pesan.textContent = hasil || 'Tugas berhasil ditambahkan.'; form.reset();
-          document.getElementById('tugasMulai').value = tanggalHariIniLokal();
-          document.getElementById('tugasSelesai').value = tanggalHariIniLokal();
-          muatAplikasi();
-        })
-        .withFailureHandler(function(error) { pesan.className = 'message error'; pesan.textContent = error && error.message ? error.message : String(error); })
-        .tambahTugas(data, pin);
     });
   });
 
@@ -3708,8 +3865,6 @@
   });
 
   document.getElementById('agendaTanggal').value = tanggalHariIniLokal();
-  document.getElementById('tugasMulai').value = tanggalHariIniLokal();
-  document.getElementById('tugasSelesai').value = tanggalHariIniLokal();
 
   perbaruiJamDashboard();
   perbaruiHeaderPengumuman();
@@ -3853,11 +4008,17 @@
   }
 
   function terapkanPeran(sesi) {
-    document.body.dataset.peran = sesi.role || '';
+    sesiAktif = sesi;
+    const tampilan = tampilanDariPeran(sesi.role);
+    document.body.dataset.peran = tampilan;
     document.getElementById('namaPengguna').textContent = sesi.nama || '';
     document.getElementById('peranPengguna').textContent = sesi.label || sesi.role || '';
+    document.getElementById('sonikSalam').textContent = tampilan === 'SONIK' ? 'Assalamu\u2019alaikum, ' + (sesi.nama || '') : '';
+    document.getElementById('mtMode').textContent = tampilan === 'KOREKTOR' ? 'MODE KOREKTOR' : 'MODE ADMINISTRATOR';
+    if (tampilan === 'SONIK' && HALAMAN_SONIK.indexOf(halamanAktif()) < 0) bukaHalaman('dashboard');
+    renderManajemenTugas();
+    renderTugasTerkait();
   }
-
   function muatPengguna() {
     const wadah = document.getElementById('isiPengguna');
     if (!dataPengguna) wadah.innerHTML = '<div class="empty">Memuat pengguna…</div>';
@@ -4004,9 +4165,262 @@
     }
   }
 
+
+  /* ===== MANAJEMEN TUGAS, TUGAS TERKAIT & TAMPILAN SONIK ===== */
+  const HALAMAN_SONIK = ['tugasTerkait', 'pengumuman', 'dashboard', 'batasPelajaran', 'tipeSoal'];
+  let sesiAktif = null;
+  let mtDaftar = [];
+  let mtAnggota = [];
+
+  // ADMIN & KOREKTOR = tampilan staf; peran lain (SONIK/anggota) = tampilan ringkas hanya-lihat
+  function tampilanDariPeran(role) {
+    const r = String(role || '').trim().toUpperCase();
+    if (r === 'ADMIN' || r === 'ADMIN/TU') return 'ADMIN';
+    if (r === 'KOREKTOR') return 'KOREKTOR';
+    return 'SONIK';
+  }
+  function halamanAktif() {
+    const p = document.querySelector('.page.active');
+    return p ? p.id.replace('page-', '') : '';
+  }
+  function selesaiItem(x) { return !!x && String(x.status || '').toLowerCase() === 'selesai'; }
+
+  // Satukan baris tab "Tugas" (Pembuatan Soal) dan "Tugas Koreksi Ujian" menjadi satu penugasan
+  function kelompokPenugasan(data) {
+    const peta = {}, hasil = [];
+    function masuk(item, jenis) {
+      if (!item || !item.nama || item.nama === '—') return;
+      const dasar = item.kunci || ('X:' + jenis + ':' + item.nomorBaris);
+      let g = peta[dasar];
+      if (!g || g[jenis]) {
+        g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tingkat: item.tingkat,
+              mulai: item.mulai, selesai: item.selesai, soal: null, ujian: null };
+        peta[dasar] = g;
+        hasil.push(g);
+      }
+      g[jenis] = item;
+    }
+    (data.semuaTugas || []).forEach(function(i) { masuk(i, 'soal'); });
+    (data.tugasKoreksiUjian || []).forEach(function(i) { masuk(i, 'ujian'); });
+    hasil.forEach(function(g) {
+      const bagian = [g.soal, g.ujian].filter(Boolean);
+      g.total = bagian.length;
+      g.selesaiN = bagian.filter(selesaiItem).length;
+      g.persen = g.total ? Math.round(g.selesaiN / g.total * 100) : 0;
+    });
+    return hasil;
+  }
+  function statusKelompok(g) {
+    if (g.total && g.selesaiN === g.total) return 'Selesai';
+    return tanggalHariIniLokal() > g.selesai ? 'Telat' : 'Proses';
+  }
+  function labelTugasChip(g) { return g.tugas + (g.kelas ? ' (' + g.kelas + ')' : ''); }
+
+  function daftarAnggotaManajemen(data, grup) {
+    const ada = {}, hasil = [];
+    function tambah(n) {
+      const k = norm(n);
+      if (!k || ada[k]) return;
+      ada[k] = true;
+      hasil.push(String(n).trim());
+    }
+    (data.dataAnggota || []).forEach(tambah);
+    grup.forEach(function(g) { tambah(g.nama); });
+    return hasil.sort(function(a, b) { return a.localeCompare(b, 'id'); });
+  }
+
+  function chipTugasHtml(g, indeks) {
+    const kls = g.persen === 100 ? 'p100' : g.persen === 0 ? 'p0' : 'pmid';
+    function tag(x, nama) {
+      return x ? '<span class="mt-tag' + (selesaiItem(x) ? ' ok' : '') + '">' + nama + (selesaiItem(x) ? ' ✓' : '') + '</span>' : '';
+    }
+    const rincian = 'Pembuatan Soal: ' + (g.soal ? (selesaiItem(g.soal) ? 'Selesai' : 'Belum') : 'tidak ada') +
+                    ' · Koreksi Ujian: ' + (g.ujian ? (selesaiItem(g.ujian) ? 'Selesai' : 'Belum') : 'tidak ada') +
+                    ' · ' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
+    return '<div class="mt-chip" title="' + aman(rincian) + '">' +
+      '<div class="mt-chip-top"><span>' + aman(labelTugasChip(g)) + '</span>' +
+      '<span class="mt-pct ' + kls + '">' + g.persen + '%</span>' +
+      '<button type="button" class="mt-x" data-mt-hapus="' + indeks + '" title="Hapus tugas" aria-label="Hapus tugas">×</button></div>' +
+      '<div class="mt-chip-sub"><span>' + aman(g.tingkat || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
+      '</div>';
+  }
+
+  function renderManajemenTugas() {
+    const wadah = document.getElementById('isiManajemenTugas');
+    if (!wadah || !dataAplikasiTersimpan) return;
+    const data = dataAplikasiTersimpan;
+    mtDaftar = kelompokPenugasan(data);
+
+    const selT = document.getElementById('mtFilterTingkat');
+    const sebelum = selT.value;
+    const tingkatAda = Array.from(new Set(mtDaftar.map(function(g) { return norm(g.tingkat); }).filter(Boolean))).sort();
+    selT.innerHTML = '<option value="">Semua tingkat</option>' +
+      tingkatAda.map(function(t) { return '<option value="' + aman(t) + '">' + aman(t) + '</option>'; }).join('');
+    selT.value = tingkatAda.indexOf(sebelum) >= 0 ? sebelum : '';
+
+    const tingkatPilih = selT.value;
+    const kata = document.getElementById('mtCari').value.trim().toLocaleLowerCase('id');
+    mtAnggota = [];
+    let totalSelesai = 0, totalSemua = 0;
+    const baris = [];
+
+    daftarAnggotaManajemen(data, mtDaftar).forEach(function(nama) {
+      let milik = mtDaftar.filter(function(g) { return norm(g.nama) === norm(nama); });
+      if (tingkatPilih) milik = milik.filter(function(g) { return norm(g.tingkat) === tingkatPilih; });
+      if (tingkatPilih && !milik.length) return;
+      if (kata) {
+        const cocokNama = nama.toLocaleLowerCase('id').indexOf(kata) >= 0;
+        const cocokTugas = milik.some(function(g) {
+          return (labelTugasChip(g) + ' ' + (g.tingkat || '')).toLocaleLowerCase('id').indexOf(kata) >= 0;
+        });
+        if (!cocokNama && !cocokTugas) return;
+      }
+      const sel = milik.reduce(function(a, g) { return a + g.selesaiN; }, 0);
+      const tot = milik.reduce(function(a, g) { return a + g.total; }, 0);
+      totalSelesai += sel; totalSemua += tot;
+      mtAnggota.push(nama);
+      baris.push(
+        '<div class="mt-row">' +
+          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
+          '<div class="mt-chips">' + (milik.length
+            ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g)); }).join('')
+            : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
+          '<div class="mt-prog">' + (tot
+            ? '<b>' + Math.round(sel / tot * 100) + '%</b><small>' + sel + ' / ' + tot + '</small>'
+            : '<b style="color:var(--redup)">—</b><small>0 / 0</small>') + '</div>' +
+          '<div class="mt-aksi"><button type="button" class="button small" data-mt-tambah="' + (mtAnggota.length - 1) + '">＋ Tambah Tugas</button></div>' +
+        '</div>');
+    });
+
+    wadah.innerHTML = baris.length ? baris.join('') : '<div class="empty">Tidak ada anggota yang cocok.</div>';
+    const persen = totalSemua ? Math.round(totalSelesai / totalSemua * 100) : 0;
+    document.getElementById('mtProgresTeks').textContent = persen + '% (' + totalSelesai + '/' + totalSemua + ')';
+    document.getElementById('mtProgresBar').style.width = persen + '%';
+  }
+
+  function bukaModalTambahTugas(nama) {
+    document.getElementById('formMtTambah').reset();
+    document.getElementById('mtNama').value = nama;
+    document.getElementById('mtNamaTampil').textContent = nama;
+    document.getElementById('mtMulai').value = tanggalHariIniLokal();
+    document.getElementById('mtSelesai').value = tanggalHariIniLokal();
+    document.getElementById('mtKeSoal').checked = true;
+    document.getElementById('mtKeUjian').checked = true;
+    document.getElementById('mtError').textContent = '';
+    updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
+    document.getElementById('mtOverlay').hidden = false;
+  }
+
+  document.getElementById('mtCari').addEventListener('input', renderManajemenTugas);
+  document.getElementById('mtFilterTingkat').addEventListener('change', renderManajemenTugas);
+  document.getElementById('mtBatal').addEventListener('click', function() { document.getElementById('mtOverlay').hidden = true; });
+  document.getElementById('formMtTambah').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pesan = document.getElementById('mtError'), tombol = document.getElementById('mtSimpan');
+    const data = {
+      nama: document.getElementById('mtNama').value,
+      tingkat: document.getElementById('mtTingkat').value,
+      kelas: document.getElementById('mtKelas').value,
+      tugas: document.getElementById('mtFan').value,
+      mulai: document.getElementById('mtMulai').value,
+      selesai: document.getElementById('mtSelesai').value,
+      keSoal: document.getElementById('mtKeSoal').checked,
+      keUjian: document.getElementById('mtKeUjian').checked
+    };
+    if (!data.keSoal && !data.keUjian) { pesan.textContent = 'Pilih minimal satu tujuan: Pembuatan Soal atau Koreksi Hasil Ujian.'; return; }
+    pesan.textContent = ''; tombol.disabled = true;
+    google.script.run
+      .withSuccessHandler(function(hasil) {
+        tombol.disabled = false;
+        document.getElementById('mtOverlay').hidden = true;
+        tampilkanNotifikasi(hasil || 'Tugas ditambahkan.', 'success');
+        muatAplikasi();
+      })
+      .withFailureHandler(function(er) {
+        tombol.disabled = false;
+        pesan.textContent = er && er.message ? er.message : String(er);
+      })
+      .tambahPenugasan(data);
+  });
+  document.addEventListener('click', function(event) {
+    const tambah = event.target.closest('[data-mt-tambah]');
+    if (tambah) {
+      const nama = mtAnggota[Number(tambah.dataset.mtTambah)];
+      if (nama) bukaModalTambahTugas(nama);
+      return;
+    }
+    const hapus = event.target.closest('[data-mt-hapus]');
+    if (!hapus) return;
+    const g = mtDaftar[Number(hapus.dataset.mtHapus)];
+    if (!g || !g.kunci) return;
+    if (!confirm('Hapus tugas "' + labelTugasChip(g) + '" milik ' + g.nama + '?\nTugas ini akan terhapus dari Pembuatan Soal dan Koreksi Hasil Ujian.')) return;
+    google.script.run
+      .withSuccessHandler(function(hasil) { tampilkanNotifikasi(hasil || 'Tugas dihapus.', 'success'); muatAplikasi(); })
+      .withFailureHandler(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
+      .hapusPenugasan(g.kunci);
+  });
+
+  // ----- Tugas Terkait (tampilan Sonik) -----
+  function tahapSoal(x) {
+    if (!x) return null;
+    const telat = tanggalHariIniLokal() > x.selesai;
+    if (!selesaiItem(x)) return telat ? { teks: 'Telat / belum dikerjakan', kelas: 'telat' } : { teks: 'Sedang dikerjakan', kelas: 'waiting' };
+    if (String(x.statusK1 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 1', kelas: 'waiting' };
+    if (String(x.statusK2 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 2', kelas: 'waiting' };
+    if (String(x.statusKoreksiBersama || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Koreksi Bersama', kelas: 'waiting' };
+    return { teks: 'Selesai semua tahap', kelas: '' };
+  }
+  function tahapUjian(x) {
+    if (!x) return null;
+    if (selesaiItem(x)) return { teks: 'Selesai' + (x.tanggalSelesaiPengerjaan ? ' · ' + formatTanggal(x.tanggalSelesaiPengerjaan) : ''), kelas: '' };
+    return tanggalHariIniLokal() > x.selesai ? { teks: 'Telat / belum dikerjakan', kelas: 'telat' } : { teks: 'Sedang dikerjakan', kelas: 'waiting' };
+  }
+  function barisTahap(judul, t) {
+    return t ? '<div class="tt-tahap-baris"><span>' + judul + '</span><span class="badge ' + t.kelas + '">' + aman(t.teks) + '</span></div>' : '';
+  }
+  function renderTugasTerkait() {
+    const wadah = document.getElementById('isiTugasTerkait');
+    if (!wadah || !sesiAktif || !dataAplikasiTersimpan) return;
+    if (tampilanDariPeran(sesiAktif.role) !== 'SONIK') return;
+    const saya = norm(sesiAktif.nama);
+    const milik = kelompokPenugasan(dataAplikasiTersimpan).filter(function(g) { return norm(g.nama) === saya; });
+    if (!milik.length) {
+      wadah.innerHTML = '<div class="card empty">Belum ada tugas atas nama <b>' + aman(sesiAktif.nama) + '</b>.<br>' +
+        'Jika Anda merasa punya tugas, mintalah admin memastikan nama akun sama dengan nama di daftar anggota.</div>';
+      return;
+    }
+    const hitung = { Selesai: 0, Proses: 0, Telat: 0 };
+    milik.forEach(function(g) { hitung[statusKelompok(g)] += 1; });
+    milik.sort(function(a, b) {
+      const sa = statusKelompok(a) === 'Selesai' ? 1 : 0, sb = statusKelompok(b) === 'Selesai' ? 1 : 0;
+      return (sa - sb) || String(a.selesai || '').localeCompare(String(b.selesai || ''));
+    });
+    const ringkasan = '<div class="summary-grid">' +
+      '<div class="summary-card"><strong>' + milik.length + '</strong><span>Total tugas</span></div>' +
+      '<div class="summary-card"><strong>' + hitung.Selesai + '</strong><span>Selesai</span></div>' +
+      '<div class="summary-card"><strong>' + hitung.Proses + '</strong><span>Proses</span></div>' +
+      '<div class="summary-card"><strong>' + hitung.Telat + '</strong><span>Telat</span></div></div>';
+    const kartu = milik.map(function(g) {
+      const st = statusKelompok(g);
+      return '<article class="tt-card ' + (st === 'Selesai' ? 'selesai' : st === 'Telat' ? 'telat' : '') + '">' +
+        '<div class="tt-judul">' + aman(g.tugas) + '</div>' +
+        '<div class="tt-meta">' + [g.kelas, g.tingkat].filter(Boolean).map(aman).join(' · ') + '</div>' +
+        '<div class="tt-periode">' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai) + '</div>' +
+        '<div class="tt-tahap">' + barisTahap('Pembuatan Soal', tahapSoal(g.soal)) + barisTahap('Koreksi Hasil Ujian', tahapUjian(g.ujian)) + '</div>' +
+        '</article>';
+    }).join('');
+    wadah.innerHTML = ringkasan + '<div class="tt-grid">' + kartu + '</div>';
+  }
+
+  document.querySelectorAll('#sonikNav button[data-page]').forEach(function(b) {
+    b.addEventListener('click', function() { bukaHalaman(b.dataset.page); });
+  });
+
   (function () {
     const bukaSebelumnya = bukaHalaman;
     bukaHalaman = function (nama, dariRiwayat) {
+      // SONIK hanya boleh membuka 5 halaman miliknya
+      if (sesiAktif && tampilanDariPeran(sesiAktif.role) === 'SONIK' && HALAMAN_SONIK.indexOf(nama) < 0) nama = 'dashboard';
       bukaSebelumnya(nama, dariRiwayat);
       if (nama === 'batasPelajaran') muatDokumen('batas');
       if (nama === 'tipeSoal') muatDokumen('tipe');
@@ -4017,6 +4431,7 @@
     const loginSebelumnya = tampilkanLogin;
     tampilkanLogin = function () {
       delete document.body.dataset.peran;
+      sesiAktif = null;
       loginSebelumnya();
     };
 
