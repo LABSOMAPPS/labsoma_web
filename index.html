@@ -1054,7 +1054,7 @@
     .announcement-layout {
       min-height: calc(100vh - 120px);
       display: grid;
-      grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr);
+      grid-template-columns: minmax(0, 1fr);
       gap: 20px;
       align-items: stretch;
     }
@@ -1290,7 +1290,8 @@
     body[data-peran="SONIK"] .bottom-nav,
     body[data-peran="SONIK"] #sidebarToggle,
     body[data-peran="SONIK"] #tombolKembaliMobile { display: none !important; }
-    body[data-peran="SONIK"] .main { width: 100%; max-width: 1180px; margin: 0 auto; padding-bottom: 130px; }
+    body[data-peran="SONIK"] .main { width: 100%; max-width: 1180px; margin: 0 auto; padding-bottom: 130px; overflow-x: clip; }
+    body[data-peran="SONIK"] .dashboard-tasks { display: none !important; }
     body[data-peran="SONIK"] .sonik-salam { display: block; margin-right: auto; color: var(--aksen); font-size: 14px; font-weight: 700; }
     body[data-peran="SONIK"] .sonik-nav {
       display: grid; direction: rtl; grid-template-columns: repeat(5, 1fr);
@@ -1324,6 +1325,11 @@
     }
 
     /* ===== Tugas Terkait (Sonik) ===== */
+    .tt-ringkasan { position: sticky; top: 0; z-index: 30; margin: 0 0 14px; padding: 8px 0 10px; background: var(--latar); }
+    .tt-ringkasan .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+    .tt-ringkasan .summary-card { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; }
+    .tt-ringkasan .summary-card strong { font-size: 20px; line-height: 1; order: 2; }
+    .tt-ringkasan .summary-card span { font-size: 12.5px; font-weight: 700; }
     .tt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
     .tt-card { padding: 16px 18px; border: 1px solid var(--garis); border-left: 4px solid var(--aksen); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan-sm); }
     .tt-card.selesai { border-left-color: var(--hijau); }
@@ -1875,15 +1881,6 @@
       <!-- PAGE: PENGUMUMAN -->
       <section class="page" id="page-pengumuman">
         <div class="announcement-layout">
-          <header class="card announcement-identity">
-            <div class="brand-title">Labsoma PPS</div>
-            <div class="brand-subtitle">Laboratorium Soal-soal Madrasah</div>
-            <div class="hijri-date" id="pengumumanHijriyah">Memuat tanggal Hijriyah…</div>
-            <div class="gregorian-date" id="pengumumanMasehi">Memuat tanggal Masehi…</div>
-            <div class="main-clock" id="pengumumanJam">--:--:--</div>
-            <div class="wib-clock" id="pengumumanWib">WIB: --:--:--</div>
-          </header>
-
           <section class="card announcement-content">
             <div class="announcement-toolbar">
               <h1 class="page-heading">Pengumuman Hari Ini</h1>
@@ -2681,17 +2678,38 @@
     return new Date(Date.now() + SELISIH_ISTIWAK_MENIT * 60000);
   }
 
-  function formatTanggalHijriyah(tanggal) {
-    const opsi = { timeZone: ZONA_WAKTU, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const BULAN_HIJRIYAH = ['Muharram', 'Safar', 'Rabiul Awal', 'Rabiul Akhir', 'Jumadil Awal', 'Jumadil Akhir',
+    'Rajab', 'Syaban', 'Ramadhan', 'Syawal', 'Zulkaidah', 'Zulhijjah'];
+
+  // Angka tanggal/bulan/tahun Hijriyah. Nama bulan selalu dari daftar di atas, jadi tidak
+  // tergantung dukungan bahasa di HP (sebelumnya bulan & tahun bisa keluar Masehi).
+  function hitungHijriyah(tanggal) {
     try {
-      return new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', opsi).format(tanggal);
-    } catch (e) {
-      try {
-        return new Intl.DateTimeFormat('id-ID-u-ca-islamic', opsi).format(tanggal);
-      } catch (err) {
-        return 'Tanggal Hijriyah tidak didukung';
+      const fmt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { timeZone: ZONA_WAKTU, day: 'numeric', month: 'numeric', year: 'numeric' });
+      if (/islamic/.test(fmt.resolvedOptions().calendar || '')) {
+        const bagian = {};
+        fmt.formatToParts(tanggal).forEach(function(x) { bagian[x.type] = x.value; });
+        const d = parseInt(bagian.day, 10), m = parseInt(bagian.month, 10), y = parseInt(bagian.year, 10);
+        if (d >= 1 && d <= 30 && m >= 1 && m <= 12 && y > 1300 && y < 1700) return { d: d, m: m, y: y };
       }
-    }
+    } catch (e) { /* lanjut ke hitungan tabel */ }
+
+    // Cadangan: kalender Hijriyah tabular (selisih paling banyak ±1 hari dari Umm al-Qura)
+    const g = {};
+    new Intl.DateTimeFormat('en-CA', { timeZone: ZONA_WAKTU, year: 'numeric', month: 'numeric', day: 'numeric' })
+      .formatToParts(tanggal).forEach(function(x) { g[x.type] = parseInt(x.value, 10); });
+    const jd = Date.UTC(g.year, g.month - 1, g.day) / 86400000 + 2440587.5;
+    const epoch = 1948439.5;
+    const keJd = function(y, m, d) { return d + Math.ceil(29.5 * (m - 1)) + (y - 1) * 354 + Math.floor((3 + 11 * y) / 30) + epoch - 1; };
+    const y = Math.floor((30 * (jd - epoch) + 10646) / 10631);
+    const m = Math.min(12, Math.ceil((jd - (29 + keJd(y, 1, 1))) / 29.5) + 1);
+    return { d: Math.floor(jd - keJd(y, m, 1)) + 1, m: m, y: y };
+  }
+
+  function formatTanggalHijriyah(tanggal) {
+    const hari = new Intl.DateTimeFormat('id-ID', { timeZone: ZONA_WAKTU, weekday: 'long' }).format(tanggal);
+    const h = hitungHijriyah(tanggal);
+    return hari + ', ' + h.d + ' ' + BULAN_HIJRIYAH[h.m - 1] + ' ' + h.y + ' H';
   }
 
   function formatWaktu12(tanggal) {
@@ -4395,11 +4413,11 @@
       const sa = statusKelompok(a) === 'Selesai' ? 1 : 0, sb = statusKelompok(b) === 'Selesai' ? 1 : 0;
       return (sa - sb) || String(a.selesai || '').localeCompare(String(b.selesai || ''));
     });
-    const ringkasan = '<div class="summary-grid">' +
+    const ringkasan = '<div class="tt-ringkasan"><div class="summary-grid">' +
       '<div class="summary-card"><strong>' + milik.length + '</strong><span>Total tugas</span></div>' +
       '<div class="summary-card"><strong>' + hitung.Selesai + '</strong><span>Selesai</span></div>' +
       '<div class="summary-card"><strong>' + hitung.Proses + '</strong><span>Proses</span></div>' +
-      '<div class="summary-card"><strong>' + hitung.Telat + '</strong><span>Telat</span></div></div>';
+      '<div class="summary-card"><strong>' + hitung.Telat + '</strong><span>Telat</span></div></div></div>';
     const kartu = milik.map(function(g) {
       const st = statusKelompok(g);
       return '<article class="tt-card ' + (st === 'Selesai' ? 'selesai' : st === 'Telat' ? 'telat' : '') + '">' +
