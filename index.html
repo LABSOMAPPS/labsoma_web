@@ -1086,6 +1086,27 @@
     .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
     .calendar-weekday { min-height: auto; text-align: center; font-weight: 800; color: var(--aksen); background: transparent; border: 0; padding: 6px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
     .calendar-cell { min-height: 85px; padding: 8px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); overflow: hidden; display: flex; flex-direction: column; gap: 4px; transition: border-color 0.15s ease; }
+    .calendar-cell[data-tanggal] { cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .calendar-cell[data-tanggal]:hover { border-color: var(--aksen-border); }
+    .calendar-cell.selected { box-shadow: 0 0 0 2px var(--aksen); background: var(--aksen-soft); }
+    .calendar-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; margin-top: 6px; padding: 0 5px; border: 2px solid var(--aksen); border-radius: 999px; color: var(--aksen); font-size: 11px; font-weight: 800; line-height: 1; }
+    .pt-wadah { margin-top: 16px; padding: 18px 20px; }
+    .pt-judul-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+    .pt-judul-bar h2 { font-size: 16px; font-weight: 800; }
+    .pt-judul-bar small { color: var(--redup); font-weight: 600; }
+    .pt-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid var(--garis); }
+    .pt-jenis { flex: none; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.03em; }
+    .pt-jenis.kegiatan { background: var(--aksen-soft); color: var(--aksen); }
+    .pt-jenis.agenda { background: var(--biru-soft); color: var(--biru); }
+    .pt-jenis.rapat { background: var(--kuning-soft); color: var(--kuning); }
+    .pt-jam { flex: none; min-width: 46px; font-size: 13px; font-weight: 800; }
+    .pt-isi { flex: 1; min-width: 0; }
+    .pt-isi strong { display: block; font-size: 14px; }
+    .pt-isi small { display: block; margin-top: 2px; color: var(--redup); font-size: 12.5px; line-height: 1.5; }
+    .catatan-edit { width: 100%; min-width: 150px; padding: 8px 10px; border: 1px solid var(--aksen-border); border-radius: var(--radius-sm); background: var(--panel2); color: var(--teks); font: inherit; font-size: 13px; }
+    textarea.catatan-edit { min-width: 240px; min-height: 96px; resize: vertical; }
+    .catatan-aksi { display: flex; flex-direction: column; gap: 6px; min-width: 84px; }
+    tr.catatan-sedang-edit td { background: var(--aksen-soft); vertical-align: top; }
     .calendar-cell.today { border: 2px solid var(--aksen); background: var(--aksen-soft); }
     .calendar-cell.muted { opacity: 0.35; }
     .calendar-cell b { font-size: 12px; font-weight: 700; color: var(--teks); }
@@ -2387,7 +2408,7 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Kalender Kegiatan</h1>
-            <p class="subheading">Centang opsi agenda jika kegiatan juga ingin ditampilkan di dashboard.</p>
+            <p class="subheading">Angka berlingkar di tanggal adalah jumlah peristiwa (kegiatan, agenda, rapat). Pilih tanggal untuk melihat rinciannya.</p>
           </div>
           <button class="button" id="tombolTambahKalender" type="button">＋ Tambah Kegiatan</button>
         </div>
@@ -3274,11 +3295,70 @@
     `;
   }
 
+  /* ----- Catatan Rapat: edit langsung di baris tabel (semua kolom) ----- */
+  let catatanSedangEdit = null;
+
+  function gambarCatatan(catatan) {
+    const rows = (catatan || []).map(function(x) {
+      if (catatanSedangEdit !== null && Number(x.nomorBaris) === catatanSedangEdit) {
+        return '<tr class="catatan-sedang-edit" data-catatan-baris="' + x.nomorBaris + '"><td>' + aman(x.no) + '</td>' +
+          '<td><input class="catatan-edit" data-cf="pokokMasalah" value="' + aman(x.pokokMasalah) + '" aria-label="Pokok masalah"></td>' +
+          '<td><textarea class="catatan-edit" data-cf="notula" aria-label="Notula rapat">' + aman(x.notula) + '</textarea></td>' +
+          '<td><input class="catatan-edit" data-cf="pic" value="' + aman(x.pic) + '" aria-label="PIC"></td>' +
+          '<td><input class="catatan-edit" data-cf="ket" value="' + aman(x.ket) + '" aria-label="Keterangan"></td>' +
+          '<td><div class="catatan-aksi"><button class="button small" type="button" data-catatan-simpan="1">Simpan</button>' +
+          '<button class="button secondary small" type="button" data-catatan-batal="1">Batal</button></div></td></tr>';
+      }
+      return '<tr data-catatan-baris="' + x.nomorBaris + '"><td>' + aman(x.no) + '</td><td>' + aman(x.pokokMasalah) + '</td><td>' + aman(x.notula) +
+        '</td><td>' + aman(x.pic) + '</td><td>' + aman(x.ket) + '</td><td>' +
+        (x.nomorBaris ? '<button class="button secondary small" type="button" data-catatan-edit="' + x.nomorBaris + '">✎ Edit</button>' : '') + '</td></tr>';
+    });
+    document.getElementById('daftarCatatan').innerHTML = renderTabel(['NO', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET', 'Aksi'], rows);
+  }
+
+  document.getElementById('daftarCatatan').addEventListener('click', function(event) {
+    const catatan = (dataAplikasiTersimpan || {}).catatan || [];
+    const edit = event.target.closest('[data-catatan-edit]');
+    if (edit) {
+      catatanSedangEdit = Number(edit.dataset.catatanEdit);
+      gambarCatatan(catatan);
+      const pertama = document.querySelector('#daftarCatatan [data-cf="pokokMasalah"]');
+      if (pertama) pertama.focus();
+      return;
+    }
+    if (event.target.closest('[data-catatan-batal]')) {
+      catatanSedangEdit = null;
+      gambarCatatan(catatan);
+      return;
+    }
+    const simpan = event.target.closest('[data-catatan-simpan]');
+    if (!simpan) return;
+    const tr = simpan.closest('tr'), baris = Number(tr.dataset.catatanBaris), data = {};
+    tr.querySelectorAll('[data-cf]').forEach(function(el) { data[el.dataset.cf] = el.value; });
+    if (!String(data.pokokMasalah || '').trim()) { tampilkanNotifikasi('Pokok masalah wajib diisi.', 'error'); return; }
+    mintaPin().then(function(pin) {
+      if (!pin) return;
+      simpan.disabled = true;
+      google.script.run
+        .withSuccessHandler(function(pesan) {
+          tampilkanNotifikasi(pesan || 'Catatan berhasil diperbarui.', 'success');
+          catatanSedangEdit = null;
+          muatAplikasi();
+        })
+        .withFailureHandler(function(error) {
+          simpan.disabled = false;
+          const teks = error && error.message ? error.message : String(error);
+          if (teks.toLowerCase().indexOf('pin') !== -1) pinAdmin = '';
+          tampilkanNotifikasi(teks, 'error');
+        })
+        .editCatatan(baris, data, pin);
+    });
+  });
+
   function tampilkanModulTambahan(data) {
     const catatan = data.catatan || [], kalender = data.kalender || [], ujian = data.tugasKoreksiUjian || [], rekapUjian = data.rekapKoreksiUjian || [];
-    document.getElementById('daftarCatatan').innerHTML = renderTabel(['NO', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET'], catatan.map(function(x) { return '<tr><td>' + aman(x.no) + '</td><td>' + aman(x.pokokMasalah) + '</td><td>' + aman(x.notula) + '</td><td>' + aman(x.pic) + '</td><td>' + aman(x.ket) + '</td></tr>'; }));
-    document.getElementById('daftarKalender').innerHTML = renderTabel(['Tanggal', 'Jam', 'Kegiatan', 'PIC', 'Ditampilkan sebagai', 'Aksi'], kalender.map(function(x) { return '<tr><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) + '</td><td>' + aman(x.jam || '—') + '</td><td>' + aman(x.kegiatan) + (x.keterangan ? ' · ' + aman(x.keterangan) : '') + '</td><td>' + aman(x.pic) + '</td><td>' + (x.sebagaiAgenda ? 'Agenda' : 'Kegiatan saja') + '</td><td><button class="button secondary small" data-action="editKalender" data-row="' + x.nomorBaris + '">✎ Edit</button></td></tr>'; }));
-    gambarKalender(kalender);
+    if (catatanSedangEdit === null) gambarCatatan(catatan);   // jangan timpa baris yang sedang diedit
+    gambarKalender(data);
     isiPilihanTugas(data.dataAnggota || [], data.materiPelajaran || []);
     tampilkanAntrianKoreksiBersama(data.antrianKoreksiBersama || []);
     dataUjianTersimpan = ujian;
@@ -3319,7 +3399,33 @@
   document.getElementById('mtKelas').addEventListener('change', function() {
     updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
   });
-  function gambarKalender(daftar) {
+  /* ----- Kalender: kegiatan + agenda + rapat dalam satu kalender ----- */
+  let tanggalKalenderDipilih = '';
+
+  function kumpulkanPeristiwa(data) {
+    const hasil = [];
+    (data.kalender || []).forEach(function(x) {
+      hasil.push({ jenis: 'Kegiatan', mulai: x.mulai, selesai: x.selesai || x.mulai, jam: x.jam || '', judul: x.kegiatan,
+        rincian: [x.pic ? 'PIC: ' + x.pic : '', x.keterangan || ''].filter(Boolean), edit: 'editKalender', baris: x.nomorBaris });
+    });
+    (data.semuaAgenda || []).forEach(function(x) {
+      hasil.push({ jenis: 'Agenda', mulai: x.tanggal, selesai: x.tanggal, jam: x.jam || '', judul: x.agenda,
+        rincian: [x.tempat ? 'Tempat: ' + x.tempat : '', x.penanggungJawab ? 'PJ: ' + x.penanggungJawab : '', x.keterangan || ''].filter(Boolean),
+        edit: 'editAgenda', baris: x.nomorBaris });
+    });
+    (data.rapat || []).forEach(function(x) {
+      hasil.push({ jenis: 'Rapat', mulai: x.tanggal, selesai: x.tanggal, jam: '', judul: x.nama,
+        rincian: [x.jenis ? 'Jenis: ' + x.jenis : ''].filter(Boolean), edit: '', baris: x.nomorBaris });
+    });
+    return hasil.filter(function(p) { return p.mulai; });
+  }
+  function peristiwaPada(iso, semua) {
+    return semua.filter(function(p) { return p.mulai <= iso && p.selesai >= iso; });
+  }
+
+  function gambarKalender(data) {
+    data = data || {};
+    const semua = kumpulkanPeristiwa(data);
     const y = bulanKalenderAktif.getFullYear(), m = bulanKalenderAktif.getMonth();
     document.getElementById('judulBulanKalender').textContent = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(bulanKalenderAktif);
     let html = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(function(n) { return '<div class="calendar-cell calendar-weekday">' + n + '</div>'; }).join('');
@@ -3331,14 +3437,66 @@
       else d = new Date(y, m, i - offset + 1);
 
       const iso = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2),
-            events = (daftar || []).filter(function(x) { return x.mulai <= iso && x.selesai >= iso; }).slice(0, 2);
-      html += '<div class="calendar-cell ' + (muted ? 'muted ' : '') + (iso === today ? 'today' : '') + '"><b>' + d.getDate() + '</b>' + events.map(function(x) { return '<div class="calendar-event" title="' + aman(x.kegiatan) + '">' + (x.jam ? aman(x.jam) + ' ' : '') + aman(x.kegiatan) + '</div>'; }).join('') + '</div>';
+            jumlah = peristiwaPada(iso, semua).length;
+      html += '<div class="calendar-cell ' + (muted ? 'muted ' : '') + (iso === today ? 'today ' : '') + (iso === tanggalKalenderDipilih ? 'selected' : '') +
+        '" data-tanggal="' + iso + '" role="button" tabindex="0"><b>' + d.getDate() + '</b>' +
+        (jumlah ? '<span class="calendar-count" title="' + jumlah + ' peristiwa">' + jumlah + '</span>' : '') + '</div>';
     }
     document.getElementById('gridKalender').innerHTML = html;
+    gambarDaftarPeristiwa(semua);
   }
 
-  document.getElementById('kalenderSebelumnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() - 1, 1); gambarKalender((dataAplikasiTersimpan || {}).kalender || []); });
-  document.getElementById('kalenderBerikutnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() + 1, 1); gambarKalender((dataAplikasiTersimpan || {}).kalender || []); });
+  // Daftar di bawah kalender: tanggal yang dipilih; bila tidak ada yang dipilih, hanya peristiwa HARI INI.
+  function gambarDaftarPeristiwa(semua) {
+    const hariIni = tanggalHariIniLokal(), iso = tanggalKalenderDipilih || hariIni;
+    const daftar = peristiwaPada(iso, semua).sort(function(a, b) {
+      return (a.jam || '99:99').localeCompare(b.jam || '99:99') || String(a.judul).localeCompare(String(b.judul), 'id');
+    });
+    const judulTanggal = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+      .format(new Date(iso + 'T00:00:00Z'));
+    const kembali = tanggalKalenderDipilih && tanggalKalenderDipilih !== hariIni
+      ? '<button class="button secondary small" type="button" data-kalender-hariini="1">Kembali ke hari ini</button>' : '';
+    const kepala = '<div class="pt-judul-bar"><h2>Peristiwa · ' + aman(judulTanggal) +
+      (iso === hariIni ? ' <small>(hari ini)</small>' : '') + '</h2>' + kembali + '</div>';
+
+    let isi;
+    if (!daftar.length) {
+      isi = '<div class="empty">' + (tanggalKalenderDipilih ? 'Tidak ada peristiwa pada tanggal ini.'
+        : 'Tidak ada peristiwa hari ini. Pilih tanggal di kalender untuk melihat peristiwa pada tanggal itu.') + '</div>';
+    } else {
+      isi = daftar.map(function(p) {
+        return '<div class="pt-item"><span class="pt-jenis ' + p.jenis.toLowerCase() + '">' + p.jenis + '</span>' +
+          '<span class="pt-jam">' + aman(p.jam || '—') + '</span>' +
+          '<div class="pt-isi"><strong>' + aman(p.judul) + '</strong>' +
+          (p.rincian.length ? '<small>' + p.rincian.map(aman).join(' · ') + '</small>' : '') + '</div>' +
+          (p.edit && p.baris ? '<button class="button secondary small" type="button" data-action="' + p.edit + '" data-row="' + p.baris + '">✎ Edit</button>' : '') +
+          '</div>';
+      }).join('');
+    }
+    document.getElementById('daftarKalender').innerHTML = '<div class="card pt-wadah">' + kepala + isi + '</div>';
+  }
+
+  document.getElementById('gridKalender').addEventListener('click', function(event) {
+    const sel = event.target.closest('[data-tanggal]');
+    if (!sel) return;
+    tanggalKalenderDipilih = tanggalKalenderDipilih === sel.dataset.tanggal ? '' : sel.dataset.tanggal;   // klik lagi = batal pilih
+    gambarKalender(dataAplikasiTersimpan || {});
+  });
+  document.getElementById('gridKalender').addEventListener('keydown', function(event) {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    const sel = event.target.closest('[data-tanggal]');
+    if (!sel) return;
+    event.preventDefault();
+    sel.click();
+  });
+  document.getElementById('daftarKalender').addEventListener('click', function(event) {
+    if (!event.target.closest('[data-kalender-hariini]')) return;
+    tanggalKalenderDipilih = '';
+    gambarKalender(dataAplikasiTersimpan || {});
+  });
+
+  document.getElementById('kalenderSebelumnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() - 1, 1); gambarKalender(dataAplikasiTersimpan || {}); });
+  document.getElementById('kalenderBerikutnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() + 1, 1); gambarKalender(dataAplikasiTersimpan || {}); });
 
   function sambungkanFormTambahan(id, method) {
     document.getElementById(id).addEventListener('submit', function(event) {
