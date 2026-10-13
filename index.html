@@ -1271,6 +1271,31 @@
       .search-filters.mt-tools { grid-template-columns: 1fr; }
     }
 
+    /* ===== Warna aksen KOREKTOR (hijau stabilo) — beda dari Admin (tosca) dan Sonik (emas) ===== */
+    body[data-peran="KOREKTOR"] {
+      --aksen: #a3e635; --aksen-hover: #84cc16; --aksen-soft: rgba(163, 230, 53, 0.14);
+      --aksen-border: rgba(163, 230, 53, 0.38); --aksen-teks: #12220a; --glow: 0 0 24px rgba(163, 230, 53, 0.25);
+    }
+    body[data-peran="KOREKTOR"][data-theme="light"] {
+      --aksen: #4d7c0f; --aksen-hover: #3f6212; --aksen-soft: rgba(101, 163, 13, 0.11);
+      --aksen-border: rgba(77, 124, 15, 0.3); --aksen-teks: #ffffff; --glow: 0 0 20px rgba(101, 163, 13, 0.16);
+    }
+    body[data-peran="KOREKTOR"] .app {
+      background: radial-gradient(circle at 12% 0%, rgba(163, 230, 53, 0.08) 0%, transparent 42%),
+                  radial-gradient(circle at 92% 92%, rgba(56, 189, 248, 0.04) 0%, transparent 40%), var(--latar);
+    }
+    /* Menu bawah HP: Admin & Sonik punya sendiri, Korektor memakai #korektorNav */
+    body[data-peran="KOREKTOR"] #bottomNav { display: none !important; }
+    body:not([data-peran="KOREKTOR"]) #korektorNav { display: none !important; }
+    #tombolDrawerKorektor { display: none; }
+    @media (max-width: 768px) {
+      body[data-peran="KOREKTOR"] #tombolDrawerKorektor { display: inline-flex; }
+      body[data-peran="KOREKTOR"] #korektorNav button.active,
+      body[data-peran="KOREKTOR"] #korektorNav button.active span.nav-label { color: var(--aksen); }
+      body[data-peran="KOREKTOR"] #korektorNav button.active .nav-icon-wrap svg { filter: drop-shadow(0 0 8px var(--aksen-border)); }
+      body[data-peran="KOREKTOR"] #korektorNav button.active::before { background: var(--aksen); box-shadow: 0 0 12px 2px var(--aksen-border), 0 0 24px 6px var(--aksen-soft); }
+    }
+
     /* ===== Tampilan SONIK / Anggota (hanya lihat, aksen emas) ===== */
     .sonik-salam, .sonik-nav { display: none; }
     body[data-peran="SONIK"] {
@@ -1683,6 +1708,7 @@
         <button class="toolbar-button icon-only" id="logoutBtn" type="button" title="Keluar" aria-label="Keluar">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
+        <button class="toolbar-button icon-only" id="tombolDrawerKorektor" type="button" title="Menu lengkap" aria-label="Menu lengkap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
         <button class="toolbar-button" id="tombolKembaliMobile" type="button">‹ Kembali</button>
       </div>
 
@@ -1841,6 +1867,46 @@
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             </span>
             <span><strong>Catatan</strong><small>Notula penting &amp; rekam evaluasi rapat</small></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- PAGE HUB: DOKUMEN (Korektor, HP) -->
+      <section class="page" id="page-hubDokumen">
+        <h1 class="page-heading">Dokumen</h1>
+        <p class="subheading">Rujukan tipe soal dan batas pelajaran.</p>
+        <div class="hub-grid">
+          <button class="hub-button" data-goto="tipeSoal">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+            </span>
+            <span><strong>Tipe Soal</strong><small>Mekanisme dan rincian soal per-IMDA</small></span>
+          </button>
+          <button class="hub-button" data-goto="batasPelajaran">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </span>
+            <span><strong>Batas Pelajaran</strong><small>Batas materi pelajaran per-IMDA</small></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- PAGE HUB: KOREKSI (Korektor, HP) -->
+      <section class="page" id="page-hubKoreksi">
+        <h1 class="page-heading">Koreksi</h1>
+        <p class="subheading">Antrean pemeriksaan Korektor 1 dan Korektor 2.</p>
+        <div class="hub-grid">
+          <button class="hub-button" data-goto="korektor1">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
+          </button>
+          <button class="hub-button" data-goto="korektor2">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
           </button>
         </div>
       </section>
@@ -2450,6 +2516,30 @@
     </button>
   </nav>
 
+  <!-- MENU BAWAH KOREKTOR (HP), kiri ke kanan: Dokumen | Kegiatan | Dashboard | Pengumuman | Koreksi -->
+  <nav class="bottom-nav" id="korektorNav" aria-label="Menu korektor">
+    <button type="button" data-tab="dokumen">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+      <span class="nav-label">Dokumen</span>
+    </button>
+    <button type="button" data-tab="kegiatan">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+      <span class="nav-label">Kegiatan</span>
+    </button>
+    <button type="button" data-tab="dashboard" class="active">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      <span class="nav-label">Dashboard</span>
+    </button>
+    <button type="button" data-tab="pengumuman">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+      <span class="nav-label">Pengumuman</span>
+    </button>
+    <button type="button" data-tab="koreksi">
+      <span class="nav-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+      <span class="nav-label">Koreksi</span>
+    </button>
+  </nav>
+
   <!-- NAVIGASI SONIK / ANGGOTA: urutan dari KANAN ke KIRI = Tugas Terkait, Pengumuman, Dashboard, Batas Pelajaran, Tipe -->
   <nav class="sonik-nav" id="sonikNav" aria-label="Menu anggota">
     <button type="button" data-page="tugasTerkait">
@@ -2791,14 +2881,19 @@
 
     pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' },
     manajemenTugas: { tab: 'dashboard', induk: 'dashboard' },
-    tugasTerkait:   { tab: 'tugasTerkait' }
+    tugasTerkait:   { tab: 'tugasTerkait' },
+    hubDokumen:     { tab: 'dokumen' },
+    hubKoreksi:     { tab: 'koreksi' }
   };
 
   const HALAMAN_TAB = {
     soal: 'hubSoal',
     ujian: 'hubUjian',
     dashboard: 'dashboard',
-    kegiatan: 'hubKegiatan'
+    kegiatan: 'hubKegiatan',
+    dokumen: 'hubDokumen',
+    koreksi: 'hubKoreksi',
+    pengumuman: 'pengumuman'
   };
 
   let riwayatOk = true;
@@ -2820,7 +2915,7 @@
 
     const info = PETA_HALAMAN[nama] || {};
 
-    document.querySelectorAll('#bottomNav button[data-tab]').forEach(function(b) {
+    document.querySelectorAll('#bottomNav button[data-tab], #korektorNav button[data-tab]').forEach(function(b) {
       b.classList.toggle('active', b.dataset.tab === info.tab);
     });
 
@@ -2862,7 +2957,7 @@
     });
   });
 
-  document.querySelectorAll('#bottomNav button[data-tab]').forEach(function(b) {
+  document.querySelectorAll('#bottomNav button[data-tab], #korektorNav button[data-tab]').forEach(function(b) {
     b.addEventListener('click', function() {
       bukaHalaman(HALAMAN_TAB[b.dataset.tab]);
     });
@@ -2870,6 +2965,10 @@
 
   // Tombol Menu ke-5 di Nav Bawah HP: Membuka Drawer Sidebar
   document.getElementById('tombolBukaDrawerMenu').addEventListener('click', function() {
+    document.body.classList.toggle('sidebar-mobile-open');
+  });
+
+  document.getElementById('tombolDrawerKorektor').addEventListener('click', function() {
     document.body.classList.toggle('sidebar-mobile-open');
   });
 
@@ -4028,6 +4127,16 @@
   function terapkanPeran(sesi) {
     sesiAktif = sesi;
     const tampilan = tampilanDariPeran(sesi.role);
+    if (tampilan === 'KOREKTOR') {
+      // di menu bawah Korektor, halaman ini berada di tab Dokumen / Koreksi / Pengumuman
+      Object.assign(PETA_HALAMAN, {
+        tipeSoal:       { tab: 'dokumen', induk: 'hubDokumen' },
+        batasPelajaran: { tab: 'dokumen', induk: 'hubDokumen' },
+        korektor1:      { tab: 'koreksi', induk: 'hubKoreksi' },
+        korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
+        pengumuman:     { tab: 'pengumuman' }
+      });
+    }
     document.body.dataset.peran = tampilan;
     document.getElementById('namaPengguna').textContent = sesi.nama || '';
     document.getElementById('peranPengguna').textContent = sesi.label || sesi.role || '';
