@@ -2207,6 +2207,7 @@
             <input id="loginPass" type="password" autocomplete="current-password" required>
           </div>
           <div class="modal-error" id="loginError"></div>
+          <p style="margin-top:10px; text-align:center; font-size:12px; color:var(--redup);">Cukup masuk sekali. Anda tetap masuk di perangkat ini sampai menekan Keluar.</p>
           <div class="modal-actions" style="width: 100%; margin-top: 15px;">
             <button class="button" type="submit" id="loginTombol" style="width: 100%; display: block;">Masuk</button>
           </div>
@@ -2639,7 +2640,17 @@
 
   function ambilToken() { try { return localStorage.getItem(KUNCI_TOKEN) || ''; } catch (e) { return ''; } }
   function simpanToken(t) {
-    try { if (t) localStorage.setItem(KUNCI_TOKEN, t); else localStorage.removeItem(KUNCI_TOKEN); } catch (e) {}
+    try {
+      if (t) localStorage.setItem(KUNCI_TOKEN, t);
+      else { localStorage.removeItem(KUNCI_TOKEN); localStorage.removeItem(KUNCI_SESI); }
+    } catch (e) {}
+  }
+  // Salinan data sesi (nama & peran) agar aplikasi langsung tampil sesuai peran saat dibuka, tanpa menunggu jaringan.
+  // Hanya untuk tampilan; hak akses tetap diperiksa server pada setiap permintaan.
+  const KUNCI_SESI = 'labsomaSesi';
+  function simpanSesiLokal(s) { try { localStorage.setItem(KUNCI_SESI, JSON.stringify(s)); } catch (e) {} }
+  function bacaSesiLokal() {
+    try { const s = JSON.parse(localStorage.getItem(KUNCI_SESI) || 'null'); return s && s.role ? s : null; } catch (e) { return null; }
   }
 
   (function () {
@@ -2670,8 +2681,9 @@
               function (data) { if (ok) ok(data); },
               function (err) {
                 if (err && err.message === 'SESI_HABIS') {
+                  // hanya terjadi bila kata sandi diganti / akun dinonaktifkan / dihapus — bukan karena waktu
                   simpanToken('');
-                  tampilkanLogin();
+                  tampilkanLogin('Sesi berakhir karena kata sandi diubah atau akun dinonaktifkan. Silakan masuk lagi.');
                   return;
                 }
                 if (gagal) gagal(err); else console.error(err);
@@ -2685,9 +2697,10 @@
     window.google = { script: { run: buat(null, null) } };
   })();
 
-  function tampilkanLogin() {
+  function tampilkanLogin(pesan) {
     const ov = document.getElementById('loginOverlay');
     const sudahTampil = !ov.hidden;
+    if (typeof pesan === 'string' && pesan) document.getElementById('loginError').textContent = pesan;
     ov.hidden = false;
     if (!sudahTampil) setTimeout(function () { document.getElementById('loginUser').focus(); }, 50);
   }
@@ -2704,6 +2717,8 @@
     google.script.run
       .withSuccessHandler(function (h) {
         simpanToken(h.token);
+        // minta browser menjaga penyimpanan ini agar tidak dihapus otomatis saat memori penuh
+        try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
         document.getElementById('loginPass').value = '';
         document.getElementById('loginOverlay').hidden = true;
         tombol.disabled = false; tombol.textContent = 'Masuk';
@@ -2718,6 +2733,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', function () {
+    if (!confirm('Keluar dari akun ini? Anda perlu masuk lagi untuk membuka aplikasi.')) return;
     const selesai = function () { simpanToken(''); location.reload(); };
     google.script.run.withSuccessHandler(selesai).withFailureHandler(selesai).logout();
   });
@@ -3740,6 +3756,15 @@
         tampilkanAntrianK1(dataK1Tersimpan);
         tampilkanAntrianK2(dataK2Tersimpan);
         tampilkanDaftarRapat(daftarRapatTersimpan);
+        // peran/nama dari server selalu dianggap benar: bila berubah (mis. admin mengganti peran), muat ulang tampilan
+        if (data.sesi) {
+          if (sesiAktif && tampilanDariPeran(data.sesi.role) !== tampilanDariPeran(sesiAktif.role)) {
+            simpanSesiLokal(data.sesi);
+            location.reload();
+            return;
+          }
+          if (!sesiAktif || data.sesi.nama !== sesiAktif.nama || data.sesi.role !== sesiAktif.role) terapkanPeran(data.sesi);
+        }
         tampilkanModulTambahan(data);
         renderManajemenTugas();
         renderTugasTerkait();
@@ -4417,9 +4442,11 @@
 
     const kartu = event.target.closest('[data-dok-pilih]');
     if (!kartu) return;
+    // tentukan halaman SEBELUM kartu digambar ulang (setelah itu elemen kartu lama sudah lepas dari halaman)
+    const kode = kartu.closest('#page-tipeSoal') ? 'tipe' : 'batas';
     dokPilih[kartu.dataset.dokPilih] = kartu.dataset.nilai;
     gambarFilterDokumen();
-    muatDokumen(kartu.closest('#page-tipeSoal') ? 'tipe' : 'batas');
+    muatDokumen(kode);
   });
 
   /* ===== PENGGUNA & SIDEBAR ===== */
@@ -4435,6 +4462,7 @@
 
   function terapkanPeran(sesi) {
     sesiAktif = sesi;
+    simpanSesiLokal(sesi);
     const tampilan = tampilanDariPeran(sesi.role);
     if (tampilan === 'KOREKTOR') {
       // di menu bawah Korektor, halaman ini berada di tab Dokumen / Koreksi / Pengumuman
@@ -4865,10 +4893,10 @@
     };
 
     const loginSebelumnya = tampilkanLogin;
-    tampilkanLogin = function () {
+    tampilkanLogin = function (pesan) {
       delete document.body.dataset.peran;
       sesiAktif = null;
-      loginSebelumnya();
+      loginSebelumnya(pesan);
     };
 
     const aplikasiSebelumnya = muatAplikasi;
@@ -4878,7 +4906,12 @@
     };
   })();
 
-  if (ambilToken()) muatSesi();
+  // Buka aplikasi: bila sudah pernah masuk, langsung tampilkan sesuai peran tersimpan lalu cocokkan ke server
+  if (ambilToken()) {
+    const sesiLokal = bacaSesiLokal();
+    if (sesiLokal) terapkanPeran(sesiLokal);
+    muatSesi();
+  }
 </script>
 </body>
 </html>
