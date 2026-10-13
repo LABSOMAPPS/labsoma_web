@@ -1222,6 +1222,20 @@
     .message.success { color: var(--hijau); }
 
     /* Dokumen */
+    .dok-filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+    .dok-baris { display: grid; gap: 10px; }
+    .dok-baris-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dok-baris-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .dok-kartu { padding: 14px 10px; border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); color: var(--teks); font: inherit; font-size: 14px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; box-shadow: var(--bayangan-sm); transition: all 0.18s ease; -webkit-tap-highlight-color: transparent; }
+    .dok-baris-2 .dok-kartu { padding: 20px 10px; font-size: 19px; }
+    .dok-kartu:hover { border-color: var(--aksen-border); }
+    .dok-kartu:active { transform: scale(0.97); }
+    .dok-kartu.aktif { background: var(--aksen); border-color: var(--aksen); color: var(--aksen-teks); box-shadow: var(--glow, none); }
+    @media (max-width: 640px) {
+      .dok-baris-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dok-kartu { font-size: 13px; }
+      .dok-baris-2 .dok-kartu { font-size: 17px; }
+    }
     .dokumen-blok { margin: 0 0 32px; }
     .dokumen-judul { margin: 0 0 8px; text-align: center; color: var(--aksen); font-size: clamp(22px, 2.2vw, 28px); font-weight: 800; }
     .dokumen-bagian { margin: 0 0 10px; text-align: center; color: var(--biru); font-size: clamp(17px, 1.8vw, 22px); font-weight: 700; }
@@ -2489,10 +2503,11 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Batas Pelajaran</h1>
-            <p class="subheading">Batas materi tiap dawr (IMDA) per kelas.</p>
+            <p class="subheading">Pilih lembaga (IMDA / IMNI) dan tingkat untuk melihat batas materi per kelas.</p>
           </div>
           <button class="button secondary" type="button" data-muat-dokumen="batas">⟳ Muat ulang</button>
         </div>
+        <div class="dok-filter" id="filterDokumenBatas"></div>
         <div id="isiDokumenBatas"><div class="empty">Memuat dokumen…</div></div>
       </section>
 
@@ -2501,10 +2516,11 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Tipe Soal</h1>
-            <p class="subheading">Mekanisme pembuatan soal dan rincian per-IMDA.</p>
+            <p class="subheading">Pilih lembaga (IMDA / IMNI) dan tingkat untuk melihat mekanisme pembuatan soal.</p>
           </div>
           <button class="button secondary" type="button" data-muat-dokumen="tipe">⟳ Muat ulang</button>
         </div>
+        <div class="dok-filter" id="filterDokumenTipe"></div>
         <div id="isiDokumenTipe"><div class="empty">Memuat dokumen…</div></div>
       </section>
     </main>
@@ -4339,38 +4355,71 @@
     }).join('');
   }
 
+  // Filter kartu: baris atas = lembaga, baris bawah = tingkat. Pilihan dipakai bersama oleh Batas Pelajaran & Tipe Soal.
+  const LEMBAGA_DOK = ['IMDA', 'IMNI'];
+  const TINGKAT_DOK = ['IDADIYAH', 'IBTIDAIYAH', 'TSANAWIYAH', 'ALIYAH'];
+  let dokPilih = { lembaga: 'IMDA', tingkat: 'IDADIYAH' };
+
   const DOKUMEN = {
-    batas: { wadah: 'isiDokumenBatas', data: null },
-    tipe:  { wadah: 'isiDokumenTipe',  data: null }
+    batas: { wadah: 'isiDokumenBatas', filter: 'filterDokumenBatas', cache: {} },
+    tipe:  { wadah: 'isiDokumenTipe',  filter: 'filterDokumenTipe',  cache: {} }
   };
+  function kunciDokumen() { return dokPilih.lembaga + '|' + dokPilih.tingkat; }
+
+  function kartuFilterDokumen(grup, nilai) {
+    const aktif = dokPilih[grup] === nilai;
+    return '<button type="button" class="dok-kartu' + (aktif ? ' aktif' : '') + '" data-dok-pilih="' + grup +
+      '" data-nilai="' + nilai + '" aria-pressed="' + aktif + '">' + nilai + '</button>';
+  }
+  function gambarFilterDokumen() {
+    Object.keys(DOKUMEN).forEach(function (kode) {
+      document.getElementById(DOKUMEN[kode].filter).innerHTML =
+        '<div class="dok-baris dok-baris-2">' + LEMBAGA_DOK.map(function (n) { return kartuFilterDokumen('lembaga', n); }).join('') + '</div>' +
+        '<div class="dok-baris dok-baris-4">' + TINGKAT_DOK.map(function (n) { return kartuFilterDokumen('tingkat', n); }).join('') + '</div>';
+    });
+  }
+  gambarFilterDokumen();
 
   function gambarDokumen(kode) {
-    const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah);
-    if (!d.data || !d.data.nilai || !d.data.nilai.length) {
-      wadah.innerHTML = '<div class="card empty">Dokumen masih kosong.</div>';
+    const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah), data = d.cache[kunciDokumen()];
+    const kosong = !data || !data.nilai || !data.nilai.length ||
+      data.nilai.every(function (baris) { return baris.every(function (v) { return teksSel(v) === ''; }); });
+    if (kosong) {
+      wadah.innerHTML = '<div class="card empty">Dokumen ' + aman(dokPilih.lembaga + ' ' + dokPilih.tingkat) + ' masih kosong.</div>';
       return;
     }
-    wadah.innerHTML = susunDokumen(d.data.nilai, d.data.gabung);
+    wadah.innerHTML = susunDokumen(data.nilai, data.gabung);
   }
 
   function muatDokumen(kode) {
     const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah);
-    if (d.data) gambarDokumen(kode);
-    else wadah.innerHTML = '<div class="empty">Memuat dokumen…</div>';
+    const kunci = kunciDokumen(), lembaga = dokPilih.lembaga, tingkat = dokPilih.tingkat;
+    if (d.cache[kunci]) gambarDokumen(kode);
+    else wadah.innerHTML = '<div class="empty">Memuat dokumen ' + aman(lembaga + ' ' + tingkat) + '…</div>';
 
     google.script.run
-      .withSuccessHandler(function (hasil) { d.data = hasil; gambarDokumen(kode); })
+      .withSuccessHandler(function (hasil) {
+        d.cache[kunci] = hasil;
+        if (kunci === kunciDokumen()) gambarDokumen(kode);   // abaikan jawaban lama bila pilihan sudah berganti
+      })
       .withFailureHandler(function (er) {
+        if (kunci !== kunciDokumen()) return;
         const pesan = er && er.message ? er.message : String(er);
-        if (d.data) tampilkanNotifikasi(pesan, 'error');
+        if (d.cache[kunci]) tampilkanNotifikasi(pesan, 'error');
         else wadah.innerHTML = '<div class="card empty">' + aman(pesan) + '</div>';
       })
-      .getDokumen(kode);
+      .getDokumen(kode, lembaga, tingkat);
   }
 
   document.addEventListener('click', function (event) {
     const tombol = event.target.closest('[data-muat-dokumen]');
-    if (tombol) muatDokumen(tombol.dataset.muatDokumen);
+    if (tombol) { muatDokumen(tombol.dataset.muatDokumen); return; }
+
+    const kartu = event.target.closest('[data-dok-pilih]');
+    if (!kartu) return;
+    dokPilih[kartu.dataset.dokPilih] = kartu.dataset.nilai;
+    gambarFilterDokumen();
+    muatDokumen(kartu.closest('#page-tipeSoal') ? 'tipe' : 'batas');
   });
 
   /* ===== PENGGUNA & SIDEBAR ===== */
