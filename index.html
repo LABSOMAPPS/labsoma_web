@@ -1950,7 +1950,7 @@
           <section class="card announcement-content">
             <div class="announcement-toolbar">
               <h1 class="page-heading">Pengumuman Hari Ini</h1>
-              <div class="announcement-actions staf-only">
+              <div class="announcement-actions hanya-admin">
                 <button class="button secondary" id="tombolEditPengumuman" type="button">✎ Edit Pengumuman</button>
                 <button class="button" id="tombolTambahPengumuman" type="button">＋ Tambah Pengumuman</button>
               </div>
@@ -2082,9 +2082,14 @@
 
       <!-- PAGE: AGENDA -->
       <section class="page" id="page-agenda">
-        <h1 class="page-heading">Agenda</h1>
-        <p class="subheading">Kelola dan jadwalkan agenda Labsoma secara terintegrasi.</p>
-        <form class="card form-card" id="formAgenda">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Agenda</h1>
+            <p class="subheading">Kelola dan jadwalkan agenda Labsoma secara terintegrasi.</p>
+          </div>
+          <button class="button" id="tombolTambahAgenda" type="button">＋ Tambah Agenda</button>
+        </div>
+        <form class="card form-card" id="formAgenda" hidden>
           <div class="form-grid">
             <div class="field">
               <label for="agendaTanggal">Tanggal</label>
@@ -2113,6 +2118,7 @@
           </div>
           <div class="form-actions">
             <button class="button" type="submit">Simpan Agenda</button>
+            <button class="button secondary" type="button" data-batal-form="formAgenda">Batal</button>
             <span class="message" id="pesanAgenda"></span>
           </div>
         </form>
@@ -2357,25 +2363,35 @@
       </section>
       <!-- PAGE: CATATAN -->
       <section class="page" id="page-catatan">
-        <h1 class="page-heading">Catatan Rapat</h1>
-        <p class="subheading">Notula dan rangkuman poin-poin penting pembahasan rapat.</p>
-        <form class="card form-card" id="formCatatan">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Catatan Rapat</h1>
+            <p class="subheading">Notula dan rangkuman poin-poin penting pembahasan rapat.</p>
+          </div>
+          <button class="button" id="tombolTambahCatatan" type="button">＋ Tambah Catatan</button>
+        </div>
+        <form class="card form-card" id="formCatatan" hidden>
           <div class="form-grid">
             <div class="field"><label>Pokok masalah</label><input name="pokokMasalah" required></div>
             <div class="field"><label>PIC</label><input name="pic"></div>
             <div class="field full"><label>Notula rapat</label><textarea name="notula" rows="4"></textarea></div>
             <div class="field full"><label>Keterangan</label><input name="ket"></div>
           </div>
-          <div class="form-actions"><button class="button">Simpan Catatan</button></div>
+          <div class="form-actions"><button class="button">Simpan Catatan</button><button class="button secondary" type="button" data-batal-form="formCatatan">Batal</button></div>
         </form>
         <div id="daftarCatatan"></div>
       </section>
 
       <!-- PAGE: KALENDER -->
       <section class="page" id="page-kalender">
-        <h1 class="page-heading">Kalender Kegiatan</h1>
-        <p class="subheading">Centang opsi agenda jika kegiatan juga ingin ditampilkan di dashboard.</p>
-        <form class="card form-card" id="formKalender">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Kalender Kegiatan</h1>
+            <p class="subheading">Centang opsi agenda jika kegiatan juga ingin ditampilkan di dashboard.</p>
+          </div>
+          <button class="button" id="tombolTambahKalender" type="button">＋ Tambah Kegiatan</button>
+        </div>
+        <form class="card form-card" id="formKalender" hidden>
           <div class="form-grid">
             <div class="field"><label>Tanggal mulai</label><input name="mulai" type="date" required></div>
             <div class="field"><label>Tanggal selesai</label><input name="selesai" type="date"></div>
@@ -2385,7 +2401,7 @@
             <div class="field full"><label>Keterangan</label><textarea name="keterangan" rows="3"></textarea></div>
             <label class="field full"><input name="tampilkanSebagaiAgenda" type="checkbox" value="Ya"> Tampilkan sebagai agenda dashboard</label>
           </div>
-          <div class="form-actions"><button class="button">Tambah Kegiatan</button></div>
+          <div class="form-actions"><button class="button">Tambah Kegiatan</button><button class="button secondary" type="button" data-batal-form="formKalender">Batal</button></div>
         </form>
         <div class="card calendar-card">
           <div class="calendar-toolbar">
@@ -2669,12 +2685,15 @@
     google.script.run.withSuccessHandler(selesai).withFailureHandler(selesai).logout();
   });
 
-  const SELISIH_ISTIWAK_MENIT = 39;
+  // Lokasi Labsoma. Ubah di sini bila pindah tempat (jam WIS & jadwal salat ikut berubah).
+  const LOKASI = { nama: 'Pasuruan', lat: -7.6453, lon: 112.9075, utc: 7 };
+  const RAD = Math.PI / 180;
   const JUMLAH_ANGGOTA_PER_HALAMAN = 5;
   const INTERVAL_GANTI_ANGGOTA = 5000;
   const ZONA_WAKTU = 'Asia/Jakarta';
 
   let targetSalatMillis = 0;
+  let jadwalSalatServer = [];
   let halamanAnggota = 0;
   let timerAnggota = null;
   let timerAgendaDashboard = null;
@@ -2700,18 +2719,22 @@
 
   function perbaruiHitungMundurSalat() {
     const tampilan = document.getElementById('hitungMundurSalat');
-    if (!tampilan || !targetSalatMillis) return;
-
-    const sisa = Math.max(0, Math.floor((targetSalatMillis - Date.now()) / 1000));
-    if (sisa === 0) {
-      tampilan.textContent = 'Waktunya salat';
+    if (!tampilan) return;
+    const salat = salatBerikutnya();
+    if (!salat) {
+      document.getElementById('salatBerikutnya').textContent = 'Jadwal salat belum tersedia';
+      document.getElementById('jamSalatBerikutnya').textContent = '';
+      tampilan.textContent = '--:--:--';
       return;
     }
+    targetSalatMillis = Number(salat.targetMillis);
+    document.getElementById('salatBerikutnya').textContent = 'Menuju waktu ' + salat.nama;
+    document.getElementById('jamSalatBerikutnya').textContent = 'Jadwal ' + salat.jam + ' WIB · ' + LOKASI.nama;
 
+    const sisa = Math.max(0, Math.floor((targetSalatMillis - Date.now()) / 1000));
     const jam = Math.floor(sisa / 3600);
     const menit = Math.floor((sisa % 3600) / 60);
     const detik = sisa % 60;
-
     tampilan.textContent = [jam, menit, detik]
       .map(function(angka) { return String(angka).padStart(2, '0'); })
       .join(':');
@@ -2764,8 +2787,75 @@
     }).format(new Date());
   }
 
-  function waktuIstiwak() {
-    return new Date(Date.now() + SELISIH_ISTIWAK_MENIT * 60000);
+  function tanggalWib(tanggal) {
+    const b = {};
+    new Intl.DateTimeFormat('en-CA', { timeZone: ZONA_WAKTU, year: 'numeric', month: 'numeric', day: 'numeric' })
+      .formatToParts(tanggal).forEach(function(x) { if (x.type !== 'literal') b[x.type] = parseInt(x.value, 10); });
+    return { y: b.year, m: b.month, d: b.day };
+  }
+
+  // Deklinasi matahari (derajat) dan equation of time (jam, + = matahari "lebih cepat") untuk satu hari
+  function posisiMatahari(jd) {
+    const D = jd - 2451545.0;
+    const norm360 = function(x) { return ((x % 360) + 360) % 360; };
+    const g = norm360(357.529 + 0.98560028 * D) * RAD;
+    const q = norm360(280.459 + 0.98564736 * D);
+    const L = norm360(q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * RAD;
+    const e = (23.439 - 0.00000036 * D) * RAD;
+    const RA = (((Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)) / RAD / 15) % 24) + 24) % 24;
+    let eqt = q / 15 - RA;
+    if (eqt > 12) eqt -= 24;
+    if (eqt < -12) eqt += 24;
+    return { decl: Math.asin(Math.sin(e) * Math.sin(L)) / RAD, eqt: eqt };
+  }
+
+  // Waktu Istiwa' (WIS) = waktu matahari setempat: selisih dari WIB dihitung dari bujur lokasi
+  // ditambah equation of time hari itu, sehingga selalu cocok dengan tanggal & tempat.
+  function waktuIstiwak(tanggal) {
+    const sekarang = tanggal || new Date();
+    const w = tanggalWib(sekarang);
+    const jd = Date.UTC(w.y, w.m - 1, w.d, 12) / 86400000 + 2440587.5;
+    const selisihMenit = LOKASI.lon * 4 - LOKASI.utc * 60 + posisiMatahari(jd).eqt * 60;
+    return new Date(sekarang.getTime() + selisihMenit * 60000);
+  }
+
+  // Jadwal salat hitungan lokal (kriteria Kemenag RI: Subuh 20°, Isya 18°, Ashar mazhab Syafi'i, ihtiyat +2 menit).
+  // Dipakai bila jadwal dari server belum/tidak tersedia.
+  function hitungSalatLokal(y, m, d) {
+    const jd = Date.UTC(y, m - 1, d, 12) / 86400000 + 2440587.5 - LOKASI.lon / 360;
+    const s = posisiMatahari(jd), lat = LOKASI.lat * RAD, dec = s.decl * RAD;
+    const dzuhur = 12 + LOKASI.utc - LOKASI.lon / 15 - s.eqt;
+    const selisih = function(sudutBawahUfuk) {
+      const v = (-Math.sin(sudutBawahUfuk * RAD) - Math.sin(lat) * Math.sin(dec)) / (Math.cos(lat) * Math.cos(dec));
+      return Math.acos(Math.max(-1, Math.min(1, v))) / RAD / 15;
+    };
+    const sudutAshar = -Math.atan(1 / (1 + Math.tan(Math.abs(lat - dec)))) / RAD;
+    const jam = {
+      Subuh: dzuhur - selisih(20), Dzuhur: dzuhur, Ashar: dzuhur + selisih(sudutAshar),
+      Maghrib: dzuhur + selisih(0.833), Isya: dzuhur + selisih(18)
+    };
+    const awalHari = Date.UTC(y, m - 1, d) - LOKASI.utc * 3600000;
+    return Object.keys(jam).map(function(nama) {
+      const menit = Math.ceil(jam[nama] * 60) + 2;
+      const ms = awalHari + menit * 60000;
+      return { nama: nama, targetMillis: ms, jam: ('0' + Math.floor(menit / 60)).slice(-2) + ':' + ('0' + (menit % 60)).slice(-2) };
+    });
+  }
+
+  function daftarSalatLokal(sekarangMs) {
+    const w = tanggalWib(new Date(sekarangMs)), hasil = [];
+    for (let i = 0; i < 2; i++) {
+      const t = new Date(Date.UTC(w.y, w.m - 1, w.d + i));
+      hasil.push.apply(hasil, hitungSalatLokal(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()));
+    }
+    return hasil;
+  }
+
+  function salatBerikutnya() {
+    const sekarang = Date.now();
+    let daftar = (jadwalSalatServer || []).filter(function(x) { return Number(x.targetMillis) > sekarang; });
+    if (!daftar.length) daftar = daftarSalatLokal(sekarang).filter(function(x) { return x.targetMillis > sekarang; });
+    return daftar[0] || null;
   }
 
   const BULAN_HIJRIYAH = ['Muharram', 'Safar', 'Rabiul Awal', 'Rabiul Akhir', 'Jumadil Awal', 'Jumadil Akhir',
@@ -2829,7 +2919,7 @@
   }
 
   function perbaruiHeaderPengumuman() {
-    const istiwak = new Date(Date.now() + SELISIH_ISTIWAK_MENIT * 60000);
+    const istiwak = waktuIstiwak();
     const wib = new Date();
     const hijri = document.getElementById('pengumumanHijriyah');
     if (!hijri) return;
@@ -3103,16 +3193,9 @@
     document.getElementById('judulAgendaRentang').textContent = rentangAgendaTerpilih === 'bulan' ? 'Agenda Bulan Ini' : 'Agenda Pekan Ini';
     tampilkanAgendaRentang(rentangAgendaTerpilih === 'bulan' ? data.agendaBulanIni : data.agendaPekanIni);
 
-    const salat = data.waktuShalatBerikutnya;
-    if (salat && salat.targetMillis) {
-      targetSalatMillis = Number(salat.targetMillis);
-      document.getElementById('salatBerikutnya').textContent = 'Menuju waktu ' + salat.nama;
-      document.getElementById('jamSalatBerikutnya').textContent = 'Jadwal ' + salat.jam + ' WIB · Pasuruan';
-      perbaruiHitungMundurSalat();
-    } else {
-      document.getElementById('salatBerikutnya').textContent = 'Jadwal salat belum tersedia';
-      document.getElementById('jamSalatBerikutnya').textContent = '';
-    }
+    // jadwal dari server (dua hari) disimpan; pilihan salat berikutnya dihitung ulang tiap detik
+    jadwalSalatServer = Array.isArray(data.jadwalSalat) ? data.jadwalSalat : [];
+    perbaruiHitungMundurSalat();
 
     const anggota = data.anggota || [];
     const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
@@ -3265,7 +3348,7 @@
       mintaPin().then(function(pin) {
         if (!pin) return;
         const runner = google.script.run.withSuccessHandler(function(msg) {
-          tampilkanNotifikasi(msg, 'success'); form.reset(); muatAplikasi();
+          tampilkanNotifikasi(msg, 'success'); form.reset(); form.hidden = true; muatAplikasi();
         }).withFailureHandler(function(e) {
           tampilkanNotifikasi(e && e.message ? e.message : String(e), 'error');
         });
@@ -3275,6 +3358,25 @@
   }
   sambungkanFormTambahan('formCatatan', 'simpanCatatan');
   sambungkanFormTambahan('formKalender', 'simpanKegiatanKalender');
+
+  // Tombol "＋" membuka/menutup form tambah di masing-masing menu
+  [['tombolTambahAgenda', 'formAgenda'], ['tombolTambahCatatan', 'formCatatan'], ['tombolTambahKalender', 'formKalender']].forEach(function(pasang) {
+    document.getElementById(pasang[0]).addEventListener('click', function() {
+      const form = document.getElementById(pasang[1]);
+      form.hidden = !form.hidden;
+      if (form.hidden) return;
+      if (pasang[1] === 'formAgenda') document.getElementById('agendaTanggal').value = tanggalHariIniLokal();
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const pertama = form.querySelector('input:not([type=hidden]), textarea');
+      if (pertama) pertama.focus({ preventScroll: true });
+    });
+  });
+  document.querySelectorAll('[data-batal-form]').forEach(function(b) {
+    b.addEventListener('click', function() {
+      const form = document.getElementById(b.dataset.batalForm);
+      form.reset(); form.hidden = true;
+    });
+  });
 
   function tampilkanRekap(daftar) {
     daftar = saringDaftarTugas(daftar, 'rekap');
@@ -3636,7 +3738,7 @@
       if (!pin) { pesan.textContent = 'Penyimpanan dibatalkan.'; return; }
       google.script.run
         .withSuccessHandler(function(hasil) {
-          pesan.className = 'message success'; pesan.textContent = hasil || 'Agenda berhasil ditambahkan.'; form.reset();
+          pesan.className = 'message success'; pesan.textContent = ''; tampilkanNotifikasi(hasil || 'Agenda berhasil ditambahkan.', 'success'); form.reset(); form.hidden = true;
           document.getElementById('agendaTanggal').value = tanggalHariIniLokal(); muatAplikasi();
         })
         .withFailureHandler(function(error) { pesan.className = 'message error'; pesan.textContent = error && error.message ? error.message : String(error); })
