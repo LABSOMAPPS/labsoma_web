@@ -4828,7 +4828,7 @@
   function tahapSoal(x) {
     if (!x) return null;
     const telat = tanggalHariIniLokal() > x.selesai;
-    if (!selesaiItem(x)) return telat ? { teks: 'Telat / belum dikerjakan', kelas: 'telat' } : { teks: 'Sedang dikerjakan', kelas: 'waiting' };
+    if (!selesaiItem(x)) return telat ? { teks: 'Telat / Belum Selesai', kelas: 'telat' } : { teks: 'Menunggu Waktu', kelas: 'waiting' };
     if (String(x.statusK1 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 1', kelas: 'waiting' };
     if (String(x.statusK2 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 2', kelas: 'waiting' };
     if (String(x.statusKoreksiBersama || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Koreksi Bersama', kelas: 'waiting' };
@@ -4837,7 +4837,7 @@
   function tahapUjian(x) {
     if (!x) return null;
     if (selesaiItem(x)) return { teks: 'Selesai' + (x.tanggalSelesaiPengerjaan ? ' · ' + formatTanggal(x.tanggalSelesaiPengerjaan) : ''), kelas: '' };
-    return tanggalHariIniLokal() > x.selesai ? { teks: 'Telat / belum dikerjakan', kelas: 'telat' } : { teks: 'Sedang dikerjakan', kelas: 'waiting' };
+    return tanggalHariIniLokal() > x.selesai ? { teks: 'Telat / Belum Selesai', kelas: 'telat' } : { teks: 'Menunggu Waktu', kelas: 'waiting' };
   }
   function barisTahap(judul, t) {
     return t ? '<div class="tt-tahap-baris"><span>' + judul + '</span><span class="badge ' + t.kelas + '">' + aman(t.teks) + '</span></div>' : '';
