@@ -1212,6 +1212,19 @@
     }
 
     .modal h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
+    .dialog-keluar { width: min(380px, 100%); padding: 30px 26px 24px; text-align: center; }
+    .dialog-keluar .dk-ikon { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: var(--merah-soft); color: var(--merah); box-shadow: 0 0 0 8px rgba(248, 113, 113, 0.07); }
+    .dialog-keluar .dk-ikon svg { width: 28px; height: 28px; stroke: currentColor; fill: none; }
+    .dialog-keluar h2 { margin: 0 0 6px; font-size: 20px; }
+    .dialog-keluar p { margin: 0; color: var(--redup); font-size: 14px; line-height: 1.55; }
+    .dialog-keluar .dk-akun { display: inline-flex; align-items: center; gap: 8px; margin: 16px auto 0; padding: 7px 14px 7px 8px; border: 1px solid var(--garis); border-radius: 999px; background: var(--panel2); font-size: 13px; font-weight: 700; max-width: 100%; }
+    .dialog-keluar .dk-akun i { display: grid; place-items: center; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--aksen); color: var(--aksen-teks); font-style: normal; font-size: 12px; font-weight: 800; }
+    .dialog-keluar .dk-akun span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dialog-keluar .dk-aksi { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 24px; }
+    .dialog-keluar .dk-aksi .button { width: 100%; justify-content: center; padding-top: 12px; padding-bottom: 12px; }
+    .button.bahaya { background: var(--merah); border-color: var(--merah); color: #fff; }
+    .button.bahaya:hover { filter: brightness(1.08); }
+    .button.bahaya:disabled { opacity: 0.7; cursor: wait; }
     .modal p { margin: 0 0 18px; color: var(--redup); font-size: 13.5px; }
     .modal-error { min-height: 20px; margin-top: 8px; color: var(--merah); font-size: 12.5px; font-weight: 600; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
@@ -1390,6 +1403,14 @@
     .tt-ringkasan .summary-card { flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; }
     .tt-ringkasan .summary-card strong { font-size: 20px; line-height: 1; order: 2; }
     .tt-ringkasan .summary-card span { font-size: 12.5px; font-weight: 700; }
+    .tt-jenis-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .tt-jenis-kartu { padding: 12px 14px; border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan-sm); }
+    .tt-jenis-judul { display: flex; align-items: baseline; justify-content: space-between; color: var(--aksen); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; }
+    .tt-jenis-judul b { color: var(--teks); font-size: 24px; letter-spacing: 0; line-height: 1; }
+    .tt-jenis-bar { height: 5px; margin: 10px 0 8px; border-radius: 999px; background: var(--panel3); overflow: hidden; }
+    .tt-jenis-bar i { display: block; height: 100%; border-radius: 999px; background: var(--hijau); }
+    .tt-jenis-angka { display: flex; justify-content: space-between; gap: 6px; color: var(--redup); font-size: 11.5px; font-weight: 700; }
+    .tt-jenis-angka .s b { color: var(--hijau); } .tt-jenis-angka .p b { color: var(--kuning); } .tt-jenis-angka .t b { color: var(--merah); }
     .tt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
     .tt-card { padding: 16px 18px; border: 1px solid var(--garis); border-left: 4px solid var(--aksen); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan-sm); }
     .tt-card.selesai { border-left-color: var(--hijau); }
@@ -1997,8 +2018,12 @@
               <input id="pengumumanNomorBaris" type="hidden" value="">
               <div class="form-grid">
                 <div class="field">
-                  <label for="pengumumanTanggal">Tanggal tampil</label>
+                  <label for="pengumumanTanggal">Mulai tampil</label>
                   <input id="pengumumanTanggal" name="tanggal" type="date" required>
+                </div>
+                <div class="field">
+                  <label for="pengumumanTanggalAkhir">Tampil sampai (tanggal akhir)</label>
+                  <input id="pengumumanTanggalAkhir" name="tanggalAkhir" type="date" required>
                 </div>
                 <div class="field">
                   <label for="pengumumanSasaran">Sasaran (opsional)</label>
@@ -2570,6 +2595,20 @@
     </button>
   </nav>
 
+  <!-- DIALOG KELUAR -->
+  <div class="modal-overlay" id="keluarOverlay" hidden>
+    <div class="modal dialog-keluar" role="dialog" aria-modal="true" aria-labelledby="dkJudul">
+      <div class="dk-ikon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      <h2 id="dkJudul">Keluar dari akun?</h2>
+      <p>Untuk membuka aplikasi lagi, Anda perlu masuk kembali dengan username dan kata sandi.</p>
+      <div class="dk-akun" id="dkAkun" hidden><i id="dkInisial"></i><span id="dkNama"></span></div>
+      <div class="dk-aksi">
+        <button class="button secondary" type="button" id="dkBatal">Batal</button>
+        <button class="button bahaya" type="button" id="dkKeluar">Ya, Keluar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MENU BAWAH KOREKTOR (HP), kiri ke kanan: Dokumen | Kegiatan | Dashboard | Pengumuman | Koreksi -->
   <nav class="bottom-nav" id="korektorNav" aria-label="Menu korektor">
     <button type="button" data-tab="dokumen">
@@ -2732,8 +2771,24 @@
       .login(user, pass);
   });
 
+  function tutupDialogKeluar() { document.getElementById('keluarOverlay').hidden = true; }
   document.getElementById('logoutBtn').addEventListener('click', function () {
-    if (!confirm('Keluar dari akun ini? Anda perlu masuk lagi untuk membuka aplikasi.')) return;
+    const nama = (sesiAktif && sesiAktif.nama) || '';
+    document.getElementById('dkAkun').hidden = !nama;
+    document.getElementById('dkNama').textContent = nama + (sesiAktif && sesiAktif.label ? ' · ' + sesiAktif.label : '');
+    document.getElementById('dkInisial').textContent = (nama.trim().charAt(0) || '?').toUpperCase();
+    const tombol = document.getElementById('dkKeluar');
+    tombol.disabled = false; tombol.textContent = 'Ya, Keluar';
+    document.getElementById('keluarOverlay').hidden = false;
+    document.getElementById('dkBatal').focus();   // fokus awal di Batal agar tidak keluar karena salah tekan
+  });
+  document.getElementById('dkBatal').addEventListener('click', tutupDialogKeluar);
+  document.getElementById('keluarOverlay').addEventListener('click', function (e) { if (e.target === this) tutupDialogKeluar(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !document.getElementById('keluarOverlay').hidden) tutupDialogKeluar();
+  });
+  document.getElementById('dkKeluar').addEventListener('click', function () {
+    this.disabled = true; this.textContent = 'Keluar…';
     const selesai = function () { simpanToken(''); location.reload(); };
     google.script.run.withSuccessHandler(selesai).withFailureHandler(selesai).logout();
   });
@@ -3169,6 +3224,7 @@
           ${item.keterangan ? `<h2 class="announcement-title">${aman(item.keterangan)}</h2>` : ''}
           <div class="announcement-text">${aman(item.isi)}</div>
           ${item.sasaran ? `<div class="announcement-target">Kepada: ${aman(item.sasaran)}</div>` : ''}
+          ${item.tanggalAkhir && item.tanggalAkhir > item.tanggal ? `<div class="announcement-target">Berlaku sampai ${formatTanggal(item.tanggalAkhir)}</div>` : ''}
         </article>
       `;
     }).join('');
@@ -3225,7 +3281,7 @@
         <article class="announcement-edit-row">
           <div class="announcement-edit-copy">
             <strong>${aman(item.keterangan || 'Tanpa judul')}</strong>
-            <span>${aman(item.isi)} · ${formatTanggal(item.tanggal)} ${item.sasaran ? ' · Sasaran: ' + aman(item.sasaran) : ''}</span>
+            <span>${aman(item.isi)} · ${formatTanggal(item.tanggal)}${item.tanggalAkhir && item.tanggalAkhir > item.tanggal ? ' s.d. ' + formatTanggal(item.tanggalAkhir) : ''} ${item.sasaran ? ' · Sasaran: ' + aman(item.sasaran) : ''}</span>
           </div>
           <button class="button secondary" type="button" data-edit-pengumuman="${Number(item.nomorBaris)}">Edit</button>
         </article>
@@ -3954,6 +4010,8 @@
     form.hidden = !form.hidden;
     if (!form.hidden) {
       document.getElementById('pengumumanTanggal').value = tanggalHariIniLokal();
+      document.getElementById('pengumumanTanggalAkhir').value = tanggalHariIniLokal();
+      document.getElementById('pengumumanTanggalAkhir').min = tanggalHariIniLokal();
       document.getElementById('pengumumanIsi').focus();
     }
   });
@@ -3974,6 +4032,8 @@
     barisPengumumanEdit = String(nomor);
     document.getElementById('pengumumanNomorBaris').value = barisPengumumanEdit;
     document.getElementById('pengumumanTanggal').value = item.tanggal;
+    document.getElementById('pengumumanTanggalAkhir').value = item.tanggalAkhir || item.tanggal;
+    document.getElementById('pengumumanTanggalAkhir').min = item.tanggal;
     document.getElementById('pengumumanIsi').value = item.isi;
     document.getElementById('pengumumanSasaran').value = item.sasaran || '';
     document.getElementById('pengumumanKeterangan').value = item.keterangan || '';
@@ -3981,6 +4041,13 @@
     document.getElementById('formPengumuman').hidden = false;
     document.getElementById('pesanPengumuman').textContent = 'Mengedit pengumuman tanggal ' + formatTanggal(item.tanggal) + '.';
     document.getElementById('formPengumuman').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // tanggal akhir tidak boleh lebih awal dari tanggal mulai
+  document.getElementById('pengumumanTanggal').addEventListener('change', function() {
+    const akhir = document.getElementById('pengumumanTanggalAkhir');
+    akhir.min = this.value;
+    if (!akhir.value || akhir.value < this.value) akhir.value = this.value;
   });
 
   document.getElementById('batalPengumuman').addEventListener('click', function() {
@@ -4864,6 +4931,19 @@
       '<div class="summary-card"><strong>' + hitung.Selesai + '</strong><span>Selesai</span></div>' +
       '<div class="summary-card"><strong>' + hitung.Proses + '</strong><span>Proses</span></div>' +
       '<div class="summary-card"><strong>' + hitung.Telat + '</strong><span>Telat</span></div></div></div>';
+    // rekap per jenis: tiap bagian tugas dihitung sendiri (SOAL = Pembuatan Soal, KOREKSI = Koreksi Hasil Ujian)
+    function rekapJenis(label, bagian) {
+      const hariIni = tanggalHariIniLokal();
+      const adaItem = milik.map(function(g) { return g[bagian]; }).filter(Boolean);
+      const s = adaItem.filter(selesaiItem).length;
+      const t = adaItem.filter(function(x) { return !selesaiItem(x) && hariIni > x.selesai; }).length;
+      const p = adaItem.length - s - t;
+      return '<div class="tt-jenis-kartu"><div class="tt-jenis-judul"><span>' + label + '</span><b>' + adaItem.length + '</b></div>' +
+        '<div class="tt-jenis-bar"><i style="width:' + (adaItem.length ? Math.round(s / adaItem.length * 100) : 0) + '%"></i></div>' +
+        '<div class="tt-jenis-angka"><span class="s"><b>' + s + '</b> selesai</span><span class="p"><b>' + p + '</b> proses</span><span class="t"><b>' + t + '</b> telat</span></div></div>';
+    }
+    const rekapHtml = '<div class="tt-jenis-grid">' + rekapJenis('SOAL', 'soal') + rekapJenis('KOREKSI', 'ujian') + '</div>';
+
     const kartu = milik.map(function(g) {
       const st = statusKelompok(g);
       return '<article class="tt-card ' + (st === 'Selesai' ? 'selesai' : st === 'Telat' ? 'telat' : '') + '">' +
@@ -4873,7 +4953,7 @@
         '<div class="tt-tahap">' + barisTahap('Pembuatan Soal', tahapSoal(g.soal)) + barisTahap('Koreksi Hasil Ujian', tahapUjian(g.ujian)) + '</div>' +
         '</article>';
     }).join('');
-    wadah.innerHTML = ringkasan + '<div class="tt-grid">' + kartu + '</div>';
+    wadah.innerHTML = ringkasan + rekapHtml + '<div class="tt-grid">' + kartu + '</div>';
   }
 
   document.querySelectorAll('#sonikNav button[data-page]').forEach(function(b) {
