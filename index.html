@@ -1654,6 +1654,12 @@
           <span>Dashboard</span>
         </button>
 
+        <!-- Input Nilai IMDA -->
+        <button class="nav-button" data-page="inputNilai">
+          <span class="nav-icon-inline"><span aria-hidden="true">✏️</span></span>
+          <span>Input Nilai IMDA</span>
+        </button>
+
         <!-- Pengumuman -->
         <button class="nav-button" data-page="pengumuman">
           <span class="nav-icon-inline">
@@ -1826,7 +1832,15 @@
       </section>
 
       <!-- PAGE HUB 1: PEMBUATAN SOAL (HP) -->
-      <section class="page" id="page-hubSoal">
+      <section class="page" id="page-inputNilai">
+      <h1 class="page-heading">Input Nilai IMDA</h1>
+      <p class="subheading">Gunakan modul input nilai di bawah ini. Sesi login modul ini dikelola oleh sistem nilai.</p>
+      <div class="card" style="padding:0; overflow:hidden; height:calc(100vh - 190px); min-height:650px;">
+        <iframe title="Aplikasi Input Nilai IMDA" src="index.input.html" style="display:block; width:100%; height:100%; border:0; background:#f8fafc;" allow="fullscreen"></iframe>
+      </div>
+    </section>
+
+    <section class="page" id="page-hubSoal">
         <h1 class="page-heading">Pembuatan Soal</h1>
         <p class="subheading">Akses modul tipe soal, batas pelajaran, tugas, dan tahapan koreksi.</p>
         <div class="hub-grid">
@@ -3055,6 +3069,7 @@
 
   /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
   const PETA_HALAMAN = {
+    inputNilai:     { tab: 'inputNilai' },
     hubSoal:        { tab: 'soal' },
     tipeSoal:       { tab: 'soal', induk: 'hubSoal' },
     batasPelajaran: { tab: 'soal', induk: 'hubSoal' },
@@ -4995,3 +5010,5 @@
 </script>
 </body>
 </html>
+
+
