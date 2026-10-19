@@ -1071,6 +1071,7 @@
     .announcement-toolbar .page-heading { margin: 0; }
     .announcement-actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .announcement-item { margin-top: 14px; padding: 20px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel2); box-shadow: var(--bayangan-sm); }
+    .announcement-item-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--garis); }
     .announcement-title { margin: 0 0 10px; color: var(--aksen); font-size: clamp(18px, 1.8vw, 26px); font-weight: 800; line-height: 1.25; }
     .announcement-text { font-size: clamp(15px, 1.4vw, 19px); line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--teks); }
     .announcement-target { display: inline-block; margin-top: 14px; padding: 4px 12px; border-radius: var(--radius-full); background: var(--aksen-soft); border: 1px solid var(--aksen-border); color: var(--aksen); font-size: 12px; font-weight: 700; }
@@ -2067,12 +2068,9 @@
             <div class="announcement-toolbar">
               <h1 class="page-heading">Pengumuman</h1>
               <div class="announcement-actions hanya-admin">
-                <button class="button secondary" id="tombolEditPengumuman" type="button">✎ Edit Pengumuman</button>
                 <button class="button" id="tombolTambahPengumuman" type="button">＋ Tambah Pengumuman</button>
               </div>
             </div>
-
-            <div id="daftarEditPengumuman" class="announcement-edit-list" hidden></div>
 
             <form class="card form-card announcement-form" id="formPengumuman" hidden>
               <input id="pengumumanNomorBaris" type="hidden" value="">
@@ -2430,6 +2428,7 @@
         <div class="search-filters mt-tools">
           <input type="search" id="mtCari" placeholder="Cari anggota atau tugas…" aria-label="Cari anggota atau tugas">
           <select id="mtFilterTingkat" aria-label="Filter tingkat"><option value="">Semua tingkat</option></select>
+          <select id="mtFilterJenis" aria-label="Filter jenis tugas"><option value="">Semua jenis tugas</option><option value="soal">Pembuatan Soal</option><option value="ujian">Koreksi Hasil Ujian</option></select>
         </div>
         <div class="mt-table">
           <div class="mt-thead"><div>Anggota</div><div>Daftar tugas (model kartu)</div><div style="text-align:center">Progres</div><div style="text-align:right">Aksi</div></div>
@@ -2728,6 +2727,19 @@
 
   <div class="toast-area" id="toastArea" aria-live="polite"></div>
 
+  <div class="modal-overlay" id="hapusPengumumanOverlay" hidden>
+    <section class="modal dialog-keluar" role="alertdialog" aria-modal="true" aria-labelledby="hapusPengumumanJudul" aria-describedby="hapusPengumumanRincian">
+      <div class="dk-ikon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></div>
+      <h2 id="hapusPengumumanJudul">Hapus pengumuman?</h2>
+      <p id="hapusPengumumanRincian"></p>
+      <div class="dk-aksi">
+        <button class="button secondary" type="button" id="batalHapusPengumuman">Batal</button>
+        <button class="button bahaya" type="button" id="konfirmasiHapusPengumuman">Ya, Hapus</button>
+      </div>
+      <div class="message" id="statusHapusPengumuman" aria-live="polite"></div>
+    </section>
+  </div>
+
   <!-- MODAL PIN ADMIN -->
   <div class="modal-overlay" id="pinOverlay" hidden>
     <form class="modal" id="pinForm">
@@ -2930,6 +2942,7 @@
   let pengumumanDashboard = [];
   let semuaPengumumanTersimpan = [];
   let barisPengumumanEdit = '';
+  let nomorPengumumanAkanDihapus = null;
   let pinAdmin = '';
   let penyelesaiPin = null;
   let dataRekapTersimpan = [];
@@ -3371,6 +3384,10 @@
         (item.sasaran ? '<div class="announcement-target">Kepada: ' + aman(item.sasaran) + '</div>' : '') +
         (item.tanggal ? '<div class="announcement-target">Tanggal: ' + formatTanggal(item.tanggal) + '</div>' : '') +
         (item.tanggalAkhir && item.tanggalAkhir > item.tanggal ? '<div class="announcement-target">Berlaku sampai ' + formatTanggal(item.tanggalAkhir) + '</div>' : '') +
+        '<div class="announcement-item-actions hanya-admin">' +
+          '<button class="button secondary small" type="button" data-edit-pengumuman="' + Number(item.nomorBaris) + '">✎ Edit</button>' +
+          '<button class="button bahaya small" type="button" data-hapus-pengumuman="' + Number(item.nomorBaris) + '">Hapus</button>' +
+        '</div>' +
         '</article>';
     }).join('');
   }
@@ -3454,25 +3471,6 @@
         gambarSlideAgendaDashboard();
       }, INTERVAL_GANTI_ANGGOTA);
     }
-  }
-
-  function tampilkanDaftarEditPengumuman(daftar) {
-    const wadah = document.getElementById('daftarEditPengumuman');
-    if (!daftar || !daftar.length) {
-      wadah.innerHTML = '<div class="card empty">Belum ada pengumuman untuk diedit.</div>';
-      return;
-    }
-    wadah.innerHTML = daftar.map(function(item) {
-      return `
-        <article class="announcement-edit-row">
-          <div class="announcement-edit-copy">
-            <strong>${aman(item.keterangan || 'Tanpa judul')}</strong>
-            <span>${aman(item.isi)} · ${formatTanggal(item.tanggal)}${item.tanggalAkhir && item.tanggalAkhir > item.tanggal ? ' s.d. ' + formatTanggal(item.tanggalAkhir) : ''} · Penerima: ${item.penerima === 'KOREKTOR' ? 'Korektor' : item.penerima === 'SONIK' ? 'Sonik' : 'Semua pengguna'}${item.sasaran ? ' · Sasaran: ' + aman(item.sasaran) : ''}</span>
-          </div>
-          <button class="button secondary" type="button" data-edit-pengumuman="${Number(item.nomorBaris)}">Edit</button>
-        </article>
-      `;
-    }).join('');
   }
 
   function rincianKelasTingkat(item) {
@@ -4015,7 +4013,6 @@
         tampilkanDashboard(data.dashboard);
         mulaiSlideAgendaDashboard();
         tampilkanPengumuman(semuaPengumumanTersimpan.length ? semuaPengumumanTersimpan : (data.pengumumanHariIni || []));
-        tampilkanDaftarEditPengumuman(semuaPengumumanTersimpan);
         tampilkanRekap(dataRekapTersimpan);
         tampilkanAntrianK1(dataK1Tersimpan);
         tampilkanAntrianK2(dataK2Tersimpan);
@@ -4226,19 +4223,9 @@
     }
   });
 
-  document.getElementById('tombolEditPengumuman').addEventListener('click', function() {
-    const daftar = document.getElementById('daftarEditPengumuman');
-    daftar.hidden = !daftar.hidden;
-    this.textContent = daftar.hidden ? '✎ Edit Pengumuman' : 'Tutup Daftar Edit';
-  });
-
-  document.getElementById('daftarEditPengumuman').addEventListener('click', function(event) {
-    const tombol = event.target.closest('[data-edit-pengumuman]');
-    if (!tombol) return;
-    const nomor = Number(tombol.dataset.editPengumuman);
-    const item = semuaPengumumanTersimpan.find(function(pengumuman) { return Number(pengumuman.nomorBaris) === nomor; });
+  function bukaEditPengumuman(nomor) {
+    const item = semuaPengumumanTersimpan.find(function(pengumuman) { return Number(pengumuman.nomorBaris) === Number(nomor); });
     if (!item) return;
-
     barisPengumumanEdit = String(nomor);
     document.getElementById('pengumumanNomorBaris').value = barisPengumumanEdit;
     document.getElementById('pengumumanTanggal').value = item.tanggal;
@@ -4252,6 +4239,58 @@
     document.getElementById('formPengumuman').hidden = false;
     document.getElementById('pesanPengumuman').textContent = 'Mengedit pengumuman tanggal ' + formatTanggal(item.tanggal) + '.';
     document.getElementById('formPengumuman').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.getElementById('isiPengumuman').addEventListener('click', function(event) {
+    const tombolEdit = event.target.closest('[data-edit-pengumuman]');
+    if (tombolEdit) { bukaEditPengumuman(tombolEdit.dataset.editPengumuman); return; }
+    const tombolHapus = event.target.closest('[data-hapus-pengumuman]');
+    if (!tombolHapus) return;
+    const nomor = Number(tombolHapus.dataset.hapusPengumuman);
+    const item = semuaPengumumanTersimpan.find(function(pengumuman) { return Number(pengumuman.nomorBaris) === nomor; });
+    if (!item) return;
+    nomorPengumumanAkanDihapus = nomor;
+    const judul = item.keterangan || 'Pengumuman tanpa judul';
+    document.getElementById('hapusPengumumanRincian').textContent = '“' + judul + '” · ' + formatTanggal(item.tanggal) + '. Pengumuman ini akan dihapus permanen.';
+    document.getElementById('statusHapusPengumuman').textContent = '';
+    document.getElementById('statusHapusPengumuman').className = 'message';
+    document.getElementById('hapusPengumumanOverlay').hidden = false;
+  });
+
+  function tutupKonfirmasiHapusPengumuman() {
+    nomorPengumumanAkanDihapus = null;
+    document.getElementById('hapusPengumumanOverlay').hidden = true;
+    document.getElementById('statusHapusPengumuman').textContent = '';
+    document.getElementById('statusHapusPengumuman').className = 'message';
+  }
+  document.getElementById('batalHapusPengumuman').addEventListener('click', tutupKonfirmasiHapusPengumuman);
+  document.getElementById('hapusPengumumanOverlay').addEventListener('click', function(event) {
+    if (event.target.id === 'hapusPengumumanOverlay') tutupKonfirmasiHapusPengumuman();
+  });
+  document.getElementById('konfirmasiHapusPengumuman').addEventListener('click', function() {
+    const nomor = nomorPengumumanAkanDihapus;
+    if (!nomor) return;
+    const tombol = this, batal = document.getElementById('batalHapusPengumuman');
+    const status = document.getElementById('statusHapusPengumuman');
+    tombol.disabled = true; batal.disabled = true;
+    status.textContent = 'Menghapus pengumuman…';
+    mintaPin().then(function(pin) {
+      if (!pin) { tombol.disabled = false; batal.disabled = false; status.textContent = 'Penghapusan dibatalkan.'; return; }
+      google.script.run
+        .withSuccessHandler(function(hasil) {
+          tutupKonfirmasiHapusPengumuman();
+          tombol.disabled = false; batal.disabled = false;
+          tampilkanNotifikasi(hasil || 'Pengumuman berhasil dihapus.', 'success');
+          muatAplikasi();
+        })
+        .withFailureHandler(function(error) {
+          tombol.disabled = false; batal.disabled = false;
+          const teks = error && error.message ? error.message : String(error);
+          status.className = 'message error';
+          status.textContent = 'Pengumuman belum terhapus. ' + teks;
+        })
+        .hapusPengumuman(nomor, pin);
+    });
   });
 
   // tanggal akhir tidak boleh lebih awal dari tanggal mulai
@@ -4743,6 +4782,24 @@
       .getSesi();
   }
 
+  function susunSidebarStaf(tampilan) {
+    if (tampilan === 'SONIK') return;
+    const daftar = document.querySelector('.sidebar .nav-list');
+    if (!daftar) return;
+    const ambil = function(sel) { return daftar.querySelector(sel); };
+    const grup = function(menu) {
+      const toggle = ambil('.nav-group-toggle[data-menu="' + menu + '"]');
+      return toggle ? toggle.parentElement : null;
+    };
+    const urutan = [
+      ambil(':scope > button[data-page="dashboard"]'),
+      ambil(':scope > button[data-page="pengguna"]'),
+      ambil(':scope > button[data-page="manajemenTugas"]'),
+      grup('kegiatan'), grup('dokumen'), grup('inputNilai'), grup('pembuatanSoal'), grup('koreksiUjian')
+    ].filter(Boolean);
+    urutan.forEach(function(item) { daftar.appendChild(item); });
+  }
+
   function terapkanPeran(sesi) {
     sesiAktif = sesi;
     kirimKonteksKeInputNilai();
@@ -4759,6 +4816,7 @@
       });
     }
     document.body.dataset.peran = tampilan;
+    susunSidebarStaf(tampilan);
     document.getElementById('namaPengguna').textContent = sesi.nama || '';
     document.getElementById('peranPengguna').textContent = sesi.label || sesi.role || '';
     document.getElementById('sonikSalam').textContent = tampilan === 'SONIK' ? 'Assalamu\u2019alaikum, ' + (sesi.nama || '') : '';
@@ -5007,6 +5065,7 @@
     selT.value = tingkatAda.indexOf(sebelum) >= 0 ? sebelum : '';
 
     const tingkatPilih = selT.value;
+    const jenisPilih = document.getElementById('mtFilterJenis').value;
     const kata = document.getElementById('mtCari').value.trim().toLocaleLowerCase('id');
     mtAnggota = [];
     let totalSelesai = 0, totalSemua = 0;
@@ -5015,7 +5074,15 @@
     daftarAnggotaManajemen(data, mtDaftar).forEach(function(nama) {
       let milik = mtDaftar.filter(function(g) { return norm(g.nama) === norm(nama); });
       if (tingkatPilih) milik = milik.filter(function(g) { return norm(g.tingkat) === tingkatPilih; });
-      if (tingkatPilih && !milik.length) return;
+      if (jenisPilih === 'soal') milik = milik.filter(function(g) { return !!g.soal; }).map(function(g) {
+        const soal = g.soal;
+        return Object.assign({}, g, { ujian: null, total: 1, selesaiN: selesaiItem(soal) ? 1 : 0, persen: selesaiItem(soal) ? 100 : 0, sumber: g });
+      });
+      if (jenisPilih === 'ujian') milik = milik.filter(function(g) { return !!g.ujian; }).map(function(g) {
+        const ujian = g.ujian;
+        return Object.assign({}, g, { soal: null, total: 1, selesaiN: selesaiItem(ujian) ? 1 : 0, persen: selesaiItem(ujian) ? 100 : 0, sumber: g });
+      });
+      if ((tingkatPilih || jenisPilih) && !milik.length) return;
       if (kata) {
         const cocokNama = nama.toLocaleLowerCase('id').indexOf(kata) >= 0;
         const cocokTugas = milik.some(function(g) {
@@ -5031,7 +5098,7 @@
         '<div class="mt-row">' +
           '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
           '<div class="mt-chips">' + (milik.length
-            ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g)); }).join('')
+            ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
             : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
           '<div class="mt-prog">' + (tot
             ? '<b>' + Math.round(sel / tot * 100) + '%</b><small>' + sel + ' / ' + tot + '</small>'
@@ -5061,6 +5128,7 @@
 
   document.getElementById('mtCari').addEventListener('input', renderManajemenTugas);
   document.getElementById('mtFilterTingkat').addEventListener('change', renderManajemenTugas);
+  document.getElementById('mtFilterJenis').addEventListener('change', renderManajemenTugas);
   document.getElementById('mtBatal').addEventListener('click', function() { document.getElementById('mtOverlay').hidden = true; });
   document.getElementById('formMtTambah').addEventListener('submit', function(e) {
     e.preventDefault();
