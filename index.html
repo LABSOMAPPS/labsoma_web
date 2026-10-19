@@ -286,6 +286,7 @@
       font-size: 13.5px;
       font-weight: 500;
     }
+    .nav-submenu .nav-count { flex:0 0 auto; min-width:25px; margin-left:auto; padding:2px 7px; border-radius:999px; background:var(--aksen-soft); color:var(--aksen); font-size:11px; font-weight:800; line-height:1.5; text-align:center; }
 
     .sidebar-user {
       margin-top: auto;
@@ -1163,6 +1164,7 @@
     .hub-button .hub-icon-box svg { width: 22px; height: 22px; stroke: currentColor; }
     .hub-button strong { display: block; font-size: 15px; font-weight: 700; }
     .hub-button small { display: block; margin-top: 3px; color: var(--redup); font-size: 12.5px; }
+    .hub-button .hub-count { flex: 0 0 auto; min-width: 34px; margin-left: auto; padding: 7px 10px; border: 1px solid var(--aksen-border); border-radius: 999px; background: var(--aksen-soft); color: var(--aksen); font-size: 14px; font-weight: 800; line-height: 1; text-align: center; }
     .koreksi-ringkasan { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; max-width:900px; margin:18px 0 22px; }
     .koreksi-ringkasan-kartu { display:block; width:100%; padding:18px; border:1px solid var(--garis); border-radius:var(--radius-lg); background:var(--panel); color:var(--teks); box-shadow:var(--bayangan-sm); text-align:left; cursor:pointer; }
     .koreksi-ringkasan-kartu:hover, .koreksi-ringkasan-kartu:focus-visible { border-color:var(--aksen); background:var(--panel2); outline:none; }
@@ -1772,9 +1774,9 @@
           <div class="nav-submenu" id="menu-pembuatanSoal">
             <button class="nav-button" data-page="tugas">Tugas</button>
             <button class="nav-button" data-page="rekap">Rekap</button>
-            <button class="nav-button" data-page="korektor1">Korektor 1</button>
-            <button class="nav-button" data-page="korektor2">Korektor 2</button>
-            <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama</button>
+            <button class="nav-button" data-page="korektor1">Korektor 1<span class="nav-count" id="jumlahKorektor1Sidebar" aria-label="Jumlah antrean Korektor 1">0</span></button>
+            <button class="nav-button" data-page="korektor2">Korektor 2<span class="nav-count" id="jumlahKorektor2Sidebar" aria-label="Jumlah antrean Korektor 2">0</span></button>
+            <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama<span class="nav-count" id="jumlahKoreksiBersamaSidebar" aria-label="Jumlah antrean Koreksi Bersama">0</span></button>
           </div>
         </div>
 
@@ -1930,18 +1932,21 @@
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
             </span>
             <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
+            <span class="hub-count" id="jumlahKorektor1Hub" aria-label="Jumlah antrean Korektor 1">0</span>
           </button>
           <button class="hub-button" data-goto="korektor2">
             <span class="hub-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
             </span>
             <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
+            <span class="hub-count" id="jumlahKorektor2Hub" aria-label="Jumlah antrean Korektor 2">0</span>
           </button>
           <button class="hub-button" data-goto="koreksiBersama">
             <span class="hub-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </span>
             <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno bersama tim</small></span>
+            <span class="hub-count" id="jumlahKoreksiBersamaHub" aria-label="Jumlah antrean Koreksi Bersama">0</span>
           </button>
         </div>
       </section>
@@ -3914,6 +3919,20 @@
     });
   }
 
+  function perbaruiJumlahKartuAntrean() {
+    [
+      { id: 'jumlahKorektor1Hub', daftar: dataK1Tersimpan },
+      { id: 'jumlahKorektor2Hub', daftar: dataK2Tersimpan },
+      { id: 'jumlahKoreksiBersamaHub', daftar: dataKBTersimpan },
+      { id: 'jumlahKorektor1Sidebar', daftar: dataK1Tersimpan },
+      { id: 'jumlahKorektor2Sidebar', daftar: dataK2Tersimpan },
+      { id: 'jumlahKoreksiBersamaSidebar', daftar: dataKBTersimpan }
+    ].forEach(function(info) {
+      const node = document.getElementById(info.id);
+      if (node) node.textContent = (info.daftar || []).length.toLocaleString('id-ID');
+    });
+  }
+
   function tampilkanAntrianKoreksiBersama(daftar) {
     const dataFiltered = saringDaftarTugas(daftar, 'kb');
     const rows = (dataFiltered || []).map(function(item) {
@@ -4003,6 +4022,7 @@
         dataK1Tersimpan = data.antrianKorektor1 || [];
         dataK2Tersimpan = data.antrianKorektor2 || [];
         dataKBTersimpan = data.antrianKoreksiBersama || [];
+        perbaruiJumlahKartuAntrean();
         daftarRapatTersimpan = data.rapat || [];
         daftarAnggotaRapatTersimpan = data.anggotaRapat || data.daftarAnggotaRapat || data.dataAnggota || [];
         semuaPengumumanTersimpan = data.semuaPengumuman || data.pengumumanHariIni || [];
