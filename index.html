@@ -603,7 +603,6 @@
       padding: 12px 6px;
       border-bottom: 1px solid var(--garis);
     }
-    .item-index { display:inline-grid; place-items:center; flex:0 0 auto; min-width:27px; height:27px; padding:0 6px; border-radius:9px; background:var(--panel2); color:var(--aksen); font-size:12px; font-weight:800; }
 
     .agenda-item:last-child {
       border-bottom: none;
@@ -3477,7 +3476,7 @@
       wadah.innerHTML = '<div class="empty">Tidak ada agenda.</div>';
       return;
     }
-    wadah.innerHTML = daftar.map(function(item, indeks) {
+    wadah.innerHTML = daftar.map(function(item) {
       const detail = [
         item.tempat ? '📍' + aman(item.tempat) : '',
         item.penanggungJawab ? 'PJ: ' + aman(item.penanggungJawab) : '',
@@ -3487,7 +3486,6 @@
       return `
         <article class="agenda-item">
           <div class="agenda-line">
-            <span class="item-index">${indeks + 1}</span>
             <span class="agenda-time">${aman(item.jam || '')}</span>
             <span class="agenda-name">${aman(item.agenda)}</span>
           </div>
@@ -3507,9 +3505,8 @@
       return String(b.tanggal || '').localeCompare(String(a.tanggal || '')) ||
         Number(b.nomorBaris || 0) - Number(a.nomorBaris || 0);
     });
-    wadah.innerHTML = riwayat.map(function(item, indeks) {
+    wadah.innerHTML = riwayat.map(function(item) {
       return '<article class="announcement-item">' +
-        '<span class="item-index">' + (indeks + 1) + '</span> ' +
         (item.keterangan ? '<h2 class="announcement-title">' + aman(item.keterangan) + '</h2>' : '') +
         '<div class="announcement-text">' + aman(item.isi) + '</div>' +
         (item.sasaran ? '<div class="announcement-target">Kepada: ' + aman(item.sasaran) + '</div>' : '') +
@@ -3636,7 +3633,7 @@
     if (!terlihat.length) {
       wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
-      wadah.innerHTML = terlihat.map(function(orang, indeksAnggota) {
+      wadah.innerHTML = terlihat.map(function(orang) {
         const daftar = (orang.daftarTugas || []).map(function(item) {
           const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
           return '<li>' + aman(item.tugas) + rincianKelasTingkat(item) +
@@ -3646,7 +3643,7 @@
 
         return `
           <article class="member-card ${Number(orang.telat || 0) > 0 ? 'ada-tugas-telat' : ''}">
-            <div class="member-name"><span class="item-index">${awal + indeksAnggota + 1}</span> ${aman(orang.nama)}</div>
+            <div class="member-name">${aman(orang.nama)}</div>
             <div class="task-label">Tugas hari ini</div>
             <ol class="task-list">${daftar}</ol>
             <div class="counts">
@@ -3671,8 +3668,8 @@
   function tampilkanAgendaRentang(daftar) {
     const wadah = document.getElementById('agendaRentang');
     if (!daftar || !daftar.length) { wadah.innerHTML = '<div class="empty">Tidak ada agenda pada rentang ini.</div>'; return; }
-    wadah.innerHTML = daftar.map(function(item, indeks) {
-      return '<article class="agenda-item"><div class="agenda-line"><span class="item-index">' + (indeks + 1) + '</span><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
+    wadah.innerHTML = daftar.map(function(item) {
+      return '<article class="agenda-item"><div class="agenda-line"><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
     }).join('');
   }
 
@@ -3686,13 +3683,6 @@
 
   function renderTabel(headers, rows) {
     if (!rows.length) return '<div class="card empty">Belum ada data.</div>';
-    const sudahAdaNomor = headers.some(function(header) { return /^(no\.?|nomor|#)$/i.test(String(header).trim()); });
-    if (!sudahAdaNomor) {
-      headers = ['No'].concat(headers);
-      rows = rows.map(function(row, indeks) {
-        return String(row).replace(/<tr(\s*[^>]*)>/i, '<tr$1><td>' + (indeks + 1) + '</td>');
-      });
-    }
     return `
       <div class="table-wrap">
         <table>
@@ -4130,8 +4120,8 @@
       const jumlahHadir = daftarPeserta.filter(function(item) { return item.kehadiran === 'Hadir'; }).length;
       const ringkasan = mode === 'rekap' ? '<p><b>' + jumlahHadir + ' hadir</b> · ' + (daftarPeserta.length - jumlahHadir) + ' belum · ' + daftarPeserta.length + ' peserta</p>' : '';
       const barisPeserta = daftarPeserta.length
-        ? daftarPeserta.map(function(item, indeks) {
-            return '<div class="rapat-peserta-row"><span class="item-index">' + (indeks + 1) + '</span><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
+        ? daftarPeserta.map(function(item) {
+            return '<div class="rapat-peserta-row"><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
               (mode === 'absen' ? '<span><button class="button small" data-rapat-presensi="Hadir" data-nama="' + aman(item.nama) + '">Hadir</button> <button class="button secondary small" data-rapat-presensi="Belum Absen" data-nama="' + aman(item.nama) + '">Belum</button></span>' : '') +
               '</div>';
           }).join('')
@@ -5077,15 +5067,6 @@
   let daftarSetorSoalTersimpan = [];
   const OPSI_TINGKAT_SETOR = ['IBTIDAIYAH', 'TSANAWIYAH', 'ALIYAH', 'PROGRAM KHUSUS', 'REGULER', 'FAN UMUM'];
 
-  function tanggalSetorSoalISO(item) {
-    if (item && item.tanggalUnggah) return String(item.tanggalUnggah).slice(0, 10);
-    const waktu = String((item || {}).waktu || '').trim();
-    const lokal = waktu.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (lokal) return lokal[3] + '-' + String(lokal[2]).padStart(2, '0') + '-' + String(lokal[1]).padStart(2, '0');
-    const iso = waktu.match(/^(\d{4}-\d{2}-\d{2})/);
-    return iso ? iso[1] : '';
-  }
-
   function renderDaftarSetorSoal() {
     const daftar = document.getElementById('daftarSetorSoal');
     const filterIds = ['setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'];
@@ -5109,21 +5090,21 @@
     const hasil = daftarSetorSoalTersimpan.filter(function(item) {
       const teks = [item.nama, item.pengunggah, item.tingkat, item.kelas, item.tugas, item.waktu].join(' ').toLocaleLowerCase('id');
       return (!cari || teks.indexOf(cari) >= 0) &&
-        (!filterTanggal || tanggalSetorSoalISO(item) === filterTanggal) &&
+        (!filterTanggal || item.tanggalUnggah === filterTanggal) &&
         filterIds.every(function(id) { return !document.getElementById(id).value || String(item[({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id]] || '') === document.getElementById(id).value; });
     });
     if (!hasil.length) {
       daftar.innerHTML = '<div class="card empty">Belum ada dokumen yang cocok.</div>';
       return;
     }
-    daftar.innerHTML = hasil.map(function(item, indeks) {
+    daftar.innerHTML = hasil.map(function(item) {
       const ukuran = item.ukuran < 1024 * 1024
         ? Math.max(1, Math.round(item.ukuran / 1024)) + ' KB'
         : (item.ukuran / (1024 * 1024)).toFixed(1) + ' MB';
       const role = String((sesiAktif || {}).role || '').toUpperCase();
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
-      return '<article class="setor-soal-item"><span class="item-index">' + (indeks + 1) + '</span><div class="setor-soal-meta"><strong>' + aman(item.nama) + '</strong>' +
+      return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong>' + aman(item.nama) + '</strong>' +
         '<small>' + aman(item.tingkat) + ' · ' + aman(item.kelas || 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
@@ -5504,7 +5485,7 @@
       mtAnggota.push(nama);
       baris.push(
         '<div class="mt-row">' +
-          '<div class="mt-nama"><strong><span class="item-index">' + mtAnggota.length + '</span> ' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
+          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
           '<div class="mt-chips">' + (milik.length
             ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
             : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
