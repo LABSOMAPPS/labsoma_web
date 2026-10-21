@@ -603,6 +603,7 @@
       padding: 12px 6px;
       border-bottom: 1px solid var(--garis);
     }
+    .item-index { display:inline-grid; place-items:center; flex:0 0 auto; min-width:27px; height:27px; padding:0 6px; border-radius:9px; background:var(--panel2); color:var(--aksen); font-size:12px; font-weight:800; }
 
     .agenda-item:last-child {
       border-bottom: none;
@@ -887,6 +888,8 @@
       background: var(--panel);
       box-shadow: var(--bayangan-sm);
     }
+    .search-filters.setor-soal-filters { grid-template-columns: minmax(220px, 1.5fr) repeat(5, minmax(135px, 1fr)); }
+    @media (max-width: 1180px) { .search-filters.setor-soal-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
     .button {
       display: inline-flex;
@@ -2005,6 +2008,14 @@
               </select>
             </div>
             <div class="field">
+              <label for="setorSoalKelas">Kelas</label>
+              <select id="setorSoalKelas" required><option value="">Pilih kelas</option></select>
+            </div>
+            <div class="field">
+              <label for="setorSoalTugas">Tugas / Soal</label>
+              <select id="setorSoalTugas" required><option value="">Pilih tugas/soal</option></select>
+            </div>
+            <div class="field">
               <label for="setorSoalFile">Dokumen soal (DOC, DOCX, ODT, RTF, atau PDF; maks. 7 MB)</label>
               <input id="setorSoalFile" type="file" accept=".doc,.docx,.odt,.rtf,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,application/pdf" required>
             </div>
@@ -2013,9 +2024,13 @@
             <button class="button" id="tombolUnggahSoal" type="submit">Unggah Dokumen</button>
           </div>
         </form>
-        <div class="search-filters" style="margin-top:18px;">
+        <div class="search-filters setor-soal-filters" style="margin-top:18px;">
           <input id="setorSoalCari" type="search" placeholder="Cari nama file atau pengunggah…" aria-label="Cari dokumen soal">
+          <input id="setorSoalFilterTanggal" type="date" aria-label="Filter tanggal diunggah" title="Tanggal diunggah">
+          <select id="setorSoalFilterPengunggah" aria-label="Filter Sonik/pengunggah"><option value="">Semua pengunggah</option></select>
           <select id="setorSoalFilterTingkat" aria-label="Filter tingkat"><option value="">Semua tingkat</option></select>
+          <select id="setorSoalFilterKelas" aria-label="Filter kelas"><option value="">Semua kelas</option></select>
+          <select id="setorSoalFilterTugas" aria-label="Filter tugas/soal"><option value="">Semua tugas/soal</option></select>
         </div>
         <div class="setor-soal-list" id="daftarSetorSoal"><div class="card empty">Memuat dokumen…</div></div>
       </section>
@@ -2206,8 +2221,7 @@
       <section class="page" id="page-rekap">
         <h1 class="page-heading">Rekap Tugas</h1>
         <p class="subheading">
-          Semua tugas yang tanggal mulainya sudah tiba. Admin dapat mengubah
-          status menjadi Selesai. Gunakan menu Korektor untuk mengembalikan tugas.
+          Rekap progres seluruh tugas yang tanggal mulainya sudah tiba. Ubah status tugas melalui menu Daftar Tugas.
         </p>
         <div class="search-filters">
           <input type="search" id="filterRekapTugas" data-filter-group="rekap" data-filter-key="tugas" placeholder="Cari tugas/soal…" aria-label="Cari tugas di Rekap">
@@ -2823,6 +2837,19 @@
         <button class="button bahaya" type="button" id="konfirmasiHapusPengumuman">Ya, Hapus</button>
       </div>
       <div class="message" id="statusHapusPengumuman" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="hapusSetorSoalOverlay" hidden>
+    <section class="modal dialog-keluar" role="alertdialog" aria-modal="true" aria-labelledby="hapusSetorSoalJudul" aria-describedby="hapusSetorSoalRincian">
+      <div class="dk-ikon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></div>
+      <h2 id="hapusSetorSoalJudul">Hapus dokumen?</h2>
+      <p id="hapusSetorSoalRincian"></p>
+      <div class="dk-aksi">
+        <button class="button secondary" type="button" id="batalHapusSetorSoal">Batal</button>
+        <button class="button bahaya" type="button" id="konfirmasiHapusSetorSoal">Ya, Hapus</button>
+      </div>
+      <div class="message" id="statusHapusSetorSoal" aria-live="polite"></div>
     </section>
   </div>
 
@@ -3450,7 +3477,7 @@
       wadah.innerHTML = '<div class="empty">Tidak ada agenda.</div>';
       return;
     }
-    wadah.innerHTML = daftar.map(function(item) {
+    wadah.innerHTML = daftar.map(function(item, indeks) {
       const detail = [
         item.tempat ? '📍' + aman(item.tempat) : '',
         item.penanggungJawab ? 'PJ: ' + aman(item.penanggungJawab) : '',
@@ -3460,6 +3487,7 @@
       return `
         <article class="agenda-item">
           <div class="agenda-line">
+            <span class="item-index">${indeks + 1}</span>
             <span class="agenda-time">${aman(item.jam || '')}</span>
             <span class="agenda-name">${aman(item.agenda)}</span>
           </div>
@@ -3479,8 +3507,9 @@
       return String(b.tanggal || '').localeCompare(String(a.tanggal || '')) ||
         Number(b.nomorBaris || 0) - Number(a.nomorBaris || 0);
     });
-    wadah.innerHTML = riwayat.map(function(item) {
+    wadah.innerHTML = riwayat.map(function(item, indeks) {
       return '<article class="announcement-item">' +
+        '<span class="item-index">' + (indeks + 1) + '</span> ' +
         (item.keterangan ? '<h2 class="announcement-title">' + aman(item.keterangan) + '</h2>' : '') +
         '<div class="announcement-text">' + aman(item.isi) + '</div>' +
         (item.sasaran ? '<div class="announcement-target">Kepada: ' + aman(item.sasaran) + '</div>' : '') +
@@ -3607,7 +3636,7 @@
     if (!terlihat.length) {
       wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
-      wadah.innerHTML = terlihat.map(function(orang) {
+      wadah.innerHTML = terlihat.map(function(orang, indeksAnggota) {
         const daftar = (orang.daftarTugas || []).map(function(item) {
           const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
           return '<li>' + aman(item.tugas) + rincianKelasTingkat(item) +
@@ -3617,7 +3646,7 @@
 
         return `
           <article class="member-card ${Number(orang.telat || 0) > 0 ? 'ada-tugas-telat' : ''}">
-            <div class="member-name">${aman(orang.nama)}</div>
+            <div class="member-name"><span class="item-index">${awal + indeksAnggota + 1}</span> ${aman(orang.nama)}</div>
             <div class="task-label">Tugas hari ini</div>
             <ol class="task-list">${daftar}</ol>
             <div class="counts">
@@ -3642,8 +3671,8 @@
   function tampilkanAgendaRentang(daftar) {
     const wadah = document.getElementById('agendaRentang');
     if (!daftar || !daftar.length) { wadah.innerHTML = '<div class="empty">Tidak ada agenda pada rentang ini.</div>'; return; }
-    wadah.innerHTML = daftar.map(function(item) {
-      return '<article class="agenda-item"><div class="agenda-line"><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
+    wadah.innerHTML = daftar.map(function(item, indeks) {
+      return '<article class="agenda-item"><div class="agenda-line"><span class="item-index">' + (indeks + 1) + '</span><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
     }).join('');
   }
 
@@ -3657,6 +3686,13 @@
 
   function renderTabel(headers, rows) {
     if (!rows.length) return '<div class="card empty">Belum ada data.</div>';
+    const sudahAdaNomor = headers.some(function(header) { return /^(no\.?|nomor|#)$/i.test(String(header).trim()); });
+    if (!sudahAdaNomor) {
+      headers = ['No'].concat(headers);
+      rows = rows.map(function(row, indeks) {
+        return String(row).replace(/<tr(\s*[^>]*)>/i, '<tr$1><td>' + (indeks + 1) + '</td>');
+      });
+    }
     return `
       <div class="table-wrap">
         <table>
@@ -3936,10 +3972,6 @@
           <td>${aman(item.tingkat || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(statusTampil)}</td>
-          <td>
-            <button class="button small ${selesai ? 'selected' : ''}" data-action="ubahStatus" data-status="Selesai" data-row="${item.nomorBaris}">Selesai</button>
-            <button class="button secondary small ${!selesai ? 'selected' : ''}" data-action="ubahStatus" data-status="Belum" data-row="${item.nomorBaris}">Belum</button>
-          </td>
           <td>${aman(item.statusK1 || 'Menunggu')}</td>
           <td>${aman(item.statusK2 || 'Menunggu')}</td>
         </tr>
@@ -3947,7 +3979,7 @@
     });
 
     document.getElementById('isiRekap').innerHTML = ringkasan +
-      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Status', 'Ubah status (admin)', 'Korektor 1', 'Korektor 2'], rows);
+      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2'], rows);
   }
 
   function tampilkanAntrianK1(daftar) {
@@ -4098,8 +4130,8 @@
       const jumlahHadir = daftarPeserta.filter(function(item) { return item.kehadiran === 'Hadir'; }).length;
       const ringkasan = mode === 'rekap' ? '<p><b>' + jumlahHadir + ' hadir</b> · ' + (daftarPeserta.length - jumlahHadir) + ' belum · ' + daftarPeserta.length + ' peserta</p>' : '';
       const barisPeserta = daftarPeserta.length
-        ? daftarPeserta.map(function(item) {
-            return '<div class="rapat-peserta-row"><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
+        ? daftarPeserta.map(function(item, indeks) {
+            return '<div class="rapat-peserta-row"><span class="item-index">' + (indeks + 1) + '</span><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
               (mode === 'absen' ? '<span><button class="button small" data-rapat-presensi="Hadir" data-nama="' + aman(item.nama) + '">Hadir</button> <button class="button secondary small" data-rapat-presensi="Belum Absen" data-nama="' + aman(item.nama) + '">Belum</button></span>' : '') +
               '</div>';
           }).join('')
@@ -4532,6 +4564,9 @@
           <td>
             <button class="button secondary small" data-action="editTugas" data-row="${item.nomorBaris}">✎ Edit</button>
             <button class="button small" style="background:#e05252; color:#fff;" data-action="hapusTugas" data-row="${item.nomorBaris}">🗑 Hapus</button>
+            ${String(item.status || '').toLowerCase() === 'selesai'
+              ? `<button class="button secondary small" data-action="ubahStatus" data-status="Belum" data-row="${item.nomorBaris}">Belum</button>`
+              : `<button class="button small" data-action="ubahStatus" data-status="Selesai" data-row="${item.nomorBaris}">Tandai Selesai</button>`}
           </td>
         </tr>
       `;
@@ -4630,9 +4665,9 @@
         mintaPin().then(function(pin) {
           if (!pin) return;
           google.script.run
-            .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); muatAplikasi(); })
-            .withFailureHandler(function(err) { tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error'); })
-            .hapusTugas(nomorBaris, pin);
+          .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); muatAplikasi(); })
+          .withFailureHandler(function(err) { tampilkanNotifikasi(err && err.message ? err.message : String(err), 'error'); })
+          .hapusPenugasan(item && item.kunci ? item.kunci : nomorBaris, pin);
         });
       }
     }
@@ -4682,6 +4717,7 @@
         '</td><td>' + aman(x.tingkat) + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
         '</td><td>' + aman(x.status) + '</td><td>' +
         '<button class="button secondary small" data-action="editUjian" data-row="' + x.nomorBaris + '">✎ Edit</button> ' +
+        '<button class="button small" style="background:#e05252;color:#fff;" data-action="hapusUjian" data-key="' + aman(x.kunci || '') + '" data-nama="' + aman(x.tugas) + '">🗑 Hapus</button> ' +
         (selesai ? '<button class="button secondary small" data-action="belumUjian" data-row="' + x.nomorBaris + '">Belum</button>' : '<button class="button small" data-action="selesaiUjian" data-row="' + x.nomorBaris + '">Tandai Selesai</button>') +
         '</td></tr>';
     });
@@ -4724,6 +4760,16 @@
       document.getElementById('editUjianOverlay').hidden = false;
     } else if (aksi === 'belumUjian') {
       jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Belum']);
+    } else if (aksi === 'hapusUjian') {
+      const kunciTugas = tombol.dataset.key;
+      if (!kunciTugas || !confirm('Hapus tugas koreksi ujian "' + (tombol.dataset.nama || 'tugas ini') + '"? Tugas yang sama juga akan dihapus dari Pembuatan Soal.')) return;
+      mintaPin().then(function(pin) {
+        if (!pin) return;
+        google.script.run
+          .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'Tugas berhasil dihapus.', 'success'); muatAplikasi(); })
+          .withFailureHandler(function(error) { tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); })
+          .hapusPenugasan(kunciTugas, pin);
+      });
     }
   });
 
@@ -5031,34 +5077,54 @@
   let daftarSetorSoalTersimpan = [];
   const OPSI_TINGKAT_SETOR = ['IBTIDAIYAH', 'TSANAWIYAH', 'ALIYAH', 'PROGRAM KHUSUS', 'REGULER', 'FAN UMUM'];
 
+  function tanggalSetorSoalISO(item) {
+    if (item && item.tanggalUnggah) return String(item.tanggalUnggah).slice(0, 10);
+    const waktu = String((item || {}).waktu || '').trim();
+    const lokal = waktu.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (lokal) return lokal[3] + '-' + String(lokal[2]).padStart(2, '0') + '-' + String(lokal[1]).padStart(2, '0');
+    const iso = waktu.match(/^(\d{4}-\d{2}-\d{2})/);
+    return iso ? iso[1] : '';
+  }
+
   function renderDaftarSetorSoal() {
     const daftar = document.getElementById('daftarSetorSoal');
-    const filterTingkat = document.getElementById('setorSoalFilterTingkat');
-    if (!daftar || !filterTingkat) return;
-    const tingkatSebelum = filterTingkat.value;
+    const filterIds = ['setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'];
+    if (!daftar) return;
+    const filterSebelum = {};
+    filterIds.forEach(function(id) { filterSebelum[id] = document.getElementById(id).value; });
     const cari = String(document.getElementById('setorSoalCari').value || '').trim().toLocaleLowerCase('id');
-    filterTingkat.innerHTML = '<option value="">Semua tingkat</option>' + OPSI_TINGKAT_SETOR.map(function(t) {
-      return '<option value="' + aman(t) + '">' + aman(t) + '</option>';
-    }).join('');
-    filterTingkat.value = tingkatSebelum;
+    const definisiFilter = [
+      ['setorSoalFilterPengunggah', 'Semua pengunggah', function(x) { return x.pengunggah; }],
+      ['setorSoalFilterTingkat', 'Semua tingkat', function(x) { return x.tingkat; }],
+      ['setorSoalFilterKelas', 'Semua kelas', function(x) { return x.kelas; }],
+      ['setorSoalFilterTugas', 'Semua tugas/soal', function(x) { return x.tugas; }]
+    ];
+    definisiFilter.forEach(function(def) {
+      const select = document.getElementById(def[0]);
+      const options = [...new Set(daftarSetorSoalTersimpan.map(def[2]).filter(Boolean))].sort(function(a,b) { return String(a).localeCompare(String(b), 'id'); });
+      select.innerHTML = '<option value="">' + def[1] + '</option>' + options.map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
+      if (options.indexOf(filterSebelum[def[0]]) >= 0) select.value = filterSebelum[def[0]];
+    });
+    const filterTanggal = document.getElementById('setorSoalFilterTanggal').value;
     const hasil = daftarSetorSoalTersimpan.filter(function(item) {
-      const cocokTingkat = !filterTingkat.value || item.tingkat === filterTingkat.value;
-      const teks = (item.nama + ' ' + item.pengunggah + ' ' + item.tingkat).toLocaleLowerCase('id');
-      return cocokTingkat && (!cari || teks.indexOf(cari) >= 0);
+      const teks = [item.nama, item.pengunggah, item.tingkat, item.kelas, item.tugas, item.waktu].join(' ').toLocaleLowerCase('id');
+      return (!cari || teks.indexOf(cari) >= 0) &&
+        (!filterTanggal || tanggalSetorSoalISO(item) === filterTanggal) &&
+        filterIds.every(function(id) { return !document.getElementById(id).value || String(item[({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id]] || '') === document.getElementById(id).value; });
     });
     if (!hasil.length) {
       daftar.innerHTML = '<div class="card empty">Belum ada dokumen yang cocok.</div>';
       return;
     }
-    daftar.innerHTML = hasil.map(function(item) {
+    daftar.innerHTML = hasil.map(function(item, indeks) {
       const ukuran = item.ukuran < 1024 * 1024
         ? Math.max(1, Math.round(item.ukuran / 1024)) + ' KB'
         : (item.ukuran / (1024 * 1024)).toFixed(1) + ' MB';
       const role = String((sesiAktif || {}).role || '').toUpperCase();
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
-      return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong>' + aman(item.nama) + '</strong>' +
-        '<small>' + aman(item.tingkat) + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
+      return '<article class="setor-soal-item"><span class="item-index">' + (indeks + 1) + '</span><div class="setor-soal-meta"><strong>' + aman(item.nama) + '</strong>' +
+        '<small>' + aman(item.tingkat) + ' · ' + aman(item.kelas || 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
     }).join('');
@@ -5075,13 +5141,19 @@
   }
 
   document.getElementById('setorSoalCari').addEventListener('input', renderDaftarSetorSoal);
-  document.getElementById('setorSoalFilterTingkat').addEventListener('change', renderDaftarSetorSoal);
+  ['setorSoalFilterTanggal', 'setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', renderDaftarSetorSoal);
+  });
+  document.getElementById('setorSoalTingkat').addEventListener('change', function() { updateMateriDropdown('setorSoalTingkat', 'setorSoalKelas', 'setorSoalTugas', materiTersimpan()); });
+  document.getElementById('setorSoalKelas').addEventListener('change', function() { updateMateriDropdown('setorSoalTingkat', 'setorSoalKelas', 'setorSoalTugas', materiTersimpan()); });
   document.getElementById('formSetorSoal').addEventListener('submit', function(event) {
     event.preventDefault();
     const file = document.getElementById('setorSoalFile').files[0];
     const tingkat = document.getElementById('setorSoalTingkat').value;
+    const kelas = document.getElementById('setorSoalKelas').value;
+    const tugas = document.getElementById('setorSoalTugas').value;
     const tombol = document.getElementById('tombolUnggahSoal');
-    if (!file || !tingkat) return;
+    if (!file || !tingkat || !kelas || !tugas) { tampilkanNotifikasi('Pilih tingkat, kelas, tugas/soal, dan dokumen sebelum mengunggah.', 'error'); return; }
     if (file.size > 7 * 1024 * 1024) { tampilkanNotifikasi('Ukuran file maksimal 7 MB.', 'error'); return; }
     const reader = new FileReader();
     tombol.disabled = true;
@@ -5099,21 +5171,55 @@
           tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
           tombol.disabled = false; tombol.textContent = 'Unggah Dokumen';
         })
-        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, base64: base64 });
+        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, kelas: kelas, tugas: tugas, base64: base64 });
     };
     reader.onerror = function() { tombol.disabled = false; tombol.textContent = 'Unggah Dokumen'; tampilkanNotifikasi('File tidak dapat dibaca.', 'error'); };
     reader.readAsDataURL(file);
   });
 
+  let tombolSetorSoalAkanDihapus = null;
+  function tutupKonfirmasiHapusSetorSoal() {
+    tombolSetorSoalAkanDihapus = null;
+    document.getElementById('hapusSetorSoalOverlay').hidden = true;
+    document.getElementById('statusHapusSetorSoal').textContent = '';
+    document.getElementById('statusHapusSetorSoal').className = 'message';
+  }
+  document.getElementById('batalHapusSetorSoal').addEventListener('click', tutupKonfirmasiHapusSetorSoal);
+  document.getElementById('hapusSetorSoalOverlay').addEventListener('click', function(event) {
+    if (event.target.id === 'hapusSetorSoalOverlay') tutupKonfirmasiHapusSetorSoal();
+  });
+  document.getElementById('konfirmasiHapusSetorSoal').addEventListener('click', function() {
+    const tombolKonfirmasi = this;
+    const item = tombolSetorSoalAkanDihapus;
+    if (!item) return;
+    const tombolBatal = document.getElementById('batalHapusSetorSoal');
+    const status = document.getElementById('statusHapusSetorSoal');
+    tombolKonfirmasi.disabled = true;
+    tombolBatal.disabled = true;
+    status.textContent = 'Menghapus dokumen…';
+    google.script.run
+      .withSuccessHandler(function(pesan) {
+        tutupKonfirmasiHapusSetorSoal();
+        tombolKonfirmasi.disabled = false;
+        tombolBatal.disabled = false;
+        tampilkanNotifikasi(pesan || 'Dokumen berhasil dihapus.', 'success');
+        muatDaftarSetorSoal();
+      })
+      .withFailureHandler(function(error) {
+        tombolKonfirmasi.disabled = false;
+        tombolBatal.disabled = false;
+        status.className = 'message error';
+        status.textContent = 'Dokumen belum terhapus. ' + (error && error.message ? error.message : String(error));
+      })
+      .hapusSetorSoal(item.dataset.hapusSetorSoal);
+  });
+
   document.getElementById('daftarSetorSoal').addEventListener('click', function(event) {
     const hapus = event.target.closest('[data-hapus-setor-soal]');
     if (hapus) {
-      if (!confirm('Hapus dokumen "' + hapus.dataset.namaSetorSoal + '" dari daftar Setor Soal?')) return;
-      hapus.disabled = true;
-      google.script.run
-        .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'Dokumen dihapus.', 'success'); muatDaftarSetorSoal(); })
-        .withFailureHandler(function(error) { hapus.disabled = false; tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); })
-        .hapusSetorSoal(hapus.dataset.hapusSetorSoal);
+      tombolSetorSoalAkanDihapus = hapus;
+      document.getElementById('hapusSetorSoalRincian').textContent = '“' + hapus.dataset.namaSetorSoal + '”. Dokumen ini akan dihapus permanen dari daftar Setor Soal.';
+      document.getElementById('hapusSetorSoalOverlay').hidden = false;
       return;
     }
     const tombol = event.target.closest('[data-unduh-setor-soal]');
@@ -5398,7 +5504,7 @@
       mtAnggota.push(nama);
       baris.push(
         '<div class="mt-row">' +
-          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
+          '<div class="mt-nama"><strong><span class="item-index">' + mtAnggota.length + '</span> ' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
           '<div class="mt-chips">' + (milik.length
             ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
             : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
