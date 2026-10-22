@@ -287,6 +287,8 @@
       font-weight: 500;
     }
     .nav-submenu .nav-count { flex:0 0 auto; min-width:25px; margin-left:auto; padding:2px 7px; border-radius:999px; background:var(--aksen-soft); color:var(--aksen); font-size:11px; font-weight:800; line-height:1.5; text-align:center; }
+    .list-index { display:inline-flex; align-items:center; justify-content:center; flex:0 0 26px; width:26px; height:26px; margin-right:9px; border-radius:8px; background:var(--aksen-soft); color:var(--aksen); font-size:12px; font-weight:800; vertical-align:middle; }
+    .announcement-list-index { margin-bottom:10px; color:var(--redup); font-size:11px; font-weight:800; }
     .setor-soal-list { display:grid; gap:12px; }
     .setor-soal-item { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px; border:1px solid var(--garis); border-radius:var(--radius-lg); background:var(--panel); box-shadow:var(--bayangan-sm); }
     .setor-soal-meta { min-width:0; }
@@ -3477,7 +3479,7 @@
       wadah.innerHTML = '<div class="empty">Tidak ada agenda.</div>';
       return;
     }
-    wadah.innerHTML = daftar.map(function(item) {
+    wadah.innerHTML = daftar.map(function(item, indeks) {
       const detail = [
         item.tempat ? '📍' + aman(item.tempat) : '',
         item.penanggungJawab ? 'PJ: ' + aman(item.penanggungJawab) : '',
@@ -3487,6 +3489,7 @@
       return `
         <article class="agenda-item">
           <div class="agenda-line">
+            <span class="list-index">${indeks + 1}</span>
             <span class="agenda-time">${aman(item.jam || '')}</span>
             <span class="agenda-name">${aman(item.agenda)}</span>
           </div>
@@ -3506,8 +3509,9 @@
       return String(b.tanggal || '').localeCompare(String(a.tanggal || '')) ||
         Number(b.nomorBaris || 0) - Number(a.nomorBaris || 0);
     });
-    wadah.innerHTML = riwayat.map(function(item) {
+    wadah.innerHTML = riwayat.map(function(item, indeks) {
       return '<article class="announcement-item">' +
+        '<div class="announcement-list-index">No. ' + (indeks + 1) + '</div>' +
         (item.keterangan ? '<h2 class="announcement-title">' + aman(item.keterangan) + '</h2>' : '') +
         '<div class="announcement-text">' + aman(item.isi) + '</div>' +
         (item.sasaran ? '<div class="announcement-target">Kepada: ' + aman(item.sasaran) + '</div>' : '') +
@@ -3634,7 +3638,7 @@
     if (!terlihat.length) {
       wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
-      wadah.innerHTML = terlihat.map(function(orang) {
+      wadah.innerHTML = terlihat.map(function(orang, indeks) {
         const daftar = (orang.daftarTugas || []).map(function(item) {
           const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
           return '<li>' + aman(item.tugas) + rincianKelasTingkat(item) +
@@ -3644,7 +3648,7 @@
 
         return `
           <article class="member-card ${Number(orang.telat || 0) > 0 ? 'ada-tugas-telat' : ''}">
-            <div class="member-name">${aman(orang.nama)}</div>
+            <div class="member-name"><span class="list-index">${awal + indeks + 1}</span>${aman(orang.nama)}</div>
             <div class="task-label">Tugas hari ini</div>
             <ol class="task-list">${daftar}</ol>
             <div class="counts">
@@ -3669,8 +3673,8 @@
   function tampilkanAgendaRentang(daftar) {
     const wadah = document.getElementById('agendaRentang');
     if (!daftar || !daftar.length) { wadah.innerHTML = '<div class="empty">Tidak ada agenda pada rentang ini.</div>'; return; }
-    wadah.innerHTML = daftar.map(function(item) {
-      return '<article class="agenda-item"><div class="agenda-line"><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
+    wadah.innerHTML = daftar.map(function(item, indeks) {
+      return '<article class="agenda-item"><div class="agenda-line"><span class="list-index">' + (indeks + 1) + '</span><span class="agenda-time">' + aman(item.jam || '') + '</span><span class="agenda-name">' + aman(item.agenda) + '</span></div><div class="agenda-detail">' + formatTanggal(item.tanggal) + (item.tempat ? ' · ' + aman(item.tempat) : '') + (item.penanggungJawab ? ' · ' + aman(item.penanggungJawab) : '') + (item.keterangan ? ' · ' + aman(item.keterangan) : '') + '</div></article>';
     }).join('');
   }
 
@@ -3684,6 +3688,13 @@
 
   function renderTabel(headers, rows) {
     if (!rows.length) return '<div class="card empty">Belum ada data.</div>';
+    const headerPertama = String(headers[0] || '').replace(/<[^>]*>/g, '').trim().toLocaleLowerCase('id');
+    if (headerPertama !== 'no' && headerPertama !== 'nomor') {
+      headers = ['No'].concat(headers);
+      rows = rows.map(function(row, indeks) {
+        return String(row).replace(/<tr(\b[^>]*)>/i, '<tr$1><td>' + (indeks + 1) + '</td>');
+      });
+    }
     return `
       <div class="table-wrap">
         <table>
@@ -3793,6 +3804,41 @@
   }
 
   function materiTersimpan() { return (dataAplikasiTersimpan || {}).materiPelajaran || []; }
+
+  // Ringkas nama rombel seperti "3-A" atau "3 B" menjadi tingkat kelas "3".
+  // Jika kelas memakai nama non-angka, nama tersebut tetap ditampilkan.
+  function kelasRingkasSetorSoal(value) {
+    const teks = String(value || '').trim();
+    const cocok = teks.match(/^\s*(?:kelas\s*)?(\d+)/i);
+    return cocok ? cocok[1] : teks;
+  }
+
+  function updateSetorSoalDropdown() {
+    const tingkat = norm(document.getElementById('setorSoalTingkat').value);
+    const dataTingkat = materiTersimpan().filter(function(x) { return norm(x.tingkat) === tingkat; });
+    const kelasSelect = document.getElementById('setorSoalKelas');
+    const tugasSelect = document.getElementById('setorSoalTugas');
+    const kelasSebelum = kelasRingkasSetorSoal(kelasSelect.value);
+    const daftarKelas = [...new Set(dataTingkat.map(function(x) { return kelasRingkasSetorSoal(x.kelas); }).filter(Boolean))]
+      .sort(function(a, b) { return String(a).localeCompare(String(b), 'id', { numeric: true }); });
+
+    kelasSelect.innerHTML = '<option value="">Pilih kelas</option>' + daftarKelas.map(function(kelas) {
+      return '<option value="' + aman(kelas) + '">' + aman(kelas) + '</option>';
+    }).join('');
+    if (daftarKelas.indexOf(kelasSebelum) >= 0) kelasSelect.value = kelasSebelum;
+
+    const kelasTerpilih = kelasRingkasSetorSoal(kelasSelect.value);
+    const dataKelas = kelasTerpilih ? dataTingkat.filter(function(x) {
+      return kelasRingkasSetorSoal(x.kelas) === kelasTerpilih;
+    }) : dataTingkat;
+    const tugasSebelumnya = tugasSelect.value;
+    const daftarTugas = [...new Set(dataKelas.map(function(x) { return x.materi || x.kelas; }).filter(Boolean))]
+      .sort(function(a, b) { return String(a).localeCompare(String(b), 'id'); });
+    tugasSelect.innerHTML = '<option value="">Pilih tugas/soal</option>' + daftarTugas.map(function(tugas) {
+      return '<option value="' + aman(tugas) + '">' + aman(tugas) + '</option>';
+    }).join('');
+    if (daftarTugas.indexOf(tugasSebelumnya) >= 0) tugasSelect.value = tugasSebelumnya;
+  }
 
   document.getElementById('mtTingkat').addEventListener('change', function() {
     updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
@@ -4121,8 +4167,8 @@
       const jumlahHadir = daftarPeserta.filter(function(item) { return item.kehadiran === 'Hadir'; }).length;
       const ringkasan = mode === 'rekap' ? '<p><b>' + jumlahHadir + ' hadir</b> · ' + (daftarPeserta.length - jumlahHadir) + ' belum · ' + daftarPeserta.length + ' peserta</p>' : '';
       const barisPeserta = daftarPeserta.length
-        ? daftarPeserta.map(function(item) {
-            return '<div class="rapat-peserta-row"><span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
+        ? daftarPeserta.map(function(item, indeks) {
+            return '<div class="rapat-peserta-row"><span><span class="list-index">' + (indeks + 1) + '</span>' + aman(item.nama) + ' — <b>' + aman(item.kehadiran) + '</b></span>' +
               (mode === 'absen' ? '<span><button class="button small" data-rapat-presensi="Hadir" data-nama="' + aman(item.nama) + '">Hadir</button> <button class="button secondary small" data-rapat-presensi="Belum Absen" data-nama="' + aman(item.nama) + '">Belum</button></span>' : '') +
               '</div>';
           }).join('')
@@ -5078,7 +5124,7 @@
     const definisiFilter = [
       ['setorSoalFilterPengunggah', 'Semua pengunggah', function(x) { return x.pengunggah; }],
       ['setorSoalFilterTingkat', 'Semua tingkat', function(x) { return x.tingkat; }],
-      ['setorSoalFilterKelas', 'Semua kelas', function(x) { return x.kelas; }],
+      ['setorSoalFilterKelas', 'Semua kelas', function(x) { return kelasRingkasSetorSoal(x.kelas); }],
       ['setorSoalFilterTugas', 'Semua tugas/soal', function(x) { return x.tugas; }]
     ];
     definisiFilter.forEach(function(def) {
@@ -5092,21 +5138,27 @@
       const teks = [item.nama, item.pengunggah, item.tingkat, item.kelas, item.tugas, item.waktu].join(' ').toLocaleLowerCase('id');
       return (!cari || teks.indexOf(cari) >= 0) &&
         (!filterTanggal || item.tanggalUnggah === filterTanggal) &&
-        filterIds.every(function(id) { return !document.getElementById(id).value || String(item[({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id]] || '') === document.getElementById(id).value; });
+        filterIds.every(function(id) {
+          const pilihan = document.getElementById(id).value;
+          if (!pilihan) return true;
+          const kolom = ({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id];
+          const nilai = kolom === 'kelas' ? kelasRingkasSetorSoal(item.kelas) : String(item[kolom] || '');
+          return nilai === pilihan;
+        });
     });
     if (!hasil.length) {
       daftar.innerHTML = '<div class="card empty">Belum ada dokumen yang cocok.</div>';
       return;
     }
-    daftar.innerHTML = hasil.map(function(item) {
+    daftar.innerHTML = hasil.map(function(item, indeks) {
       const ukuran = item.ukuran < 1024 * 1024
         ? Math.max(1, Math.round(item.ukuran / 1024)) + ' KB'
         : (item.ukuran / (1024 * 1024)).toFixed(1) + ' MB';
       const role = String((sesiAktif || {}).role || '').toUpperCase();
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
-      return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong>' + aman(item.nama) + '</strong>' +
-        '<small>' + aman(item.tingkat) + ' · ' + aman(item.kelas || 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
+      return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong><span class="list-index">' + (indeks + 1) + '</span>' + aman(item.nama) + '</strong>' +
+        '<small>' + aman(item.tingkat) + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
     }).join('');
@@ -5126,8 +5178,8 @@
   ['setorSoalFilterTanggal', 'setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'].forEach(function(id) {
     document.getElementById(id).addEventListener('change', renderDaftarSetorSoal);
   });
-  document.getElementById('setorSoalTingkat').addEventListener('change', function() { updateMateriDropdown('setorSoalTingkat', 'setorSoalKelas', 'setorSoalTugas', materiTersimpan()); });
-  document.getElementById('setorSoalKelas').addEventListener('change', function() { updateMateriDropdown('setorSoalTingkat', 'setorSoalKelas', 'setorSoalTugas', materiTersimpan()); });
+  document.getElementById('setorSoalTingkat').addEventListener('change', updateSetorSoalDropdown);
+  document.getElementById('setorSoalKelas').addEventListener('change', updateSetorSoalDropdown);
   document.getElementById('formSetorSoal').addEventListener('submit', function(event) {
     event.preventDefault();
     const file = document.getElementById('setorSoalFile').files[0];
