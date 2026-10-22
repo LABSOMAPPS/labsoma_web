@@ -2432,6 +2432,14 @@
               <label for="editTugasKelas">Kelas</label>
               <select id="editTugasKelas" name="kelas" required></select>
             </div>
+            <div class="field">
+              <label for="editTugasTahap">Tahap Ujian</label>
+              <input id="editTugasTahap" name="tahapUjian" type="text" placeholder="Contoh: Ujian Tengah Semester">
+            </div>
+            <div class="field full">
+              <label for="editTugasMadrasah">Madrasah</label>
+              <input id="editTugasMadrasah" name="madrasah" type="text" placeholder="Nama madrasah">
+            </div>
             <div class="field full">
               <label for="editTugasNamaTugas">Fan / Nama Materi</label>
               <select id="editTugasNamaTugas" name="tugas" required></select>
@@ -2558,6 +2566,14 @@
             <div class="field">
               <label for="mtKelas">Kelas</label>
               <select id="mtKelas" required><option value="">Pilih kelas</option></select>
+            </div>
+            <div class="field">
+              <label for="mtTahapUjian">Tahap Ujian</label>
+              <input id="mtTahapUjian" type="text" placeholder="Contoh: Ujian Tengah Semester">
+            </div>
+            <div class="field">
+              <label for="mtMadrasah">Madrasah</label>
+              <input id="mtMadrasah" type="text" placeholder="Nama madrasah">
             </div>
             <div class="field full">
               <label for="mtFan">Fan/Nama Materi</label>
@@ -4159,7 +4175,9 @@
           <td>${aman(item.nama)}</td>
           <td>${aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
+          <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
+          <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(statusTampil)}</td>
           <td>${aman(item.statusK1 || 'Menunggu')}</td>
@@ -4169,7 +4187,7 @@
     });
 
     document.getElementById('isiRekap').innerHTML = ringkasan +
-      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2'], rows);
+      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2'], rows);
   }
 
   function tampilkanAntrianK1(daftar) {
@@ -4180,7 +4198,9 @@
           <td>${aman(item.nama)}</td>
           <td>${aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
+          <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
+          <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${formatTanggal(item.tanggalSelesaiPengerjaan)}</td>
           <td><span class="badge waiting">Menunggu Korektor 1</span></td>
@@ -4191,7 +4211,7 @@
         </tr>
       `;
     });
-    document.getElementById('isiKorektor1').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai dikerjakan', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKorektor1').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai dikerjakan', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanAntrianK2(daftar) {
@@ -4202,7 +4222,9 @@
           <td>${aman(item.nama)}</td>
           <td>${aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
+          <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
+          <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${formatTanggal(item.tanggalK1)}</td>
           <td><span class="badge waiting">Menunggu Korektor 2</span></td>
@@ -4213,7 +4235,7 @@
         </tr>
       `;
     });
-    document.getElementById('isiKorektor2').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai Korektor 1', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKorektor2').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai Korektor 1', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanRingkasanKoreksi() {
@@ -4260,7 +4282,9 @@
           <td>${aman(item.nama)}</td>
           <td>${aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
+          <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
+          <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${formatTanggal(item.tanggalK2)}</td>
           <td><span class="badge waiting">Menunggu Koreksi Bersama</span></td>
@@ -4271,7 +4295,7 @@
         </tr>
       `;
     });
-    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal Tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanDaftarRapat(daftar) {
@@ -4748,7 +4772,9 @@
           <td>${aman(item.nama)}</td>
           <td>${aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
+          <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
+          <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(item.status || 'Belum')}</td>
           <td>
@@ -4761,7 +4787,7 @@
         </tr>
       `;
     });
-    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tingkat', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
+    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
   }
 
   function gambarBaganPersentase(idWadah, daftar) {
@@ -4840,6 +4866,8 @@
       document.getElementById('editTugasRow').value = nomorBaris;
       document.getElementById('editTugasMulai').value = item.mulai || '';
       document.getElementById('editTugasSelesai').value = item.selesai || '';
+      document.getElementById('editTugasTahap').value = item.tahapUjian || '';
+      document.getElementById('editTugasMadrasah').value = item.madrasah || '';
       isiPilihanTugasEdit((dataAplikasiTersimpan || {}).dataAnggota || [], materiTersimpan(), item);
       document.getElementById('editTugasOverlay').hidden = false;
       return;
@@ -4881,10 +4909,10 @@
     const data = saringDaftarTugas(daftar, 'rekapUjian');
     const rows = data.map(function(x) {
       return '<tr><td>' + aman(x.nama) + '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.kelas) +
-        '</td><td>' + aman(x.tingkat) + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
+        '</td><td>' + aman(x.tahapUjian || '–') + '</td><td>' + aman(x.tingkat) + '</td><td>' + aman(x.madrasah || '–') + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
         '</td><td>' + formatTanggal(x.tanggalSelesaiPengerjaan) + '</td></tr>';
     });
-    document.getElementById('daftarRekapUjian').innerHTML = renderTabel(['Anggota', 'Tugas Koreksi Ujian', 'Kelas', 'Tingkat', 'Tanggal tugas', 'Selesai dikerjakan'], rows);
+    document.getElementById('daftarRekapUjian').innerHTML = renderTabel(['Anggota', 'Tugas Koreksi Ujian', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai dikerjakan'], rows);
   }
 
   function tampilkanDaftarAgendaMenu(daftar) {
@@ -4904,14 +4932,14 @@
     const rows = data.map(function(x, i) {
       const selesai = String(x.status || '').toLowerCase() === 'selesai';
       return '<tr><td>' + (i + 1) + '</td><td>' + aman(x.nama) + '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.kelas) +
-        '</td><td>' + aman(x.tingkat) + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
+        '</td><td>' + aman(x.tahapUjian || '–') + '</td><td>' + aman(x.tingkat) + '</td><td>' + aman(x.madrasah || '–') + '</td><td>' + formatTanggal(x.mulai) + ' – ' + formatTanggal(x.selesai) +
         '</td><td>' + aman(x.status) + '</td><td>' +
         '<button class="button secondary small" data-action="editUjian" data-row="' + x.nomorBaris + '">✎ Edit</button> ' +
         '<button class="button small" style="background:#e05252;color:#fff;" data-action="hapusUjian" data-key="' + aman(x.kunci || '') + '" data-nama="' + aman(x.tugas) + '">🗑 Hapus</button> ' +
         (selesai ? '<button class="button secondary small" data-action="belumUjian" data-row="' + x.nomorBaris + '">Belum</button>' : '<button class="button small" data-action="selesaiUjian" data-row="' + x.nomorBaris + '">Tandai Selesai</button>') +
         '</td></tr>';
     });
-    document.getElementById('daftarTugasUjian').innerHTML = renderTabel(['No', 'Anggota', 'Tugas', 'Kelas', 'Tingkat', 'Tanggal', 'Status', 'Aksi'], rows);
+    document.getElementById('daftarTugasUjian').innerHTML = renderTabel(['No', 'Anggota', 'Tugas', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal', 'Status', 'Aksi'], rows);
   }
 
   function isiNilai(id, nilai) { document.getElementById(id).value = nilai == null ? '' : nilai; }
@@ -5594,7 +5622,7 @@
       const dasar = item.kunci || ('X:' + jenis + ':' + item.nomorBaris);
       let g = peta[dasar];
       if (!g || g[jenis]) {
-        g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tingkat: item.tingkat,
+        g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tahapUjian: item.tahapUjian, tingkat: item.tingkat, madrasah: item.madrasah,
               mulai: item.mulai, selesai: item.selesai, soal: null, ujian: null };
         peta[dasar] = g;
         hasil.push(g);
@@ -5642,7 +5670,7 @@
       '<div class="mt-chip-top"><span>' + aman(labelTugasChip(g)) + '</span>' +
       '<span class="mt-pct ' + kls + '">' + g.persen + '%</span>' +
       '<button type="button" class="mt-x" data-mt-hapus="' + indeks + '" title="Hapus tugas" aria-label="Hapus tugas">×</button></div>' +
-      '<div class="mt-chip-sub"><span>' + aman(g.tingkat || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
+      '<div class="mt-chip-sub"><span>' + aman(g.tahapUjian || '—') + '</span><span>' + aman(g.tingkat || '—') + '</span><span>' + aman(g.madrasah || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
       '</div>';
   }
 
@@ -5681,7 +5709,7 @@
       if (kata) {
         const cocokNama = nama.toLocaleLowerCase('id').indexOf(kata) >= 0;
         const cocokTugas = milik.some(function(g) {
-          return (labelTugasChip(g) + ' ' + (g.tingkat || '')).toLocaleLowerCase('id').indexOf(kata) >= 0;
+          return (labelTugasChip(g) + ' ' + (g.tahapUjian || '') + ' ' + (g.tingkat || '') + ' ' + (g.madrasah || '')).toLocaleLowerCase('id').indexOf(kata) >= 0;
         });
         if (!cocokNama && !cocokTugas) return;
       }
@@ -5732,6 +5760,8 @@
       nama: document.getElementById('mtNama').value,
       tingkat: document.getElementById('mtTingkat').value,
       kelas: document.getElementById('mtKelas').value,
+      tahapUjian: document.getElementById('mtTahapUjian').value.trim(),
+      madrasah: document.getElementById('mtMadrasah').value.trim(),
       tugas: document.getElementById('mtFan').value,
       mulai: document.getElementById('mtMulai').value,
       selesai: document.getElementById('mtSelesai').value,
