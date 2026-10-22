@@ -1794,6 +1794,7 @@
           <div class="nav-submenu" id="menu-dokumen">
             <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
             <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
+            <button class="nav-button hanya-admin" data-page="dataMateri">Data Materi</button>
           </div>
         </div>
 
@@ -2718,6 +2719,54 @@
         <div class="dok-filter" id="filterDokumenTipe"></div>
         <div id="isiDokumenTipe"><div class="empty">Memuat dokumen…</div></div>
       </section>
+
+      <!-- PAGE: DATA MATERI (KHUSUS ADMIN) -->
+      <section class="page hanya-admin" id="page-dataMateri">
+        <div class="rapat-heading">
+          <div>
+            <h1 class="page-heading">Data Materi</h1>
+            <p class="subheading">Kelola tingkat, kelas, materi/fan, dan nama kitab. Data ini menjadi sumber pilihan di Setor Soal.</p>
+          </div>
+        </div>
+        <form class="card form-card" id="formDataMateri">
+          <input type="hidden" id="dataMateriBaris">
+          <div class="form-grid">
+            <div class="field">
+              <label for="dataMateriTingkat">Tingkat</label>
+              <select id="dataMateriTingkat" required>
+                <option value="">Pilih tingkat</option>
+                <option>IBTIDAIYAH</option><option>TSANAWIYAH</option><option>ALIYAH</option>
+                <option>PROGRAM KHUSUS</option><option>REGULER</option><option>FAN UMUM</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="dataMateriKelas">Kelas</label>
+              <input id="dataMateriKelas" list="dataMateriKelasSaran" placeholder="Pilih atau masukkan kelas" required>
+              <datalist id="dataMateriKelasSaran"></datalist>
+            </div>
+            <div class="field">
+              <label for="dataMateriNama">Materi / Fan</label>
+              <input id="dataMateriNama" placeholder="Nama materi atau fan" required>
+            </div>
+            <div class="field">
+              <label for="dataMateriKitab">Nama Kitab</label>
+              <input id="dataMateriKitab" placeholder="Nama kitab" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="button" id="tombolSimpanDataMateri" type="submit">Tambah Materi</button>
+            <button class="button secondary" id="batalEditDataMateri" type="button" hidden>Batal Edit</button>
+          </div>
+        </form>
+        <section class="card" style="margin-top:18px;">
+          <div class="rapat-heading">
+            <div><h2 class="section-title">Daftar Materi Lengkap</h2><p class="subheading">No. | Tingkat | Kelas | Materi/Fan | Nama Kitab</p></div>
+            <button class="button secondary" id="muatUlangDataMateri" type="button">⟳ Muat ulang</button>
+          </div>
+          <div class="search-filters"><input id="dataMateriCari" type="search" placeholder="Cari tingkat, kelas, materi, atau kitab…" aria-label="Cari data materi"></div>
+          <div id="daftarDataMateri"><div class="empty">Memuat data materi…</div></div>
+        </section>
+      </section>
     </main>
   </div>
 
@@ -3343,6 +3392,7 @@
     catatan:        { tab: 'kegiatan', induk: 'hubKegiatan' },
 
     pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' },
+    dataMateri:     { tab: 'dokumen' },
     manajemenTugas: { tab: 'dashboard', induk: 'dashboard' },
     tugasTerkait:   { tab: 'tugasTerkait' },
     hubDokumen:     { tab: 'dokumen' },
@@ -3832,13 +3882,116 @@
       return kelasRingkasSetorSoal(x.kelas) === kelasTerpilih;
     }) : dataTingkat;
     const tugasSebelumnya = tugasSelect.value;
-    const daftarTugas = [...new Set(dataKelas.map(function(x) { return x.materi || x.kelas; }).filter(Boolean))]
+    const daftarTugas = [...new Set(dataKelas.map(function(x) {
+      const materi = String(x.materi || x.kelas || '').trim();
+      const kitab = String(x.kitab || '').trim();
+      return materi ? (kitab ? materi + ' — ' + kitab : materi) : '';
+    }).filter(Boolean))]
       .sort(function(a, b) { return String(a).localeCompare(String(b), 'id'); });
     tugasSelect.innerHTML = '<option value="">Pilih tugas/soal</option>' + daftarTugas.map(function(tugas) {
       return '<option value="' + aman(tugas) + '">' + aman(tugas) + '</option>';
     }).join('');
     if (daftarTugas.indexOf(tugasSebelumnya) >= 0) tugasSelect.value = tugasSebelumnya;
   }
+
+  const KELAS_DATA_MATERI = {
+    'TSANAWIYAH': ['1', '2', '3'],
+    'IBTIDAIYAH': ['1', '2', '3', '4', '5', '6'],
+    'REGULER': ['5', '6', '7'],
+    'PROGRAM KHUSUS': ['FIKIH', 'ADAB', 'HADITS']
+  };
+  let daftarDataMateriTersimpan = [];
+
+  function perbaruiSaranKelasDataMateri() {
+    const tingkat = norm(document.getElementById('dataMateriTingkat').value);
+    const opsi = KELAS_DATA_MATERI[tingkat] || [];
+    document.getElementById('dataMateriKelasSaran').innerHTML = opsi.map(function(kelas) {
+      return '<option value="' + aman(kelas) + '"></option>';
+    }).join('');
+  }
+
+  function gambarDataMateri() {
+    const wadah = document.getElementById('daftarDataMateri');
+    if (!wadah) return;
+    const cari = norm(document.getElementById('dataMateriCari').value);
+    const daftar = daftarDataMateriTersimpan.filter(function(item) {
+      return norm([item.tingkat, item.kelas, item.materi, item.kitab].join(' ')).indexOf(cari) >= 0;
+    });
+    if (!daftar.length) {
+      wadah.innerHTML = '<div class="card empty">' + (cari ? 'Tidak ada data materi yang cocok.' : 'Belum ada data di tab DATA_MATERI.') + '</div>';
+      return;
+    }
+    const rows = daftar.map(function(item) {
+      return '<tr><td>' + aman(item.tingkat) + '</td><td>' + aman(item.kelas) + '</td><td>' + aman(item.materi) + '</td><td>' + aman(item.kitab) + '</td>' +
+        '<td><button class="button secondary small" type="button" data-edit-data-materi="' + item.nomorBaris + '">✎ Edit</button></td></tr>';
+    });
+    wadah.innerHTML = renderTabel(['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Aksi'], rows);
+  }
+
+  function muatDataMateri() {
+    const wadah = document.getElementById('daftarDataMateri');
+    if (!wadah) return;
+    wadah.innerHTML = '<div class="empty">Memuat data materi…</div>';
+    google.script.run
+      .withSuccessHandler(function(hasil) {
+        daftarDataMateriTersimpan = Array.isArray(hasil) ? hasil : [];
+        if (!dataAplikasiTersimpan) dataAplikasiTersimpan = {};
+        dataAplikasiTersimpan.materiPelajaran = daftarDataMateriTersimpan.map(function(item) {
+          return { tingkat: item.tingkat, kelas: item.kelas, materi: item.materi, kitab: item.kitab };
+        });
+        gambarDataMateri(); updateSetorSoalDropdown();
+      })
+      .withFailureHandler(function(er) { wadah.innerHTML = '<div class="card empty">' + aman(er && er.message ? er.message : String(er)) + '</div>'; })
+      .getDataMateri();
+  }
+
+  function resetFormDataMateri() {
+    document.getElementById('formDataMateri').reset();
+    document.getElementById('dataMateriBaris').value = '';
+    document.getElementById('tombolSimpanDataMateri').textContent = 'Tambah Materi';
+    document.getElementById('batalEditDataMateri').hidden = true;
+    perbaruiSaranKelasDataMateri();
+  }
+
+  document.getElementById('dataMateriTingkat').addEventListener('change', perbaruiSaranKelasDataMateri);
+  document.getElementById('dataMateriCari').addEventListener('input', gambarDataMateri);
+  document.getElementById('muatUlangDataMateri').addEventListener('click', muatDataMateri);
+  document.getElementById('batalEditDataMateri').addEventListener('click', resetFormDataMateri);
+  document.getElementById('daftarDataMateri').addEventListener('click', function(event) {
+    const tombol = event.target.closest('[data-edit-data-materi]');
+    if (!tombol) return;
+    const item = daftarDataMateriTersimpan.find(function(x) { return Number(x.nomorBaris) === Number(tombol.dataset.editDataMateri); });
+    if (!item) return;
+    document.getElementById('dataMateriBaris').value = item.nomorBaris;
+    document.getElementById('dataMateriTingkat').value = item.tingkat;
+    document.getElementById('dataMateriKelas').value = item.kelas;
+    document.getElementById('dataMateriNama').value = item.materi;
+    document.getElementById('dataMateriKitab').value = item.kitab;
+    document.getElementById('tombolSimpanDataMateri').textContent = 'Simpan Perubahan';
+    document.getElementById('batalEditDataMateri').hidden = false;
+    perbaruiSaranKelasDataMateri();
+    document.getElementById('formDataMateri').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  document.getElementById('formDataMateri').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const baris = document.getElementById('dataMateriBaris').value;
+    const data = {
+      tingkat: document.getElementById('dataMateriTingkat').value,
+      kelas: document.getElementById('dataMateriKelas').value,
+      materi: document.getElementById('dataMateriNama').value,
+      kitab: document.getElementById('dataMateriKitab').value
+    };
+    const tombol = document.getElementById('tombolSimpanDataMateri');
+    tombol.disabled = true;
+    google.script.run
+      .withSuccessHandler(function(pesan) {
+        tampilkanNotifikasi(pesan || 'Data materi berhasil disimpan.', 'success');
+        resetFormDataMateri(); tombol.disabled = false; muatDataMateri();
+      })
+      .withFailureHandler(function(er) {
+        tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); tombol.disabled = false;
+      })[baris ? 'editDataMateri' : 'tambahDataMateri'](baris ? Number(baris) : data, baris ? data : undefined);
+  });
 
   document.getElementById('mtTingkat').addEventListener('change', function() {
     updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
@@ -5696,6 +5849,7 @@
       if (nama === 'batasPelajaran') muatDokumen('batas');
       if (nama === 'tipeSoal') muatDokumen('tipe');
       if (nama === 'pengguna') muatPengguna();
+      if (nama === 'dataMateri') muatDataMateri();
       sorotSidebar();
     };
 
