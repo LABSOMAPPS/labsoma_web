@@ -6482,10 +6482,24 @@ function compRows(tingkat, kat, kelas, ujian) {
     return true;
   });
   const exact = scoped.filter(r => smartMatch(r.Kategori) === tKat);
-  if (exact.length) return exact;
+  if (exact.length) return exact.map(rapikanBarisKomposisi);
   const umum = scoped.filter(r => smartMatch(r.Kategori) === 'seluruhfan');
-  if (umum.length) return umum;
+  if (umum.length) return umum.map(rapikanBarisKomposisi);
   return [];
+}
+
+// Kode materi dibaca toleran: untuk IMDA I/II/III (juga ditulis 1, 2, 3, "IMDA 2", ١…), untuk IMNI nomor kelas sumber (1, 2, 3, …).
+function materiKanon(materi, ujian) {
+  const asli = String(materi == null ? '' : materi).trim();
+  const s = asli.replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660))
+    .toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/^(IMDA|IMNI|TAHAP|KELAS|MATERI)/, '');
+  const angka = ({ '1': '1', I: '1', '2': '2', II: '2', '3': '3', III: '3', '4': '4', IV: '4', '5': '5', V: '5', '6': '6', VI: '6' })[s];
+  if (!angka) return asli;
+  if (canonUjian(ujian) === 'IMNI') return angka;
+  return ({ '1': 'I', '2': 'II', '3': 'III' })[angka] || asli;
+}
+function rapikanBarisKomposisi(r) {
+  return Object.assign({}, r, { Materi: materiKanon(r.Materi, r.Ujian), Tipe: String(r.Tipe == null ? '' : r.Tipe).trim().toUpperCase().charAt(0) });
 }
 
 function summarize(rows) {
@@ -6917,6 +6931,11 @@ function simpanFile(f) {
   function tabCek(m) {
     const tugas = S.data.tugas || [];
     m.append(h('p', { class: 'ps-hint' }, 'Ringkasan tiap kombinasi fan, kelas, dan tahap dari data Tugas LABSOMA. Baris bertanda “Belum” perlu dilengkapi agar template terisi penuh.'));
+    const aneh = (S.data.komposisi || []).filter(r => {
+      const k = materiKanon(r.Materi, r.Ujian);
+      return canonUjian(r.Ujian) === 'IMNI' ? !/^[1-6]$/.test(k) : !['I', 'II', 'III'].includes(k);
+    });
+    if (aneh.length) m.append(h('div', { class: 'ps-warn' }, aneh.length + ' baris Komposisi memakai kode Materi yang tidak dikenali (contoh: "' + aneh[0].Materi + '" pada ' + aneh[0].Kategori + ' / ' + aneh[0].Ujian + '). Materi IMDA harus I, II, atau III; Materi IMNI berupa nomor kelas sumber (1, 2, 3, …). Baris ini tidak ikut terhitung di template.'));
     const kunci = {}, daftar = [];
     tugas.forEach(r => {
       const k = [smartMatch(r.Tingkat), r.Kelas, fanKey(r.Mapel), r.Ujian].join('|');
