@@ -890,6 +890,14 @@
       background: var(--panel);
       box-shadow: var(--bayangan-sm);
     }
+    /* Data Materi: baris 1 = pencarian, baris 2 = 3 filter (tetap 3 kolom di HP) */
+    body[data-peran] .search-filters.dm-filters, .search-filters.dm-filters { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .dm-tiga { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .dm-tiga select { min-width: 0; width: 100%; text-overflow: ellipsis; }
+    @media (max-width: 560px) {
+      .dm-tiga { gap: 6px; }
+      .search-filters .dm-tiga select { padding: 10px 2px 10px 8px; font-size: 12.5px; }
+    }
     .search-filters.setor-soal-filters { grid-template-columns: minmax(220px, 1.5fr) repeat(5, minmax(135px, 1fr)); }
     @media (max-width: 1180px) { .search-filters.setor-soal-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
@@ -2919,7 +2927,14 @@
             <div><h2 class="section-title">Daftar Materi Lengkap</h2><p class="subheading">No. | Tingkat | Kelas | Materi/Fan | Nama Kitab | Cover</p></div>
             <button class="button secondary" id="muatUlangDataMateri" type="button">⟳ Muat ulang</button>
           </div>
-          <div class="search-filters"><input id="dataMateriCari" type="search" placeholder="Cari tingkat, kelas, materi, atau kitab…" aria-label="Cari data materi"></div>
+          <div class="search-filters dm-filters">
+            <input id="dataMateriCari" type="search" placeholder="Cari tingkat, kelas, materi, atau kitab…" aria-label="Cari data materi">
+            <div class="dm-tiga">
+              <select id="dmFilterTingkat" aria-label="Filter tingkat"></select>
+              <select id="dmFilterKelas" aria-label="Filter kelas"></select>
+              <select id="dmFilterMateri" aria-label="Filter materi"></select>
+            </div>
+          </div>
           <div id="daftarDataMateri"><div class="empty">Memuat data materi…</div></div>
         </section>
       </section>
@@ -4159,6 +4174,35 @@
     }).join('');
   }
 
+  /* ----- Filter bertingkat: Tingkat → Kelas → Materi (pilihan sesuai data yang ada) ----- */
+  const dmFilter = { tingkat: '', kelas: '', materi: '' };
+  function cocokFilterDataMateri(item, f) {
+    return (!f.tingkat || item.tingkat === f.tingkat) && (!f.kelas || item.kelas === f.kelas) && (!f.materi || item.materi === f.materi);
+  }
+  function isiFilterDataMateri() {
+    const semua = daftarDataMateriTersimpan;
+    const unik = function(daftar, kunci) { return Array.from(new Set(daftar.map(function(x) { return x[kunci]; }).filter(Boolean))); };
+    const urutAlfa = function(a, b) { return String(a).localeCompare(String(b), 'id', { numeric: true, sensitivity: 'base' }); };
+    // pilihan tiap tingkat mengikuti pilihan di atasnya; filter bawah yang tidak berlaku lagi dikosongkan
+    const opsiTingkat = unik(semua, 'tingkat').sort(urutAlfa);
+    if (dmFilter.tingkat && opsiTingkat.indexOf(dmFilter.tingkat) < 0) dmFilter.tingkat = '';
+    const opsiKelas = unik(semua.filter(function(x) { return !dmFilter.tingkat || x.tingkat === dmFilter.tingkat; }), 'kelas').sort(urutAlfa);
+    if (dmFilter.kelas && opsiKelas.indexOf(dmFilter.kelas) < 0) dmFilter.kelas = '';
+    const opsiMateri = unik(semua.filter(function(x) { return (!dmFilter.tingkat || x.tingkat === dmFilter.tingkat) && (!dmFilter.kelas || x.kelas === dmFilter.kelas); }), 'materi').sort(urutAlfa);
+    if (dmFilter.materi && opsiMateri.indexOf(dmFilter.materi) < 0) dmFilter.materi = '';
+    const isi = function(id, label, opsi, nilai) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = '';
+      const awal = document.createElement('option'); awal.value = ''; awal.textContent = label; el.appendChild(awal);
+      opsi.forEach(function(v) { const o = document.createElement('option'); o.value = v; o.textContent = v; el.appendChild(o); });
+      el.value = nilai;
+    };
+    isi('dmFilterTingkat', 'Tingkat', opsiTingkat, dmFilter.tingkat);
+    isi('dmFilterKelas', 'Kelas', opsiKelas, dmFilter.kelas);
+    isi('dmFilterMateri', 'Materi', opsiMateri, dmFilter.materi);
+  }
+
   function gambarDataMateri() {
     const wadah = document.getElementById('daftarDataMateri');
     if (!wadah) return;
@@ -4168,12 +4212,15 @@
     if (sub) sub.textContent = bolehKelola
       ? 'Kelola tingkat, kelas, materi/fan, dan nama kitab. Data ini menjadi sumber pilihan di Setor Soal.'
       : 'Daftar tingkat, kelas, materi/fan, dan nama kitab. Gunakan kotak pencarian untuk menemukan materi.';
+    isiFilterDataMateri();
     const cari = norm(document.getElementById('dataMateriCari').value);
+    const adaFilter = !!(cari || dmFilter.tingkat || dmFilter.kelas || dmFilter.materi);
     const daftar = daftarDataMateriTersimpan.filter(function(item) {
-      return norm([item.tingkat, item.kelas, item.materi, item.kitab].join(' ')).indexOf(cari) >= 0;
+      return cocokFilterDataMateri(item, dmFilter) &&
+        norm([item.tingkat, item.kelas, item.materi, item.kitab].join(' ')).indexOf(cari) >= 0;
     });
     if (!daftar.length) {
-      wadah.innerHTML = '<div class="card empty">' + (cari ? 'Tidak ada data materi yang cocok.' : 'Belum ada data di tab DATA_MATERI.') + '</div>';
+      wadah.innerHTML = '<div class="card empty">' + (adaFilter ? 'Tidak ada data materi yang cocok.' : 'Belum ada data di tab DATA_MATERI.') + '</div>';
       return;
     }
     const rows = daftar.map(function(item) {
@@ -4220,6 +4267,9 @@
 
   document.getElementById('dataMateriTingkat').addEventListener('change', perbaruiSaranKelasDataMateri);
   document.getElementById('dataMateriCari').addEventListener('input', gambarDataMateri);
+  [['dmFilterTingkat', 'tingkat'], ['dmFilterKelas', 'kelas'], ['dmFilterMateri', 'materi']].forEach(function(p) {
+    document.getElementById(p[0]).addEventListener('change', function(e) { dmFilter[p[1]] = e.target.value; gambarDataMateri(); });
+  });
   document.getElementById('muatUlangDataMateri').addEventListener('click', muatDataMateri);
   document.getElementById('batalEditDataMateri').addEventListener('click', resetFormDataMateri);
   document.getElementById('daftarDataMateri').addEventListener('click', function(event) {
