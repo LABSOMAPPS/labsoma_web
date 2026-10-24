@@ -1342,6 +1342,7 @@
     /* Tipe/Batas hanya sekali di grup Dokumen untuk staf; menu terpisah khusus Sonik. */
     body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="tipeSoal"],
     body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="batasPelajaran"],
+    body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="dataMateri"],
     body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="tugasTerkait"],
     body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="setorSoal"],
     body:not([data-peran="SONIK"]) .sidebar .nav-list > .sonik-sidebar-item[data-page="cetakTemplate"] { display: none !important; }
@@ -1827,6 +1828,10 @@
           <span class="nav-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
           <span>Batas Pelajaran</span>
         </button>
+        <button class="nav-button sonik-sidebar-item" data-page="dataMateri">
+          <span class="nav-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg></span>
+          <span>Data Materi</span>
+        </button>
         <button class="nav-button sonik-sidebar-item" data-page="tugasTerkait">
           <span class="nav-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
           <span>Tugas Terkait</span>
@@ -1887,7 +1892,7 @@
           <div class="nav-submenu" id="menu-dokumen">
             <button class="nav-button" data-page="batasPelajaran">Batas Pelajaran</button>
             <button class="nav-button" data-page="tipeSoal">Tipe Soal</button>
-            <button class="nav-button hanya-admin" data-page="dataMateri">Data Materi</button>
+            <button class="nav-button" data-page="dataMateri">Data Materi</button>
           </div>
         </div>
 
@@ -2865,13 +2870,13 @@
       </section>
 
       <!-- PAGE: DATA MATERI (KHUSUS ADMIN) -->
-      <section class="page hanya-admin" id="page-dataMateri">
+      <section class="page" id="page-dataMateri">
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Data Materi</h1>
-            <p class="subheading">Kelola tingkat, kelas, materi/fan, dan nama kitab. Data ini menjadi sumber pilihan di Setor Soal.</p>
+            <p class="subheading" id="subDataMateri">Kelola tingkat, kelas, materi/fan, dan nama kitab. Data ini menjadi sumber pilihan di Setor Soal.</p>
           </div>
-          <button class="button" id="tombolBukaDataMateri" type="button">＋ Tambah Materi</button>
+          <button class="button hanya-admin" id="tombolBukaDataMateri" type="button">＋ Tambah Materi</button>
         </div>
         <form class="card form-card" id="formDataMateri" hidden>
           <input type="hidden" id="dataMateriBaris">
@@ -4157,6 +4162,12 @@
   function gambarDataMateri() {
     const wadah = document.getElementById('daftarDataMateri');
     if (!wadah) return;
+    // ADMIN boleh mengelola; peran lain (SONIK) hanya melihat dan mencari
+    const bolehKelola = document.body.dataset.peran === 'ADMIN';
+    const sub = document.getElementById('subDataMateri');
+    if (sub) sub.textContent = bolehKelola
+      ? 'Kelola tingkat, kelas, materi/fan, dan nama kitab. Data ini menjadi sumber pilihan di Setor Soal.'
+      : 'Daftar tingkat, kelas, materi/fan, dan nama kitab. Gunakan kotak pencarian untuk menemukan materi.';
     const cari = norm(document.getElementById('dataMateriCari').value);
     const daftar = daftarDataMateriTersimpan.filter(function(item) {
       return norm([item.tingkat, item.kelas, item.materi, item.kitab].join(' ')).indexOf(cari) >= 0;
@@ -4168,13 +4179,15 @@
     const rows = daftar.map(function(item) {
       const cover = item.adaCover
         ? '<button class="button secondary small" type="button" data-lihat-cover="' + item.nomorBaris + '">🖼 Lihat Cover</button>'
-        : '<button class="button secondary small" type="button" data-unggah-cover="' + item.nomorBaris + '">⬆ Unggah Cover</button>';
+        : (bolehKelola ? '<button class="button secondary small" type="button" data-unggah-cover="' + item.nomorBaris + '">⬆ Unggah Cover</button>' : '<span class="message">Belum ada cover</span>');
       return '<tr><td>' + aman(item.tingkat) + '</td><td>' + aman(item.kelas) + '</td><td>' + aman(item.materi) + '</td><td>' + aman(item.kitab) + '</td>' +
         '<td>' + cover + '</td>' +
-        '<td class="ps-aksi"><button class="button secondary small" type="button" data-edit-data-materi="' + item.nomorBaris + '">✎ Edit</button> ' +
-        '<button class="button secondary small" type="button" data-hapus-data-materi="' + item.nomorBaris + '">🗑 Hapus</button></td></tr>';
+        (bolehKelola
+          ? '<td class="ps-aksi"><button class="button secondary small" type="button" data-edit-data-materi="' + item.nomorBaris + '">✎ Edit</button> ' +
+            '<button class="button secondary small" type="button" data-hapus-data-materi="' + item.nomorBaris + '">🗑 Hapus</button></td>'
+          : '') + '</tr>';
     });
-    wadah.innerHTML = renderTabel(['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover', 'Aksi'], rows);
+    wadah.innerHTML = renderTabel(bolehKelola ? ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover', 'Aksi'] : ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover'], rows);
   }
 
   function muatDataMateri() {
@@ -4312,7 +4325,8 @@
     ganti.addEventListener('click', function() { pilihFotoCover(item.nomorBaris); });
     const tutup = document.createElement('button'); tutup.type = 'button'; tutup.className = 'button'; tutup.textContent = 'Tutup';
     tutup.addEventListener('click', tutupPopupCover);
-    aksi.appendChild(ganti); aksi.appendChild(tutup);
+    if (document.body.dataset.peran === 'ADMIN') aksi.appendChild(ganti);
+    aksi.appendChild(tutup);
     const kotak = document.createElement('div'); kotak.className = 'modal'; kotak.style.width = 'min(640px, 100%)';
     kotak.appendChild(judul); kotak.appendChild(info); kotak.appendChild(aksi);
     const lapisan = document.createElement('div'); lapisan.className = 'modal-overlay'; lapisan.id = 'popupCoverMateri';
@@ -6052,7 +6066,7 @@
 
 
   /* ===== MANAJEMEN TUGAS, TUGAS TERKAIT & TAMPILAN SONIK ===== */
-  const HALAMAN_SONIK = ['tugasTerkait', 'inputNilai', 'pengumuman', 'dashboard', 'batasPelajaran', 'tipeSoal', 'setorSoal'];
+  const HALAMAN_SONIK = ['tugasTerkait', 'inputNilai', 'pengumuman', 'dashboard', 'batasPelajaran', 'tipeSoal', 'setorSoal', 'dataMateri'];
   let sesiAktif = null;
   let mtDaftar = [];
   let mtAnggota = [];
