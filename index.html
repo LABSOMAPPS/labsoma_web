@@ -1254,6 +1254,7 @@
     .dlg-pesan { margin: 0 0 24px; font-size: 13.5px; line-height: 1.65; color: var(--redup); white-space: pre-line; overflow-wrap: anywhere; }
     .dlg-aksi { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
     .dlg-aksi .button { min-width: 120px; justify-content: center; }
+    .dlg-aksi a.button { text-decoration: none; }
     .dlg-aksi .dlg-ya.bahaya { background: #e5484d; border-color: #e5484d; color: #fff; box-shadow: 0 6px 18px rgba(229, 72, 77, 0.32); }
     .dlg-aksi .dlg-ya.bahaya:hover { filter: brightness(1.1); }
     .dlg-overlay.keluar { animation: fadeOutCepat 0.16s ease forwards; }
@@ -3409,6 +3410,63 @@
   }
   // alert bawaan browser diarahkan ke notifikasi yang sama
   window.alert = function(pesan) { tampilkanNotifikasi(pesan, 'info'); };
+
+  /* ===== Menyerahkan berkas hasil unduhan ke pengguna =====
+     Desktop: unduh otomatis. Layar sentuh (HP/tablet): browser sering menolak unduhan otomatis yang terjadi setelah
+     proses di server, jadi ditampilkan dialog "Dokumen siap" dengan tautan yang diketuk langsung oleh pengguna
+     (ketukan langsung selalu diizinkan) plus tombol Bagikan/Simpan bila perangkat mendukung. */
+  function layarSentuh() {
+    return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+  function ukuranBerkas(byte) {
+    return byte >= 1048576 ? (byte / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(byte / 1024)) + ' KB';
+  }
+  function serahkanBerkas(blob, nama) {
+    const url = URL.createObjectURL(blob);
+    if (!layarSentuh()) {
+      const a = document.createElement('a');
+      a.href = url; a.download = nama; a.style.display = 'none';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function() { URL.revokeObjectURL(url); }, 120000);
+      return;
+    }
+    const lama = document.getElementById('dialogBerkasSiap');
+    if (lama) lama.remove();
+    const lapisan = document.createElement('div'); lapisan.className = 'modal-overlay dlg-overlay'; lapisan.id = 'dialogBerkasSiap';
+    const kotak = document.createElement('div'); kotak.className = 'modal dlg info';
+    kotak.setAttribute('role', 'dialog'); kotak.setAttribute('aria-modal', 'true');
+    const ikon = document.createElement('div'); ikon.className = 'dlg-ikon';
+    ikon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
+    const judul = document.createElement('h2'); judul.textContent = 'Dokumen siap diunduh';
+    const pesan = document.createElement('p'); pesan.className = 'dlg-pesan';
+    pesan.textContent = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh” untuk menyimpan ke perangkat.';
+    const aksi = document.createElement('div'); aksi.className = 'dlg-aksi';
+    const tutupDialog = function() { lapisan.remove(); setTimeout(function() { URL.revokeObjectURL(url); }, 300000); };
+    const unduh = document.createElement('a'); unduh.className = 'button dlg-ya info'; unduh.href = url; unduh.download = nama; unduh.textContent = '⬇ Unduh';
+    unduh.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
+    aksi.appendChild(unduh);
+    const bisaBagi = typeof File === 'function' && navigator.canShare && navigator.share;
+    if (bisaBagi) {
+      let berkas = null;
+      try { berkas = new File([blob], nama, { type: blob.type || 'application/octet-stream' }); } catch (e) { berkas = null; }
+      if (berkas && navigator.canShare({ files: [berkas] })) {
+        const bagi = document.createElement('button'); bagi.type = 'button'; bagi.className = 'button secondary'; bagi.textContent = 'Bagikan / Simpan ke…';
+        bagi.addEventListener('click', function() {
+          navigator.share({ files: [berkas], title: nama }).then(tutupDialog).catch(function() { /* dibatalkan pengguna */ });
+        });
+        aksi.appendChild(bagi);
+      }
+    }
+    const tutup = document.createElement('button'); tutup.type = 'button'; tutup.className = 'button secondary'; tutup.textContent = 'Tutup';
+    tutup.addEventListener('click', tutupDialog);
+    aksi.appendChild(tutup);
+    kotak.appendChild(ikon); kotak.appendChild(judul); kotak.appendChild(pesan); kotak.appendChild(aksi);
+    lapisan.appendChild(kotak);
+    lapisan.addEventListener('mousedown', function(e) { if (e.target === lapisan) tutupDialog(); });
+    document.body.appendChild(lapisan);
+  }
 
   /* ===== Dialog konfirmasi modern (pengganti confirm bawaan browser) =====
      konfirmasi({ judul, pesan, ya, batal, jenis: 'bahaya' | 'peringatan' | 'info' }) -> Promise<boolean> */
@@ -5954,9 +6012,7 @@
             bagian.push(bytes);
           }
           const blob = new Blob(bagian, { type: file.mime || 'application/octet-stream' });
-          const url = URL.createObjectURL(blob), link = document.createElement('a');
-          link.href = url; link.download = file.nama; document.body.appendChild(link); link.click(); link.remove();
-          setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+          serahkanBerkas(blob, file.nama);
         } catch (err) { tampilkanNotifikasi('Dokumen gagal disiapkan untuk diunduh.', 'error'); }
         tombol.disabled = false; tombol.textContent = 'Unduh file asli';
       })
@@ -6752,10 +6808,7 @@ function namaFile(r) { return [r.Ustadz, r.Mapel, r.Kelas, ujianNo(r), r.Unit].j
 function simpanFile(f) {
   const bin = atob(f.b64), bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  const url = URL.createObjectURL(new Blob([bytes], { type: f.mime }));
-  const a = h('a', { href: url, download: f.name, style: 'display:none' });
-  document.body.append(a); a.click();
-  setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 5000);
+  serahkanBerkas(new Blob([bytes], { type: f.mime }), f.name);
 }
   /* ============ pembantu pembuatan template ============ */
   function siapkan(r) {
