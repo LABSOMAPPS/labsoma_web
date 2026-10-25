@@ -3449,24 +3449,26 @@
     pesan.textContent = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh”. Jika gagal, buka file lalu simpan dari menu browser.';
     const aksi = document.createElement('div'); aksi.className = 'dlg-aksi';
     const tutupDialog = function() { lapisan.remove(); setTimeout(function() { URL.revokeObjectURL(url); }, 300000); };
-    const unduh = document.createElement('a'); unduh.className = 'button dlg-ya info'; unduh.href = url; unduh.download = nama; unduh.textContent = '⬇ Unduh';
-    unduh.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
+    let fileUntukDibagikan = null;
+    try { if (typeof File === 'function') fileUntukDibagikan = new File([blob], nama, { type: blob.type || 'application/octet-stream' }); } catch (e) { fileUntukDibagikan = null; }
+    const shareDidukung = !!(fileUntukDibagikan && navigator.share && navigator.canShare && navigator.canShare({ files: [fileUntukDibagikan] }));
+    const unduh = document.createElement(shareDidukung ? 'button' : 'a');
+    unduh.className = 'button dlg-ya info'; unduh.textContent = shareDidukung ? '⬇ Simpan ke HP' : '⬇ Unduh';
+    if (shareDidukung) {
+      unduh.type = 'button';
+      unduh.addEventListener('click', function() {
+        navigator.share({ files: [fileUntukDibagikan], title: nama })
+          .then(tutupDialog)
+          .catch(function(err) { if (!err || err.name !== 'AbortError') tampilkanNotifikasi('Menu simpan tidak terbuka. Ketuk “Buka file” lalu gunakan menu browser.', 'error'); });
+      });
+    } else {
+      unduh.href = url; unduh.download = nama;
+      unduh.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
+    }
     aksi.appendChild(unduh);
     const buka = document.createElement('a'); buka.className = 'button secondary'; buka.href = url; buka.target = '_blank'; buka.rel = 'noopener'; buka.textContent = 'Buka file';
     buka.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
     aksi.appendChild(buka);
-    const bisaBagi = typeof File === 'function' && navigator.canShare && navigator.share;
-    if (bisaBagi) {
-      let berkas = null;
-      try { berkas = new File([blob], nama, { type: blob.type || 'application/octet-stream' }); } catch (e) { berkas = null; }
-      if (berkas && navigator.canShare({ files: [berkas] })) {
-        const bagi = document.createElement('button'); bagi.type = 'button'; bagi.className = 'button secondary'; bagi.textContent = 'Bagikan / Simpan ke…';
-        bagi.addEventListener('click', function() {
-          navigator.share({ files: [berkas], title: nama }).then(tutupDialog).catch(function() { /* dibatalkan pengguna */ });
-        });
-        aksi.appendChild(bagi);
-      }
-    }
     const tutup = document.createElement('button'); tutup.type = 'button'; tutup.className = 'button secondary'; tutup.textContent = 'Tutup';
     tutup.addEventListener('click', tutupDialog);
     aksi.appendChild(tutup);
@@ -6078,9 +6080,9 @@
       google.script.run
       .withSuccessHandler(function(file) {
         try {
-          const binary = atob(file.base64), ukuranBagian = 32768, bagian = [];
-          for (let i = 0; i < binary.length; i += ukuranBagian) {
-            const potong = binary.slice(i, i + ukuranBagian), bytes = new Uint8Array(potong.length);
+          const ukuranBagianBase64 = 32768, bagian = [];
+          for (let i = 0; i < file.base64.length; i += ukuranBagianBase64) {
+            const potong = atob(file.base64.slice(i, i + ukuranBagianBase64)), bytes = new Uint8Array(potong.length);
             for (let j = 0; j < potong.length; j++) bytes[j] = potong.charCodeAt(j);
             bagian.push(bytes);
           }
