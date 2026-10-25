@@ -2916,6 +2916,11 @@
               <input id="dataMateriCover" type="file" accept="image/*">
               <div class="message" id="infoDataMateriCover">Format JPG atau PNG. Foto otomatis diperkecil sebelum diunggah.</div>
             </div>
+            <div class="field full">
+              <label for="dataMateriPdf" id="labelDataMateriPdf">PDF kitab (opsional)</label>
+              <input id="dataMateriPdf" type="file" accept="application/pdf,.pdf">
+              <div class="message" id="infoDataMateriPdf">PDF maksimal 10 MB. Pratinjau Drive memuat halaman saat diperlukan.</div>
+            </div>
           </div>
           <div class="form-actions">
             <button class="button" id="tombolSimpanDataMateri" type="submit">Tambah Materi</button>
@@ -2925,7 +2930,7 @@
         </form>
         <section class="card" style="margin-top:18px;">
           <div class="rapat-heading">
-            <div><h2 class="section-title">Daftar Materi Lengkap</h2><p class="subheading">No. | Tingkat | Kelas | Materi/Fan | Nama Kitab | Cover</p></div>
+            <div><h2 class="section-title">Daftar Materi Lengkap</h2><p class="subheading">No. | Tingkat | Kelas | Materi/Fan | Nama Kitab | Cover | PDF Kitab</p></div>
             <button class="button secondary" id="muatUlangDataMateri" type="button">⟳ Muat ulang</button>
           </div>
           <div class="search-filters dm-filters">
@@ -3441,12 +3446,15 @@
     ikon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
     const judul = document.createElement('h2'); judul.textContent = 'Dokumen siap diunduh';
     const pesan = document.createElement('p'); pesan.className = 'dlg-pesan';
-    pesan.textContent = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh” untuk menyimpan ke perangkat.';
+    pesan.textContent = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh”. Jika gagal, buka file lalu simpan dari menu browser.';
     const aksi = document.createElement('div'); aksi.className = 'dlg-aksi';
     const tutupDialog = function() { lapisan.remove(); setTimeout(function() { URL.revokeObjectURL(url); }, 300000); };
     const unduh = document.createElement('a'); unduh.className = 'button dlg-ya info'; unduh.href = url; unduh.download = nama; unduh.textContent = '⬇ Unduh';
     unduh.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
     aksi.appendChild(unduh);
+    const buka = document.createElement('a'); buka.className = 'button secondary'; buka.href = url; buka.target = '_blank'; buka.rel = 'noopener'; buka.textContent = 'Buka file';
+    buka.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
+    aksi.appendChild(buka);
     const bisaBagi = typeof File === 'function' && navigator.canShare && navigator.share;
     if (bisaBagi) {
       let berkas = null;
@@ -4285,14 +4293,17 @@
       const cover = item.adaCover
         ? '<button class="button secondary small" type="button" data-lihat-cover="' + item.nomorBaris + '">🖼 Lihat Cover</button>'
         : (bolehKelola ? '<button class="button secondary small" type="button" data-unggah-cover="' + item.nomorBaris + '">⬆ Unggah Cover</button>' : '<span class="message">Belum ada cover</span>');
+      const pdf = item.adaPdf
+        ? '<button class="button small" type="button" data-lihat-pdf-kitab="' + item.nomorBaris + '">📖 Baca PDF</button>'
+        : (bolehKelola ? '<button class="button secondary small" type="button" data-unggah-pdf-kitab="' + item.nomorBaris + '">⬆ Unggah PDF</button>' : '<span class="message">Belum ada PDF</span>');
       return '<tr><td>' + aman(item.tingkat) + '</td><td>' + aman(item.kelas) + '</td><td>' + aman(item.materi) + '</td><td>' + aman(item.kitab) + '</td>' +
-        '<td>' + cover + '</td>' +
+        '<td>' + cover + '</td><td>' + pdf + '</td>' +
         (bolehKelola
           ? '<td class="ps-aksi"><button class="button secondary small" type="button" data-edit-data-materi="' + item.nomorBaris + '">✎ Edit</button> ' +
             '<button class="button secondary small" type="button" data-hapus-data-materi="' + item.nomorBaris + '">🗑 Hapus</button></td>'
           : '') + '</tr>';
     });
-    wadah.innerHTML = renderTabel(bolehKelola ? ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover', 'Aksi'] : ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover'], rows);
+    wadah.innerHTML = renderTabel(bolehKelola ? ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover', 'PDF Kitab', 'Aksi'] : ['Tingkat', 'Kelas', 'Materi/Fan', 'Nama Kitab', 'Cover', 'PDF Kitab'], rows);
   }
 
   function muatDataMateri() {
@@ -4319,7 +4330,9 @@
     document.getElementById('batalEditDataMateri').hidden = true;
     document.getElementById('formDataMateri').hidden = true;
     document.getElementById('labelDataMateriCover').textContent = 'Foto cover (opsional)';
+    document.getElementById('labelDataMateriPdf').textContent = 'PDF kitab (opsional)';
     document.getElementById('infoDataMateriCover').textContent = 'Format JPG atau PNG. Foto otomatis diperkecil sebelum diunggah.';
+    document.getElementById('infoDataMateriPdf').textContent = 'PDF maksimal 10 MB. Pratinjau Drive memuat halaman saat diperlukan.';
     perbaruiSaranKelasDataMateri();
   }
 
@@ -4343,9 +4356,13 @@
     document.getElementById('tombolSimpanDataMateri').textContent = 'Simpan Perubahan';
     document.getElementById('batalEditDataMateri').hidden = false;
     document.getElementById('labelDataMateriCover').textContent = item.adaCover ? 'Ganti foto cover (opsional)' : 'Foto cover (opsional)';
+    document.getElementById('labelDataMateriPdf').textContent = item.adaPdf ? 'Ganti PDF kitab (opsional)' : 'PDF kitab (opsional)';
     document.getElementById('infoDataMateriCover').textContent = item.adaCover
       ? 'Materi ini sudah punya foto cover. Pilih file baru hanya jika ingin menggantinya.'
       : 'Belum ada foto cover. Format JPG atau PNG; foto otomatis diperkecil.';
+    document.getElementById('infoDataMateriPdf').textContent = item.adaPdf
+      ? 'PDF kitab sudah tersimpan. Pilih file baru hanya jika ingin menggantinya.'
+      : 'Belum ada PDF kitab. Format PDF, maksimal 10 MB.';
     perbaruiSaranKelasDataMateri();
     document.getElementById('formDataMateri').hidden = false;
   });
@@ -4360,6 +4377,13 @@
     };
     const tombol = document.getElementById('tombolSimpanDataMateri');
     const berkasCover = document.getElementById('dataMateriCover').files[0];
+    const berkasPdf = document.getElementById('dataMateriPdf').files[0];
+    if (berkasPdf && berkasPdf.type && berkasPdf.type !== 'application/pdf' && !/\.pdf$/i.test(berkasPdf.name)) {
+      tampilkanNotifikasi('File kitab harus berformat PDF.', 'error'); return;
+    }
+    if (berkasPdf && berkasPdf.size > 10 * 1024 * 1024) {
+      tampilkanNotifikasi('Ukuran PDF kitab maksimal 10 MB.', 'error'); return;
+    }
     tombol.disabled = true;
     const kirim = function() {
       google.script.run
@@ -4371,9 +4395,15 @@
           tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); tombol.disabled = false;
         })[baris ? 'editDataMateri' : 'tambahDataMateri'](baris ? Number(baris) : data, baris ? data : undefined);
     };
-    if (!berkasCover) { kirim(); return; }
-    kompresFotoCover(berkasCover).then(function(b64) { data.coverBase64 = b64; kirim(); })
-      .catch(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); tombol.disabled = false; });
+    const proses = [];
+    if (berkasCover) proses.push(kompresFotoCover(berkasCover).then(function(b64) { data.coverBase64 = b64; }));
+    if (berkasPdf) proses.push(new Promise(function(resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function() { data.pdfBase64 = String(reader.result || '').split(',')[1] || ''; data.pdfNama = berkasPdf.name; resolve(); };
+      reader.onerror = function() { reject(new Error('PDF kitab tidak dapat dibaca.')); };
+      reader.readAsDataURL(berkasPdf);
+    }));
+    Promise.all(proses).then(kirim).catch(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); tombol.disabled = false; });
   });
 
   /* ----- Cover materi: perkecil foto, unggah, lihat, hapus materi ----- */
@@ -4420,6 +4450,45 @@
   });
 
   function tutupPopupCover() { const o = document.getElementById('popupCoverMateri'); if (o) o.remove(); }
+  function tutupPopupPdfKitab() { const o = document.getElementById('popupPdfKitab'); if (o) o.remove(); }
+  function bukaPopupPdfKitab(item) {
+    tutupPopupPdfKitab();
+    const lapisan = document.createElement('div'); lapisan.className = 'modal-overlay'; lapisan.id = 'popupPdfKitab';
+    const kotak = document.createElement('div'); kotak.className = 'modal';
+    kotak.style.cssText = 'width:min(1100px,96vw);height:min(92dvh,900px);display:flex;flex-direction:column;gap:12px;padding:16px;';
+    const kepala = document.createElement('div'); kepala.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;';
+    const judul = document.createElement('h2'); judul.textContent = item.kitab + ' — ' + item.materi; judul.style.margin = '0';
+    const aksi = document.createElement('div'); aksi.className = 'modal-actions';
+    const tab = document.createElement('a'); tab.className = 'button secondary'; tab.href = item.pdfUrl; tab.target = '_blank'; tab.rel = 'noopener'; tab.textContent = 'Buka di tab baru';
+    const tutup = document.createElement('button'); tutup.type = 'button'; tutup.className = 'button'; tutup.textContent = 'Tutup'; tutup.addEventListener('click', tutupPopupPdfKitab);
+    aksi.appendChild(tab); aksi.appendChild(tutup); kepala.appendChild(judul); kepala.appendChild(aksi);
+    const iframe = document.createElement('iframe'); iframe.src = item.pdfUrl; iframe.title = 'PDF kitab ' + item.kitab;
+    iframe.loading = 'lazy'; iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+    iframe.style.cssText = 'border:0;border-radius:10px;background:#f3f5f8;width:100%;height:100%;min-height:0;flex:1;';
+    kotak.appendChild(kepala); kotak.appendChild(iframe); lapisan.appendChild(kotak);
+    lapisan.addEventListener('click', function(e) { if (e.target === lapisan) tutupPopupPdfKitab(); });
+    document.body.appendChild(lapisan);
+  }
+  function pilihPdfKitab(nomorBaris) {
+    const pemilih = document.createElement('input'); pemilih.type = 'file'; pemilih.accept = 'application/pdf,.pdf';
+    pemilih.onchange = function() {
+      const file = pemilih.files && pemilih.files[0]; if (!file) return;
+      if ((file.type && file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) || !/\.pdf$/i.test(file.name)) { tampilkanNotifikasi('Pilih file PDF kitab.', 'error'); return; }
+      if (file.size > 10 * 1024 * 1024) { tampilkanNotifikasi('Ukuran PDF kitab maksimal 10 MB.', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = function() {
+        const base64 = String(reader.result || '').split(',')[1] || '';
+        tampilkanNotifikasi('Mengunggah PDF kitab…', 'info');
+        google.script.run
+          .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'PDF kitab tersimpan.', 'success'); muatDataMateri(); })
+          .withFailureHandler(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
+          .unggahPdfKitabDataMateri(Number(nomorBaris), base64, file.name);
+      };
+      reader.onerror = function() { tampilkanNotifikasi('PDF kitab tidak dapat dibaca.', 'error'); };
+      reader.readAsDataURL(file);
+    };
+    pemilih.click();
+  }
   function bukaPopupCover(item) {
     tutupPopupCover();
     const gambar = document.createElement('img');
@@ -4454,6 +4523,10 @@
 
   document.getElementById('daftarDataMateri').addEventListener('click', function(event) {
     const cariItem = function(nomor) { return daftarDataMateriTersimpan.find(function(x) { return Number(x.nomorBaris) === Number(nomor); }); };
+    const bacaPdf = event.target.closest('[data-lihat-pdf-kitab]');
+    if (bacaPdf) { const itemPdf = cariItem(bacaPdf.dataset.lihatPdfKitab); if (itemPdf && itemPdf.pdfUrl) bukaPopupPdfKitab(itemPdf); return; }
+    const unggahPdf = event.target.closest('[data-unggah-pdf-kitab]');
+    if (unggahPdf) { pilihPdfKitab(unggahPdf.dataset.unggahPdfKitab); return; }
     const lihat = event.target.closest('[data-lihat-cover]');
     if (lihat) { const it = cariItem(lihat.dataset.lihatCover); if (it) bukaPopupCover(it); return; }
     const unggah = event.target.closest('[data-unggah-cover]');
@@ -4463,7 +4536,7 @@
     const it = cariItem(hapus.dataset.hapusDataMateri);
     if (!it) return;
     konfirmasi({ jenis: 'bahaya', judul: 'Hapus materi?', ya: 'Ya, hapus materi',
-      pesan: '"' + it.materi + ' — ' + it.kitab + '" (' + it.tingkat + ' kelas ' + it.kelas + ') akan dihapus.' + (it.adaCover ? '\nFoto cover-nya juga akan dihapus.' : '') + '\nTindakan ini tidak bisa dibatalkan.' }).then(function(ok) {
+      pesan: '"' + it.materi + ' — ' + it.kitab + '" (' + it.tingkat + ' kelas ' + it.kelas + ') akan dihapus.' + (it.adaCover ? '\nFoto cover-nya juga akan dihapus.' : '') + (it.adaPdf ? '\nPDF kitab-nya juga akan dihapus.' : '') + '\nTindakan ini tidak bisa dibatalkan.' }).then(function(ok) {
     if (!ok) return;
     google.script.run
       .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'Data materi dihapus.', 'success'); muatDataMateri(); })
