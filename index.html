@@ -6580,8 +6580,13 @@
   const uniq = a => [...new Set(a)].filter(x => x !== '' && x != null);
   const ROM = { '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, I: 1, II: 2, III: 3 };
   const TIPE = { A: 'Tipe A (Pilihan Ganda)', B: 'Tipe B (Melengkapi / Isian)', C: 'Tipe C (Essay / Uraian)', D: 'Tipe D (Essay / Uraian)' };
-  function tipeLabel(tipe, ujian) {
-    if (ujian === 'IMNI') return ({ A: 'Tipe A (Pilihan Ganda)', B: 'Tipe B (Menjodohkan)', C: 'Tipe C (Melengkapi / Isian)', D: 'Tipe D (Essay / Uraian)' })[tipe] || TIPE[tipe] || tipe;
+  const aliyah = tingkat => smartMatch(tingkat) === 'aliyah';
+  const tipeHuruf = (tingkat, ujian) => aliyah(tingkat)
+    ? (ujian === 'IMNI' ? ['A', 'B', 'C'] : ['A', 'B'])
+    : (ujian === 'IMNI' ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C']);
+  function tipeLabel(tipe, ujian, tingkat) {
+    if (ujian === 'IMNI') return ({ A: 'Tipe A (Pilihan Ganda)', B: aliyah(tingkat) ? 'Tipe B (Melengkapi / Isian)' : 'Tipe B (Menjodohkan)', C: aliyah(tingkat) ? 'Tipe C (Essay / Uraian)' : 'Tipe C (Melengkapi / Isian)', D: 'Tipe D (Essay / Uraian)' })[tipe] || TIPE[tipe] || tipe;
+    if (aliyah(tingkat) && tipe === 'B') return 'Tipe B (Essay / Uraian)';
     return TIPE[tipe] || tipe;
   }
   const sortNum = a => a.sort((x, y) => (+x || 0) - (+y || 0) || String(x).localeCompare(String(y), 'id'));
@@ -6650,6 +6655,8 @@
 
 function canonUjian(v) {
   const s = smartMatch(v);
+  if (s.includes('ganjil')) return 'SEMESTER GANJIL';
+  if (s.includes('genap')) return 'SEMESTER GENAP';
   if (s.startsWith('imni') || s.includes('ujianakhir') || s === 'akhir') return 'IMNI';
   if (s === 'imda1' || s === 'imdai') return 'IMDA I';
   if (s === 'imda2' || s === 'imdaii') return 'IMDA II';
@@ -6677,9 +6684,10 @@ function compRows(tingkat, kat, kelas, ujian) {
     return true;
   });
   const exact = scoped.filter(r => smartMatch(r.Kategori) === tKat);
-  if (exact.length) return exact.map(rapikanBarisKomposisi);
+  const boleh = new Set(tipeHuruf(tingkat, tUjian));
+  if (exact.length) return exact.filter(r => boleh.has(String(r.Tipe || '').trim().toUpperCase().charAt(0))).map(rapikanBarisKomposisi);
   const umum = scoped.filter(r => smartMatch(r.Kategori) === 'seluruhfan');
-  if (umum.length) return umum.map(rapikanBarisKomposisi);
+  if (umum.length) return umum.filter(r => boleh.has(String(r.Tipe || '').trim().toUpperCase().charAt(0))).map(rapikanBarisKomposisi);
   return [];
 }
 
@@ -6740,7 +6748,12 @@ function petunjukFor(r) {
     D: 'د ~ أجب عن الأسئلة الآتية إجابة صحيحة ! (لكل رقم {skor})'
   }, P);
 
-  if (r.Ujian === 'IMNI') {
+  if (aliyah(r.Tingkat) && r.Ujian !== 'IMNI') {
+    tipePetunjuk.B = 'ب ~ أجب عن الأسئلة الآتية إجابة صحيحة ! (لكل رقم {skor})';
+  } else if (r.Ujian === 'IMNI' && aliyah(r.Tingkat)) {
+    tipePetunjuk.B = 'ب ~ أَكْمِلِ الْفَرَاغَاتِ الآتِيَةَ بِمَا يُنَاسِبُ ! (لكل رقم {skor})';
+    tipePetunjuk.C = 'ج ~ أَجِبْ عَنِ الْأَسْئِلَةِ الآتِيَةِ إِجَابَةً صَحِيحَةً ! (لكل رقم {skor})';
+  } else if (r.Ujian === 'IMNI') {
     tipePetunjuk.B = 'ب ~ زوج الكلمات الآتية بأجوبة صحيحة الموجودة يسارها (لكل رقم {skor})';
     tipePetunjuk.C = 'ج ~ أَكْمِلِ الْفَرَاغَاتِ الآتِيَةَ بِمَا يُنَاسِبُ ! (لكل رقم {skor})';
     tipePetunjuk.D = 'د ~ أَجِبْ عَنِ الْأَسْئِلَةِ الآتِيَةِ إِجَابَةً صَحِيحَةً ! (لكل رقم {skor})';
@@ -6758,7 +6771,7 @@ function buildTemplate(r, map) {
   const roles = isImni ? ['PIMPINAN LABSOMA', 'PIMPINAN MADRASAH', 'KETUA 1'] : ['PIMPINAN MADRASAH', 'PIMPINAN LABSOMA'];
   const widths = isImni ? ['7%', '10%', '10%', '14%', '19.67%', '19.67%', '19.66%'] : ['9%', '12%', '12%', '17%', '25%', '25%'];
   const kw = isImni ? '19.67%' : '25%';
-  const stg = r.Ujian === 'IMNI' ? uniq(c.types.flatMap(x => x.materi.map(mm => String(mm.m)))).sort((a, b) => (+a) - (+b)).map(k => ['KELAS ' + k, k]) : [[jenis + ' I', 'I'], [jenis + ' II', 'II'], [jenis + ' III', 'III']];
+  const stg = r.Ujian === 'IMNI' ? uniq(c.types.flatMap(x => x.materi.map(mm => String(mm.m)))).sort((a, b) => (+a) - (+b)).map(k => ['KELAS ' + k, k]) : (aliyah(r.Tingkat) ? [['SEMESTER GANJIL', 'I'], ['SEMESTER GENAP', 'II']] : [[jenis + ' I', 'I'], [jenis + ' II', 'II'], [jenis + ' III', 'III']]);
   const kor = (t, v, i) => h('td', { rowspan: 3, valign: 'top', align: 'center', width: kw, bgcolor: C_SOFT, style: CELL + 'background:' + C_SOFT + ';text-align:center;vertical-align:top;width:' + kw + ';min-width:0;padding:8px 6px 12px;line-height:1.35;height:205px' }, h('b', { style: 'font-size:10pt;color:' + C_DARK + ';display:block;min-height:28px;line-height:1.3' }, t), h('div', { style: 'font-size:12pt;margin-top:76px;min-height:22px;white-space:nowrap;letter-spacing:.2px' }, '(_______________)'), h('div', { style: 'font-size:10pt;margin-top:4px;white-space:nowrap;line-height:1.4' }, 'Tgl: ______________'));
   const metaTbl = tbl({ style: 'border-collapse:collapse;table-layout:fixed;width:100%;border:1px solid ' + C_LINE });
   const widthCols = h('colgroup', {}, widths.map(w => h('col', { style: 'width:' + w })));
@@ -6841,9 +6854,9 @@ function templateModel(r, map) {
     warna: String((S.data.pengaturan && S.data.pengaturan.WarnaIsian) || 'FF0000').replace('#', ''),
     head: { rincian: [ujianTxt, r.Mapel, 'KELAS ' + r.Kelas, r.Tingkat, r.Unit].join(' | ').toUpperCase(), tingkatUnit: tu, kategori: String(r.Mapel).toUpperCase() },
     detail: { ujian: r.Ujian, tingkat: r.Tingkat, kelas: r.Kelas, unit: r.Unit, mapel: r.Mapel, sonik: r.Ustadz, kor: [r.Korektor1 || '', r.Korektor2 || ''].concat(r.Ujian === 'IMNI' ? [r.Korektor3 || ''] : []) },
-    mek: { stages: r.Ujian === 'IMNI' ? stages.map(k => 'KELAS ' + k) : [jenis + ' I', jenis + ' II', jenis + ' III'], rows: c.types.map(x => {
+    mek: { stages: r.Ujian === 'IMNI' ? stages.map(k => 'KELAS ' + k) : (aliyah(r.Tingkat) ? ['SEMESTER GANJIL', 'SEMESTER GENAP'] : [jenis + ' I', jenis + ' II', jenis + ' III']), rows: c.types.map(x => {
       const byM = Object.fromEntries(x.materi.map(m => [String(m.m), m.n])), b = bobotOf(r.Tingkat, kat, r.Ujian, x.tipe);
-      return { tipe: tipeLabel(x.tipe, r.Ujian), vals: (r.Ujian === 'IMNI' ? stages : ['I', 'II', 'III']).map(k => byM[k] || ''), jml: x.total, jadi: x.total - 1, skor: b == null ? '' : b };
+      return { tipe: tipeLabel(x.tipe, r.Ujian, r.Tingkat), vals: (r.Ujian === 'IMNI' ? stages : (aliyah(r.Tingkat) ? ['I', 'II'] : ['I', 'II', 'III'])).map(k => byM[k] || ''), jml: x.total, jadi: x.total - 1, skor: b == null ? '' : b };
     }) },
     sections: c.types.map(x => ({
       tipe: x.tipe, heading: fillTpl(tipePetunjuk[x.tipe] || '', { skor: skorAr(bobotOf(r.Tingkat, kat, r.Ujian, x.tipe)) }),
@@ -6871,8 +6884,12 @@ function extraPages(mdl) {
   const gray = 'background:#d9d9d9;font-weight:bold;';
   const K = h('div', { style: 'page-break-before:always;margin-top:36px' });
   K.append(ctr(['KISI-KISI SOAL'], 'font-size:14pt'), ctr(['MADRASAH MIFTAHUL ULUM ', h('b', { style: 'color:' + red }, mdl.head.tingkatUnit)], 'font-size:14pt'), ctr(['PONDOK PESANTREN SIDOGIRI'], 'font-size:14pt'), ctr(['KATEGORI ', h('b', { style: 'color:' + red }, mdl.head.kategori)], 'font-size:14pt;margin-bottom:10px'), ctr([mdl.head.rincian], 'font-size:15pt;font-weight:bold;color:' + red + ';margin-bottom:8px'));
-  const rows = [h('tr', {}, td('NO', gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td(mdl.detail.ujian === 'IMNI' ? 'KELAS SUMBER' : 'IMDA', gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td('MATERI / BAB / FASAL', gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td('MODEL SOAL', gray, { colspan: 4, bgcolor: '#d9d9d9' }), td('JUMLAH', gray, { rowspan: 2, bgcolor: '#d9d9d9' })), h('tr', {}, ['PILIHAN GANDA', 'MENJODOHKAN / ISIAN', 'MELENGKAPI', 'ESSAY'].map(t => td(t, gray, { bgcolor: '#d9d9d9' })))];
-  mdl.kisi.rows.concat([{}, {}]).forEach(r => rows.push(h('tr', {}, td(String(r.no || '')), td(r.imda || ''), td(r.materi || '', "font-family:" + FONT_AR + ";font-size:13pt;"), td(r.A || ''), td(r.B || ''), td(r.C || ''), td(r.D || ''), td(String(r.jml == null ? '' : r.jml)))));
+  const aliyahUjian = aliyah(mdl.detail.tingkat), labels = mdl.detail.ujian === 'IMNI'
+    ? (aliyahUjian ? ['PILIHAN GANDA', 'MELENGKAPI', 'ESSAY'] : ['PILIHAN GANDA', 'MENJODOHKAN', 'MELENGKAPI', 'ESSAY'])
+    : (aliyahUjian ? ['PILIHAN GANDA', 'ESSAY'] : ['PILIHAN GANDA', 'MELENGKAPI', 'ESSAY']);
+  const letters = labels.map((_, i) => ['A', 'B', 'C', 'D'][i]);
+  const rows = [h('tr', {}, td('NO', gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td(mdl.detail.ujian === 'IMNI' ? 'KELAS SUMBER' : (aliyahUjian ? 'SEMESTER' : 'IMDA'), gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td('MATERI / BAB / FASAL', gray, { rowspan: 2, bgcolor: '#d9d9d9' }), td('MODEL SOAL', gray, { colspan: labels.length, bgcolor: '#d9d9d9' }), td('JUMLAH', gray, { rowspan: 2, bgcolor: '#d9d9d9' })), h('tr', {}, labels.map(t => td(t, gray, { bgcolor: '#d9d9d9' })))];
+  mdl.kisi.rows.concat([{}, {}]).forEach(r => rows.push(h('tr', {}, td(String(r.no || '')), td(r.imda || ''), td(r.materi || '', "font-family:" + FONT_AR + ";font-size:13pt;"), letters.map(k => td(r[k] || '')), td(String(r.jml == null ? '' : r.jml)))));
   K.append(h('table', { border: 1, cellspacing: 0, cellpadding: 0, width: '100%', style: 'border-collapse:collapse;width:100%;border:1px solid #000' }, rows));
   wrap.append(K);
   return wrap;
@@ -7138,7 +7155,7 @@ function simpanFile(f) {
     const ok = v => h('span', { class: 'badge' + (v ? '' : ' waiting') }, v ? 'Ada' : 'Belum');
     const tb = h('tbody');
     daftar.forEach(r => {
-      const kat = kategoriOf(r), c = compFor(r), ujianDikenal = /^(IMDA (I|II|III)|IMNI)$/.test(r.Ujian);
+      const kat = kategoriOf(r), c = compFor(r), ujianDikenal = /^(IMDA (I|II|III)|SEMESTER (GANJIL|GENAP)|IMNI)$/.test(r.Ujian);
       const nKisi = (kisiList(r) || []).length;
       tb.append(h('tr', {}, h('td', {}, r.Tingkat), h('td', {}, r.Kelas), h('td', {}, r.Mapel),
         h('td', {}, ujianDikenal ? r.Ujian : h('span', { class: 'badge waiting' }, r.Ujian || 'kosong')),
