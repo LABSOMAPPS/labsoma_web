@@ -1807,6 +1807,260 @@
   body.fp-terbuka { overflow: hidden; }
   #batalEditDataMateri { display: none !important; }
 </style>
+<style id="selective-sidebar-mobile-theme">
+  /* ==========================================================================
+     SELECTIVE SIDEBAR, HUB MENU & MOBILE BOTTOM NAV STYLING
+     (Berdasarkan screenshot: mempertahankan tampilan asli komponen lain &
+      menyelaraskan palet warna dark navy-teal yang serasi)
+     ========================================================================== */
+  :root {
+    --latar: #071925;
+    --latar-subtle: #0b2232;
+    --panel: #0f2b3c;
+    --panel2: #15384d;
+    --panel3: #1c4760;
+    --teks: #f0f9ff;
+    --teks-muted: #94b8cc;
+    --redup: #8cb0c4;
+    --garis: rgba(255, 255, 255, 0.09);
+    --garis-terang: rgba(255, 255, 255, 0.18);
+
+    --aksen: #32b8c4;
+    --aksen-hover: #269aa5;
+    --aksen-soft: rgba(50, 184, 196, 0.15);
+    --aksen-border: rgba(50, 184, 196, 0.35);
+    --aksen-teks: #04242c;
+
+    --biru: #38bdf8;
+    --biru-soft: rgba(56, 189, 248, 0.14);
+    --kuning: #facc15;
+    --kuning-soft: rgba(250, 204, 21, 0.16);
+    --input: #0a202e;
+    --toast: #123246;
+  }
+
+  body[data-theme="light"] {
+    --latar: #f4f8fa;
+    --latar-subtle: #eef6f8;
+    --panel: #ffffff;
+    --panel2: #f1f8fa;
+    --panel3: #e0f0f5;
+    --teks: #102a43;
+    --teks-muted: #52667a;
+    --redup: #5c7080;
+    --garis: rgba(13, 122, 138, 0.12);
+    --garis-terang: rgba(13, 122, 138, 0.24);
+
+    --aksen: #2b9fa8;
+    --aksen-hover: #1e8790;
+    --aksen-soft: #e6f6f7;
+    --aksen-border: rgba(43, 159, 168, 0.32);
+    --aksen-teks: #ffffff;
+
+    --biru: #0b5aa2;
+    --biru-soft: rgba(11, 90, 162, 0.11);
+    --kuning: #d97706;
+    --kuning-soft: rgba(217, 119, 6, 0.14);
+    --input: #f8fbfc;
+    --toast: #ffffff;
+  }
+
+  /* 1. SIDEBAR BRAND & NAVIGATION (Sesuai Screenshot 2) */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--garis);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .sidebar .brand {
+    position: relative;
+    padding: 16px 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #0b5aa2 0%, #0d7a8a 60%, #2b9fa8 100%);
+    color: #ffffff !important;
+    border-bottom: none;
+    box-shadow: 0 8px 20px -4px rgba(11, 90, 162, 0.38);
+  }
+
+  .sidebar .brand small {
+    color: #fde047 !important;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .nav-list .nav-button .nav-icon-inline {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--aksen-soft);
+    color: var(--aksen);
+    transition: all 0.18s ease;
+  }
+
+  .nav-list .nav-button.active {
+    background: var(--aksen-soft);
+    color: var(--aksen);
+    box-shadow: inset 4px 0 0 var(--aksen);
+  }
+
+  .nav-list .nav-button.active .nav-icon-inline {
+    background: var(--aksen);
+    color: #ffffff;
+  }
+
+  /* 2. HUB MENU CARDS (Sesuai Screenshot 1 - Grid 2 Kolom & Squircle Icon) */
+  .hub-grid {
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 14px;
+    max-width: 920px;
+  }
+
+  .hub-button {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 14px;
+    border-radius: 22px;
+    background: var(--panel);
+    border: 1px solid var(--garis);
+    box-shadow: var(--bayangan-sm);
+    gap: 12px;
+    position: relative;
+  }
+
+  .hub-button .hub-icon-box {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    border-radius: 20px;
+    background: var(--aksen-soft);
+    color: var(--aksen);
+    border: none;
+    box-shadow: inset 0 0 0 1px var(--aksen-border);
+  }
+
+  .hub-button .hub-icon-box svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .hub-button .hub-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    margin-left: 0;
+    background: var(--kuning);
+    color: #091e2c;
+    border: none;
+    font-size: 12px;
+    padding: 4px 9px;
+  }
+
+  /* 3. BOTTOM NAVIGATION HP DENGAN TOMBOL TENGAH BULAT MENONJOL (Sesuai Screenshot 1) */
+  @media (max-width: 768px) {
+    .bottom-nav,
+    body[data-peran="SONIK"] .sonik-nav,
+    body[data-peran="KOREKTOR"] #korektorNav {
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      max-width: 100% !important;
+      border-radius: 24px 24px 0 0 !important;
+      background: var(--panel) !important;
+      border: none !important;
+      border-top: 1px solid var(--garis-terang) !important;
+      padding: 8px 8px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.35) !important;
+      overflow: visible !important;
+    }
+
+    body[data-theme="light"] .bottom-nav,
+    body[data-theme="light"][data-peran="SONIK"] .sonik-nav,
+    body[data-theme="light"][data-peran="KOREKTOR"] #korektorNav {
+      background: #ffffff !important;
+      border-top-color: rgba(13, 122, 138, 0.14) !important;
+      box-shadow: 0 -8px 28px rgba(11, 79, 108, 0.12) !important;
+    }
+
+    .bottom-nav button,
+    .sonik-nav button,
+    #korektorNav button {
+      color: var(--redup) !important;
+      font-weight: 600 !important;
+      background: transparent !important;
+      overflow: visible !important;
+    }
+
+    .bottom-nav button.active,
+    .sonik-nav button.active,
+    #korektorNav button.active {
+      color: var(--aksen) !important;
+      font-weight: 800 !important;
+    }
+
+    .bottom-nav button.active span.nav-label,
+    .sonik-nav button.active .nav-label,
+    #korektorNav button.active span.nav-label {
+      color: var(--aksen) !important;
+      font-weight: 800 !important;
+    }
+
+    .bottom-nav button.active::before,
+    .sonik-nav button.active::before,
+    #korektorNav button.active::before {
+      display: none !important;
+    }
+
+    .bottom-nav button.active .nav-icon-wrap svg,
+    .sonik-nav button.active .nav-icon-wrap svg,
+    #korektorNav button.active .nav-icon-wrap svg {
+      filter: none !important;
+      stroke-width: 2.3;
+    }
+
+    /* Tombol ke-3 (Dashboard) Bulat Menonjol di Tengah */
+    .bottom-nav button:nth-child(3),
+    .sonik-nav button:nth-child(3),
+    #korektorNav button:nth-child(3) {
+      position: relative;
+      padding-top: 30px !important;
+    }
+
+    .bottom-nav button:nth-child(3) .nav-icon-wrap,
+    .sonik-nav button:nth-child(3) .nav-icon-wrap,
+    #korektorNav button:nth-child(3) .nav-icon-wrap {
+      position: absolute !important;
+      top: -28px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 58px !important;
+      height: 58px !important;
+      border-radius: 50% !important;
+      background: linear-gradient(145deg, #34b3be 0%, #208e98 100%) !important;
+      color: #ffffff !important;
+      box-shadow: 0 10px 22px rgba(32, 142, 152, 0.42), 0 0 0 5px var(--panel) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    body[data-theme="light"] .bottom-nav button:nth-child(3) .nav-icon-wrap,
+    body[data-theme="light"] .sonik-nav button:nth-child(3) .nav-icon-wrap,
+    body[data-theme="light"] #korektorNav button:nth-child(3) .nav-icon-wrap {
+      box-shadow: 0 10px 22px rgba(32, 142, 152, 0.35), 0 0 0 5px #ffffff !important;
+    }
+
+    .bottom-nav button:nth-child(3) .nav-icon-wrap svg,
+    .sonik-nav button:nth-child(3) .nav-icon-wrap svg,
+    #korektorNav button:nth-child(3) .nav-icon-wrap svg {
+      width: 26px !important;
+      height: 26px !important;
+      stroke: #ffffff !important;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -7383,5 +7637,3 @@ function simpanFile(f) {
 </script>
 </body>
 </html>
-
-
