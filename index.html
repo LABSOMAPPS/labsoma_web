@@ -1922,6 +1922,7 @@
             <button class="nav-button" data-page="rekap">Rekap</button>
             <button class="nav-button" data-page="korektor1">Korektor 1<span class="nav-count" id="jumlahKorektor1Sidebar" aria-label="Jumlah antrean Korektor 1">0</span></button>
             <button class="nav-button" data-page="korektor2">Korektor 2<span class="nav-count" id="jumlahKorektor2Sidebar" aria-label="Jumlah antrean Korektor 2">0</span></button>
+            <button class="nav-button" data-page="korektor3">Korektor 3 (IMNI)<span class="nav-count" id="jumlahKorektor3Sidebar" aria-label="Jumlah antrean Korektor 3">0</span></button>
             <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama<span class="nav-count" id="jumlahKoreksiBersamaSidebar" aria-label="Jumlah antrean Koreksi Bersama">0</span></button>
           </div>
         </div>
@@ -2099,6 +2100,11 @@
             <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
             <span class="hub-count" id="jumlahKorektor2Hub" aria-label="Jumlah antrean Korektor 2">0</span>
           </button>
+          <button class="hub-button" data-goto="korektor3">
+            <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg></span>
+            <span><strong>Korektor 3</strong><small>Pemeriksaan tambahan khusus tahap IMNI</small></span>
+            <span class="hub-count" id="jumlahKorektor3Hub" aria-label="Jumlah antrean Korektor 3">0</span>
+          </button>
           <button class="hub-button" data-goto="koreksiBersama">
             <span class="hub-icon-box">
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -2249,6 +2255,7 @@
         <div class="koreksi-ringkasan">
           <button class="koreksi-ringkasan-kartu" data-goto="korektor1" aria-label="Buka antrean Korektor 1"><h2>Korektor 1</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor1">0</strong><div class="koreksi-tingkat" id="tingkatKorektor1"><span>Memuat rincian…</span></div></button>
           <button class="koreksi-ringkasan-kartu" data-goto="korektor2" aria-label="Buka antrean Korektor 2"><h2>Korektor 2</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor2">0</strong><div class="koreksi-tingkat" id="tingkatKorektor2"><span>Memuat rincian…</span></div></button>
+          <button class="koreksi-ringkasan-kartu" data-goto="korektor3" aria-label="Buka antrean Korektor 3"><h2>Korektor 3 · IMNI</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor3">0</strong><div class="koreksi-tingkat" id="tingkatKorektor3"><span>Memuat rincian…</span></div></button>
         </div>
       </section>
 
@@ -2439,6 +2446,18 @@
           <input type="search" id="filterK2Tingkat" data-filter-group="k2" data-filter-key="tingkat" placeholder="Cari tingkat…" aria-label="Cari tingkat di Korektor 2">
         </div>
         <div id="isiKorektor2"></div>
+      </section>
+
+      <!-- PAGE: KOREKTOR 3 (Khusus IMNI) -->
+      <section class="page" id="page-korektor3">
+        <h1 class="page-heading">Korektor 3</h1>
+        <p class="subheading">Pemeriksaan tahap ketiga khusus tugas IMNI yang sudah selesai dikoreksi Korektor 2.</p>
+        <div class="search-filters">
+          <input type="search" data-filter-group="k3" data-filter-key="tugas" placeholder="Cari tugas/soal…" aria-label="Cari tugas di Korektor 3">
+          <input type="search" data-filter-group="k3" data-filter-key="kelas" placeholder="Cari kelas…" aria-label="Cari kelas di Korektor 3">
+          <input type="search" data-filter-group="k3" data-filter-key="tingkat" placeholder="Cari tingkat…" aria-label="Cari tingkat di Korektor 3">
+        </div>
+        <div id="isiKorektor3"></div>
       </section>
 
       <!-- PAGE: AGENDA -->
@@ -3303,6 +3322,7 @@
   let dataRekapTersimpan = [];
   let dataK1Tersimpan = [];
   let dataK2Tersimpan = [];
+  let dataK3Tersimpan = [];
   let dataKBTersimpan = [];
   let daftarRapatTersimpan = [];
   let daftarAnggotaRapatTersimpan = [];
@@ -3707,6 +3727,7 @@
     rekap:          { tab: 'soal', induk: 'hubSoal' },
     korektor1:      { tab: 'soal', induk: 'hubSoal' },
     korektor2:      { tab: 'soal', induk: 'hubSoal' },
+    korektor3:      { tab: 'soal', induk: 'hubSoal' },
     koreksiBersama: { tab: 'soal', induk: 'hubSoal' },
 
     hubUjian:       { tab: 'ujian' },
@@ -4720,12 +4741,14 @@
           <td>${aman(statusTampil)}</td>
           <td>${aman(item.statusK1 || 'Menunggu')}</td>
           <td>${aman(item.statusK2 || 'Menunggu')}</td>
+          <td>${/IMNI/i.test(item.tahapUjian || '') ? aman(item.statusK3 || 'Menunggu') : '—'}</td>
+          <td>${aman(item.statusKoreksiBersama || 'Menunggu')}</td>
         </tr>
       `;
     });
 
     document.getElementById('isiRekap').innerHTML = ringkasan +
-      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2'], rows);
+      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2', 'Korektor 3', 'Koreksi Bersama'], rows);
   }
 
   function tampilkanAntrianK1(daftar) {
@@ -4776,10 +4799,26 @@
     document.getElementById('isiKorektor2').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai Korektor 1', 'Status', 'Aksi'], rows);
   }
 
+  function tampilkanAntrianK3(daftar) {
+    daftar = saringDaftarTugas(daftar, 'k3');
+    const rows = daftar.map(function(item) { return `
+      <tr>
+        <td>${aman(item.nama)}</td><td>${aman(item.tugas)}</td><td>${aman(item.kelas || '–')}</td>
+        <td>${aman(item.tahapUjian || '–')}</td><td>${aman(item.tingkat || '–')}</td><td>${aman(item.madrasah || '–')}</td>
+        <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td><td>${formatTanggal(item.tanggalK2)}</td>
+        <td><span class="badge waiting">Menunggu Korektor 3</span></td>
+        <td><button class="button" data-action="k3" data-row="${item.nomorBaris}">Tandai sudah dikoreksi</button>
+        <button class="button secondary" data-action="kembaliK3" data-row="${item.nomorBaris}">Kembalikan</button></td>
+      </tr>`;
+    });
+    document.getElementById('isiKorektor3').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
+  }
+
   function tampilkanRingkasanKoreksi() {
     [
       { daftar: dataK1Tersimpan, jumlah: 'jumlahKorektor1', tingkat: 'tingkatKorektor1' },
-      { daftar: dataK2Tersimpan, jumlah: 'jumlahKorektor2', tingkat: 'tingkatKorektor2' }
+      { daftar: dataK2Tersimpan, jumlah: 'jumlahKorektor2', tingkat: 'tingkatKorektor2' },
+      { daftar: dataK3Tersimpan, jumlah: 'jumlahKorektor3', tingkat: 'tingkatKorektor3' }
     ].forEach(function(info) {
       const daftar = info.daftar || [];
       const jumlahNode = document.getElementById(info.jumlah);
@@ -4802,9 +4841,11 @@
     [
       { id: 'jumlahKorektor1Hub', daftar: dataK1Tersimpan },
       { id: 'jumlahKorektor2Hub', daftar: dataK2Tersimpan },
+      { id: 'jumlahKorektor3Hub', daftar: dataK3Tersimpan },
       { id: 'jumlahKoreksiBersamaHub', daftar: dataKBTersimpan },
       { id: 'jumlahKorektor1Sidebar', daftar: dataK1Tersimpan },
       { id: 'jumlahKorektor2Sidebar', daftar: dataK2Tersimpan },
+      { id: 'jumlahKorektor3Sidebar', daftar: dataK3Tersimpan },
       { id: 'jumlahKoreksiBersamaSidebar', daftar: dataKBTersimpan }
     ].forEach(function(info) {
       const node = document.getElementById(info.id);
@@ -4824,7 +4865,7 @@
           <td>${aman(item.tingkat || '–')}</td>
           <td>${aman(item.madrasah || '–')}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
-          <td>${formatTanggal(item.tanggalK2)}</td>
+          <td>${formatTanggal(/IMNI/i.test(item.tahapUjian || '') ? item.tanggalK3 : item.tanggalK2)}</td>
           <td><span class="badge waiting">Menunggu Koreksi Bersama</span></td>
           <td>
             <button class="button" data-action="selesaiBersama" data-row="${item.nomorBaris}">Tandai Selesai</button>
@@ -4833,7 +4874,7 @@
         </tr>
       `;
     });
-    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Aksi'], rows);
   }
 
   function tampilkanDaftarRapat(daftar) {
@@ -4902,6 +4943,7 @@
         dataRekapTersimpan = data.rekapSelesai || [];
         dataK1Tersimpan = data.antrianKorektor1 || [];
         dataK2Tersimpan = data.antrianKorektor2 || [];
+        dataK3Tersimpan = data.antrianKorektor3 || [];
         dataKBTersimpan = data.antrianKoreksiBersama || [];
         perbaruiJumlahKartuAntrean();
         daftarRapatTersimpan = data.rapat || [];
@@ -4917,6 +4959,7 @@
         tampilkanRekap(dataRekapTersimpan);
         tampilkanAntrianK1(dataK1Tersimpan);
         tampilkanAntrianK2(dataK2Tersimpan);
+        tampilkanAntrianK3(dataK3Tersimpan);
         tampilkanRingkasanKoreksi();
         tampilkanDaftarRapat(daftarRapatTersimpan);
         // peran/nama dari server selalu dianggap benar: bila berubah (mis. admin mengganti peran), muat ulang tampilan
@@ -4985,6 +5028,7 @@
       if (grup === 'rekap') tampilkanRekap(dataRekapTersimpan);
       if (grup === 'k1') tampilkanAntrianK1(dataK1Tersimpan);
       if (grup === 'k2') tampilkanAntrianK2(dataK2Tersimpan);
+      if (grup === 'k3') tampilkanAntrianK3(dataK3Tersimpan);
       if (grup === 'kb') tampilkanAntrianKoreksiBersama(dataKBTersimpan);
       if (grup === 'tugasMenu') tampilkanTugasDiMenuTambah((dataAplikasiTersimpan || {}).semuaTugas || []);
       if (grup === 'agendaMenu') tampilkanDaftarAgendaMenu((dataAplikasiTersimpan || {}).semuaAgenda || []);
@@ -5026,6 +5070,7 @@
       if (method === 'ubahStatusTugas') runner.ubahStatusTugas(args[0], args[1], pin);
       else if (method === 'tandaiKorektor1Selesai') runner.tandaiKorektor1Selesai(args[0], pin);
       else if (method === 'tandaiKorektor2Selesai') runner.tandaiKorektor2Selesai(args[0], pin);
+      else if (method === 'tandaiKorektor3Selesai') runner.tandaiKorektor3Selesai(args[0], pin);
       else if (method === 'kembalikanDariKorektor') runner.kembalikanDariKorektor(args[0], args[1], pin);
       else if (method === 'ubahStatusKoreksiBersama') runner.ubahStatusKoreksiBersama(args[0], args[1], pin);
       else if (method === 'tandaiKoreksiBersamaSelesai') runner.tandaiKoreksiBersamaSelesai(args[0], pin);
@@ -5043,9 +5088,10 @@
     if (aksi === 'ubahStatus') jalankanAksi('ubahStatusTugas', [baris, tombol.dataset.status]);
     else if (aksi === 'k1') jalankanAksi('tandaiKorektor1Selesai', [baris]);
     else if (aksi === 'k2') jalankanAksi('tandaiKorektor2Selesai', [baris]);
-    else if (aksi === 'kembaliK1' || aksi === 'kembaliK2') jalankanAksi('kembalikanDariKorektor', [baris, aksi === 'kembaliK1' ? 1 : 2]);
+    else if (aksi === 'k3') jalankanAksi('tandaiKorektor3Selesai', [baris]);
+    else if (aksi === 'kembaliK1' || aksi === 'kembaliK2' || aksi === 'kembaliK3') jalankanAksi('kembalikanDariKorektor', [baris, aksi === 'kembaliK1' ? 1 : (aksi === 'kembaliK2' ? 2 : 3)]);
     else if (aksi === 'selesaiBersama') jalankanAksi('tandaiKoreksiBersamaSelesai', [baris]);
-    else if (aksi === 'kembaliKB') jalankanAksi('kembalikanDariKorektor', [baris, 3]);
+    else if (aksi === 'kembaliKB') jalankanAksi('kembalikanDariKorektor', [baris, 4]);
     else if (aksi === 'selesaiUjian') jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Selesai']);
   });
 
@@ -5859,6 +5905,7 @@
         batasPelajaran: { tab: 'batas' },
         korektor1:      { tab: 'koreksi', induk: 'hubKoreksi' },
         korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
+        korektor3:      { tab: 'koreksi', induk: 'hubKoreksi' },
         pengumuman:     { tab: 'kegiatan' }
       });
     }
@@ -6461,6 +6508,7 @@
     if (!selesaiItem(x)) return telat ? { teks: 'Telat / Belum Selesai', kelas: 'telat' } : { teks: 'Menunggu Waktu', kelas: 'waiting' };
     if (String(x.statusK1 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 1', kelas: 'waiting' };
     if (String(x.statusK2 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 2', kelas: 'waiting' };
+    if (/IMNI/i.test(x.tahapUjian || '') && String(x.statusK3 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 3', kelas: 'waiting' };
     if (String(x.statusKoreksiBersama || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Koreksi Bersama', kelas: 'waiting' };
     return { teks: 'Selesai semua tahap', kelas: '' };
   }
