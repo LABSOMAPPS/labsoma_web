@@ -1186,7 +1186,85 @@
     .hub-button strong { display: block; font-size: 15px; font-weight: 700; }
     .hub-button small { display: block; margin-top: 3px; color: var(--redup); font-size: 12.5px; }
     .hub-button .hub-count { flex: 0 0 auto; min-width: 34px; margin-left: auto; padding: 7px 10px; border: 1px solid var(--aksen-border); border-radius: 999px; background: var(--aksen-soft); color: var(--aksen); font-size: 14px; font-weight: 800; line-height: 1; text-align: center; }
-    .koreksi-ringkasan { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; max-width:900px; margin:18px 0 22px; }
+    .koreksi-ringkasan { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; max-width:1050px; margin:18px 0 22px; } @media (max-width:960px) { .koreksi-ringkasan { grid-template-columns:repeat(2,minmax(0,1fr)); } } @media (max-width:480px) { .koreksi-ringkasan { grid-template-columns:1fr; } }
+    /* ===== Subgrup Hirarki Navigasi (Tugas -> Pembuatan Soal, Koreksi Soal, Koreksi Ujian) ===== */
+    .nav-subgrup {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin: 4px 0 6px;
+    }
+
+    .nav-subgroup-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--garis);
+      border-radius: 9px;
+      background: var(--panel2);
+      color: var(--teks);
+      font-size: 13px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .nav-subgroup-toggle:hover {
+      background: var(--panel3);
+      color: var(--aksen);
+      border-color: var(--aksen-border);
+    }
+
+    .nav-subgroup-toggle.aktif {
+      color: var(--aksen);
+      background: var(--aksen-soft);
+      border-color: var(--aksen-border);
+    }
+
+    .nav-subgroup-toggle .sub-chev {
+      order: 3;
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--redup);
+      transition: transform 0.2s ease;
+    }
+
+    .nav-subgroup-toggle .nav-icon-inline {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border-radius: 7px;
+      background: var(--aksen-soft);
+      color: var(--aksen);
+    }
+
+    .nav-subgroup-toggle .nav-icon-inline svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+    }
+
+    .nav-subgroup-menu {
+      display: flex;
+      flex-direction: column;
+      margin: 2px 0 4px 12px;
+      padding-left: 8px;
+      gap: 2px;
+      border-left: 2px solid var(--garis-terang);
+    }
+
+    .nav-subgroup-menu .nav-button {
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
     .koreksi-ringkasan-kartu { display:block; width:100%; padding:18px; border:1px solid var(--garis); border-radius:var(--radius-lg); background:var(--panel); color:var(--teks); box-shadow:var(--bayangan-sm); text-align:left; cursor:pointer; }
     .koreksi-ringkasan-kartu:hover, .koreksi-ringkasan-kartu:focus-visible { border-color:var(--aksen); background:var(--panel2); outline:none; }
     .koreksi-ringkasan-kartu h2 { margin:0; font-size:17px; }
@@ -2159,40 +2237,65 @@
           </div>
         </div>
 
-        <!-- Pembuatan Soal -->
-        <div class="nav-grup">
-          <button class="nav-group-toggle" type="button" data-menu="pembuatanSoal">
+        <!-- Grub Tugas (Menaungi Pembuatan Soal, Koreksi Soal, dan Koreksi Hasil Ujian) -->
+        <div class="nav-grup" data-menu-parent="tugas">
+          <button class="nav-group-toggle" type="button" data-menu="tugas">
             <span class="chev">⌃</span>
             <span class="nav-icon-inline">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
             </span>
-            <span>Pembuatan Soal</span>
+            <span>Tugas</span>
           </button>
-          <div class="nav-submenu" id="menu-pembuatanSoal">
-            <button class="nav-button" data-page="tugas">Tugas</button>
-            <button class="nav-button" data-page="setorSoal">Setor Soal</button>
-            <button class="nav-button" data-page="cetakTemplate">Cetak Template</button>
-            <button class="nav-button hanya-admin" data-page="mekanismeSoal">Mekanisme Soal</button>
-            <button class="nav-button" data-page="rekap">Rekap</button>
-            <button class="nav-button" data-page="korektor1">Korektor 1<span class="nav-count" id="jumlahKorektor1Sidebar" aria-label="Jumlah antrean Korektor 1">0</span></button>
-            <button class="nav-button" data-page="korektor2">Korektor 2<span class="nav-count" id="jumlahKorektor2Sidebar" aria-label="Jumlah antrean Korektor 2">0</span></button>
-            <button class="nav-button" data-page="korektor3">Korektor 3 (IMNI)<span class="nav-count" id="jumlahKorektor3Sidebar" aria-label="Jumlah antrean Korektor 3">0</span></button>
-            <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama<span class="nav-count" id="jumlahKoreksiBersamaSidebar" aria-label="Jumlah antrean Koreksi Bersama">0</span></button>
-          </div>
-        </div>
+          <div class="nav-submenu" id="menu-tugas" hidden>
+            <!-- 1. Grub Pembuatan Soal -->
+            <div class="nav-subgrup">
+              <button class="nav-subgroup-toggle" type="button" data-submenu="pembuatanSoal">
+                <span class="sub-chev">⌃</span>
+                <span class="nav-icon-inline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </span>
+                <span>Pembuatan Soal</span>
+              </button>
+              <div class="nav-subgroup-menu" id="menu-pembuatanSoal">
+                <button class="nav-button" data-page="tugas">Tugas</button>
+                <button class="nav-button" data-page="setorSoal">Setor Soal</button>
+                <button class="nav-button" data-page="cetakTemplate">Cetak Template</button>
+                <button class="nav-button hanya-admin" data-page="mekanismeSoal">Mekanisme Soal</button>
+                <button class="nav-button" data-page="rekap">Rekap</button>
+              </div>
+            </div>
 
-        <!-- Koreksi Hasil Ujian -->
-        <div class="nav-grup">
-          <button class="nav-group-toggle" type="button" data-menu="koreksiUjian">
-            <span class="chev">⌃</span>
-            <span class="nav-icon-inline">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            </span>
-            <span>Koreksi Hasil Ujian</span>
-          </button>
-          <div class="nav-submenu" id="menu-koreksiUjian">
-            <button class="nav-button" data-page="tugasUjian">Tugas</button>
-            <button class="nav-button" data-page="rekapUjian">Rekap</button>
+            <!-- 2. Grub Koreksi Soal (di antara Pembuatan Soal dan Koreksi Hasil Ujian) -->
+            <div class="nav-subgrup">
+              <button class="nav-subgroup-toggle" type="button" data-submenu="koreksiSoal">
+                <span class="sub-chev">⌃</span>
+                <span class="nav-icon-inline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </span>
+                <span>Koreksi Soal</span>
+              </button>
+              <div class="nav-subgroup-menu" id="menu-koreksiSoal">
+                <button class="nav-button" data-page="korektor1">Korektor 1<span class="nav-count" id="jumlahKorektor1Sidebar" aria-label="Jumlah antrean Korektor 1">0</span></button>
+                <button class="nav-button" data-page="korektor2">Korektor 2<span class="nav-count" id="jumlahKorektor2Sidebar" aria-label="Jumlah antrean Korektor 2">0</span></button>
+                <button class="nav-button" data-page="korektor3">Korektor 3 (IMNI)<span class="nav-count" id="jumlahKorektor3Sidebar" aria-label="Jumlah antrean Korektor 3">0</span></button>
+                <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama<span class="nav-count" id="jumlahKoreksiBersamaSidebar" aria-label="Jumlah antrean Koreksi Bersama">0</span></button>
+              </div>
+            </div>
+
+            <!-- 3. Grub Koreksi Hasil Ujian -->
+            <div class="nav-subgrup">
+              <button class="nav-subgroup-toggle" type="button" data-submenu="koreksiUjian">
+                <span class="sub-chev">⌃</span>
+                <span class="nav-icon-inline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </span>
+                <span>Koreksi Hasil Ujian</span>
+              </button>
+              <div class="nav-subgroup-menu" id="menu-koreksiUjian">
+                <button class="nav-button" data-page="tugasUjian">Tugas</button>
+                <button class="nav-button" data-page="rekapUjian">Rekap</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -2300,9 +2403,111 @@
         <iframe id="inputNilaiFrame" title="Aplikasi Input Nilai" style="display:block; width:100%; height:calc(100vh - 125px); border:0; background:transparent;" allow="fullscreen"></iframe>
       </section>
 
-    <section class="page" id="page-hubSoal">
+      <!-- PAGE HUB: TUGAS (Pusat Tugas Terpadu) -->
+      <section class="page" id="page-hubTugas">
+        <h1 class="page-heading">Modul Tugas</h1>
+        <p class="subheading">Pusat penugasan terpadu Labsoma: Pembuatan Soal, Koreksi Soal, dan Koreksi Hasil Ujian.</p>
+        
+        <div style="display:grid; gap:24px; max-width:920px;">
+          <!-- 1. Pembuatan Soal -->
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h2 class="section-title" style="margin:0;">
+                <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </span>
+                Pembuatan Soal
+              </h2>
+              <button class="button secondary small" type="button" data-goto="hubSoal">Buka Hub Soal ›</button>
+            </div>
+            <div class="hub-grid">
+              <button class="hub-button" data-goto="tugas">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span>
+                <span><strong>Tugas</strong><small>Daftar penugasan soal</small></span>
+              </button>
+              <button class="hub-button" data-goto="setorSoal">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg></span>
+                <span><strong>Setor Soal</strong><small>Unggah &amp; unduh soal</small></span>
+              </button>
+              <button class="hub-button" data-goto="cetakTemplate">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="14" y2="17"/></svg></span>
+                <span><strong>Cetak Template</strong><small>Lembar &amp; kisi-kisi</small></span>
+              </button>
+              <button class="hub-button hanya-admin" data-goto="mekanismeSoal">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg></span>
+                <span><strong>Mekanisme Soal</strong><small>Komposisi &amp; bobot</small></span>
+              </button>
+              <button class="hub-button" data-goto="rekap">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                <span><strong>Rekap</strong><small>Status pembuatan soal</small></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Koreksi Soal (di antara Pembuatan Soal & Koreksi Hasil Ujian) -->
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h2 class="section-title" style="margin:0;">
+                <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </span>
+                Koreksi Soal
+              </h2>
+              <button class="button secondary small" type="button" data-goto="hubKoreksi">Buka Antrean ›</button>
+            </div>
+            <div class="hub-grid">
+              <button class="hub-button" data-goto="korektor1">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg></span>
+                <span><strong>Korektor 1</strong><small>Pemeriksaan tahap 1</small></span>
+                <span class="hub-count" id="jumlahKorektor1HubTugas" aria-label="Jumlah antrean Korektor 1">0</span>
+              </button>
+              <button class="hub-button" data-goto="korektor2">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg></span>
+                <span><strong>Korektor 2</strong><small>Pemeriksaan tahap 2</small></span>
+                <span class="hub-count" id="jumlahKorektor2HubTugas" aria-label="Jumlah antrean Korektor 2">0</span>
+              </button>
+              <button class="hub-button" data-goto="korektor3">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg></span>
+                <span><strong>Korektor 3</strong><small>Pemeriksaan IMNI</small></span>
+                <span class="hub-count" id="jumlahKorektor3HubTugas" aria-label="Jumlah antrean Korektor 3">0</span>
+              </button>
+              <button class="hub-button" data-goto="koreksiBersama">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno</small></span>
+                <span class="hub-count" id="jumlahKoreksiBersamaHubTugas" aria-label="Jumlah antrean Koreksi Bersama">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Koreksi Hasil Ujian -->
+          <div class="card" style="padding:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h2 class="section-title" style="margin:0;">
+                <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                </span>
+                Koreksi Hasil Ujian
+              </h2>
+              <button class="button secondary small" type="button" data-goto="hubUjian">Buka Hub Ujian ›</button>
+            </div>
+            <div class="hub-grid">
+              <button class="hub-button" data-goto="tugasUjian">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg></span>
+                <span><strong>Tugas</strong><small>Kelola koreksi ujian</small></span>
+              </button>
+              <button class="hub-button" data-goto="rekapUjian">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                <span><strong>Rekap</strong><small>Hasil &amp; progres ujian</small></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE HUB 1: PEMBUATAN SOAL (HP) -->
+      <section class="page" id="page-hubSoal">
         <h1 class="page-heading">Pembuatan Soal</h1>
-        <p class="subheading">Akses modul tipe soal, batas pelajaran, tugas, dan tahapan koreksi.</p>
+        <p class="subheading">Akses modul tipe soal, batas pelajaran, tugas, setor soal, cetak template, mekanisme, dan rekapitulasi.</p>
         <div class="hub-grid">
           <button class="hub-button" data-goto="tipeSoal">
             <span class="hub-icon-box">
@@ -2339,32 +2544,6 @@
               <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
             </span>
             <span><strong>Rekap</strong><small>Status &amp; progres pembuatan soal</small></span>
-          </button>
-          <button class="hub-button" data-goto="korektor1">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
-            </span>
-            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
-            <span class="hub-count" id="jumlahKorektor1Hub" aria-label="Jumlah antrean Korektor 1">0</span>
-          </button>
-          <button class="hub-button" data-goto="korektor2">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
-            </span>
-            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
-            <span class="hub-count" id="jumlahKorektor2Hub" aria-label="Jumlah antrean Korektor 2">0</span>
-          </button>
-          <button class="hub-button" data-goto="korektor3">
-            <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg></span>
-            <span><strong>Korektor 3</strong><small>Pemeriksaan tambahan khusus tahap IMNI</small></span>
-            <span class="hub-count" id="jumlahKorektor3Hub" aria-label="Jumlah antrean Korektor 3">0</span>
-          </button>
-          <button class="hub-button" data-goto="koreksiBersama">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </span>
-            <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno bersama tim</small></span>
-            <span class="hub-count" id="jumlahKoreksiBersamaHub" aria-label="Jumlah antrean Koreksi Bersama">0</span>
           </button>
         </div>
       </section>
@@ -2502,14 +2681,60 @@
         </div>
       </section>
 
-      <!-- PAGE HUB: KOREKSI (Korektor, HP) -->
+      <!-- PAGE HUB: KOREKSI SOAL (Korektor & Admin, HP) -->
       <section class="page" id="page-hubKoreksi">
-        <h1 class="page-heading">Koreksi</h1>
-        <p class="subheading">Jumlah soal yang siap dikoreksi, dirinci menurut tingkat.</p>
+        <h1 class="page-heading">Koreksi Soal</h1>
+        <p class="subheading">Pusat antrean dan tahapan pemeriksaan soal: Korektor 1, Korektor 2, Korektor 3 (IMNI), dan Koreksi Bersama.</p>
         <div class="koreksi-ringkasan">
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor1" aria-label="Buka antrean Korektor 1"><h2>Korektor 1</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor1">0</strong><div class="koreksi-tingkat" id="tingkatKorektor1"><span>Memuat rincian…</span></div></button>
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor2" aria-label="Buka antrean Korektor 2"><h2>Korektor 2</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor2">0</strong><div class="koreksi-tingkat" id="tingkatKorektor2"><span>Memuat rincian…</span></div></button>
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor3" aria-label="Buka antrean Korektor 3"><h2>Korektor 3 · IMNI</h2><strong class="koreksi-ringkasan-total" id="jumlahKorektor3">0</strong><div class="koreksi-tingkat" id="tingkatKorektor3"><span>Memuat rincian…</span></div></button>
+          <button class="koreksi-ringkasan-kartu" data-goto="korektor1" aria-label="Buka antrean Korektor 1">
+            <h2>Korektor 1</h2>
+            <strong class="koreksi-ringkasan-total" id="jumlahKorektor1">0</strong>
+            <div class="koreksi-tingkat" id="tingkatKorektor1"><span>Memuat rincian…</span></div>
+          </button>
+          <button class="koreksi-ringkasan-kartu" data-goto="korektor2" aria-label="Buka antrean Korektor 2">
+            <h2>Korektor 2</h2>
+            <strong class="koreksi-ringkasan-total" id="jumlahKorektor2">0</strong>
+            <div class="koreksi-tingkat" id="tingkatKorektor2"><span>Memuat rincian…</span></div>
+          </button>
+          <button class="koreksi-ringkasan-kartu" data-goto="korektor3" aria-label="Buka antrean Korektor 3">
+            <h2>Korektor 3 · IMNI</h2>
+            <strong class="koreksi-ringkasan-total" id="jumlahKorektor3">0</strong>
+            <div class="koreksi-tingkat" id="tingkatKorektor3"><span>Memuat rincian…</span></div>
+          </button>
+          <button class="koreksi-ringkasan-kartu" data-goto="koreksiBersama" aria-label="Buka antrean Koreksi Bersama">
+            <h2>Koreksi Bersama</h2>
+            <strong class="koreksi-ringkasan-total" id="jumlahKoreksiBersama">0</strong>
+            <div class="koreksi-tingkat" id="tingkatKoreksiBersama"><span>Memuat rincian…</span></div>
+          </button>
+        </div>
+
+        <div class="hub-grid" style="margin-top: 20px;">
+          <button class="hub-button" data-goto="korektor1">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
+            </span>
+            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
+            <span class="hub-count" id="jumlahKorektor1Hub" aria-label="Jumlah antrean Korektor 1">0</span>
+          </button>
+          <button class="hub-button" data-goto="korektor2">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
+            </span>
+            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
+            <span class="hub-count" id="jumlahKorektor2Hub" aria-label="Jumlah antrean Korektor 2">0</span>
+          </button>
+          <button class="hub-button" data-goto="korektor3">
+            <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg></span>
+            <span><strong>Korektor 3</strong><small>Pemeriksaan tambahan khusus tahap IMNI</small></span>
+            <span class="hub-count" id="jumlahKorektor3Hub" aria-label="Jumlah antrean Korektor 3">0</span>
+          </button>
+          <button class="hub-button" data-goto="koreksiBersama">
+            <span class="hub-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno bersama tim</small></span>
+            <span class="hub-count" id="jumlahKoreksiBersamaHub" aria-label="Jumlah antrean Koreksi Bersama">0</span>
+          </button>
         </div>
       </section>
 
@@ -2608,6 +2833,12 @@
               <div class="message" id="pesanPengumuman" aria-live="polite"></div>
             </form>
 
+            <header class="announcement-identity" hidden aria-hidden="true">
+              <div id="pengumumanHijriyah"></div>
+              <div id="pengumumanMasehi"></div>
+              <div id="pengumumanJam"></div>
+              <div id="pengumumanWib"></div>
+            </header>
             <div id="isiPengumuman"><div class="empty">Memuat pengumuman…</div></div>
           </section>
         </div>
@@ -3222,20 +3453,20 @@
 
   <!-- NAVIGASI BAWAH HP (5 MENU URUT DARI KIRI KE KANAN) -->
   <nav class="bottom-nav" id="bottomNav" aria-label="Menu utama">
-    <!-- 1. Pembuatan Soal -->
-    <button type="button" data-tab="soal">
+    <!-- 1. Tugas (Pusat Tugas: Pembuatan Soal, Koreksi Soal, Koreksi Hasil Ujian) -->
+    <button type="button" data-tab="tugas">
       <span class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
       </span>
-      <span class="nav-label">Pembuatan Soal</span>
+      <span class="nav-label">Tugas</span>
     </button>
 
-    <!-- 2. Koreksi Hasil Ujian -->
-    <button type="button" data-tab="ujian">
+    <!-- 2. Koreksi Soal -->
+    <button type="button" data-tab="koreksi">
       <span class="nav-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       </span>
-      <span class="nav-label">Koreksi Ujian</span>
+      <span class="nav-label">Koreksi Soal</span>
     </button>
 
     <!-- 3. Dashboard -->
@@ -3973,20 +4204,26 @@
   /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
   const PETA_HALAMAN = {
     inputNilai:     { tab: 'inputNilai' },
-    hubSoal:        { tab: 'soal' },
-    setorSoal:      { tab: 'soal', induk: 'hubSoal' },
-    tipeSoal:       { tab: 'soal', induk: 'hubSoal' },
-    batasPelajaran: { tab: 'soal', induk: 'hubSoal' },
-    tugas:          { tab: 'soal', induk: 'hubSoal' },
-    rekap:          { tab: 'soal', induk: 'hubSoal' },
-    korektor1:      { tab: 'soal', induk: 'hubSoal' },
-    korektor2:      { tab: 'soal', induk: 'hubSoal' },
-    korektor3:      { tab: 'soal', induk: 'hubSoal' },
-    koreksiBersama: { tab: 'soal', induk: 'hubSoal' },
 
-    hubUjian:       { tab: 'ujian' },
-    tugasUjian:     { tab: 'ujian', induk: 'hubUjian' },
-    rekapUjian:     { tab: 'ujian', induk: 'hubUjian' },
+    hubTugas:       { tab: 'tugas' },
+    hubSoal:        { tab: 'tugas', induk: 'hubTugas' },
+    setorSoal:      { tab: 'tugas', induk: 'hubSoal' },
+    tipeSoal:       { tab: 'tugas', induk: 'hubSoal' },
+    batasPelajaran: { tab: 'tugas', induk: 'hubSoal' },
+    tugas:          { tab: 'tugas', induk: 'hubSoal' },
+    rekap:          { tab: 'tugas', induk: 'hubSoal' },
+    cetakTemplate:  { tab: 'tugas', induk: 'hubSoal' },
+    mekanismeSoal:  { tab: 'tugas', induk: 'hubSoal' },
+
+    hubKoreksi:     { tab: 'koreksi', induk: 'hubTugas' },
+    korektor1:      { tab: 'koreksi', induk: 'hubKoreksi' },
+    korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
+    korektor3:      { tab: 'koreksi', induk: 'hubKoreksi' },
+    koreksiBersama: { tab: 'koreksi', induk: 'hubKoreksi' },
+
+    hubUjian:       { tab: 'tugas', induk: 'hubTugas' },
+    tugasUjian:     { tab: 'tugas', induk: 'hubUjian' },
+    rekapUjian:     { tab: 'tugas', induk: 'hubUjian' },
 
     dashboard:      { tab: 'dashboard' },
     pengumuman:     { tab: 'dashboard', induk: 'dashboard' },
@@ -4001,11 +4238,11 @@
     dataMateri:     { tab: 'dokumen' },
     manajemenTugas: { tab: 'dashboard', induk: 'dashboard' },
     tugasTerkait:   { tab: 'tugasTerkait' },
-    hubDokumen:     { tab: 'dokumen' },
-    hubKoreksi:     { tab: 'koreksi' }
+    hubDokumen:     { tab: 'dokumen' }
   };
 
   const HALAMAN_TAB = {
+    tugas: 'hubTugas',
     soal: 'hubSoal',
     ujian: 'hubUjian',
     dashboard: 'dashboard',
@@ -4124,9 +4361,25 @@
         return;
       }
       const submenu = document.getElementById('menu-' + button.dataset.menu);
+      if (!submenu) return;
       submenu.hidden = !submenu.hidden;
-      button.querySelector('.chev').textContent = submenu.hidden ? '⌄' : '⌃';
+      const chev = button.querySelector('.chev');
+      if (chev) chev.textContent = submenu.hidden ? '⌄' : '⌃';
+      button.classList.toggle('aktif', !submenu.hidden);
       if (!submenu.hidden) tutupSubmenuLain(submenu);
+    });
+  });
+
+  document.querySelectorAll('.nav-subgroup-toggle').forEach(function(button) {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const menuId = button.dataset.submenu;
+      const sub = document.getElementById('menu-' + menuId);
+      if (!sub) return;
+      sub.hidden = !sub.hidden;
+      const chev = button.querySelector('.sub-chev');
+      if (chev) chev.textContent = sub.hidden ? '⌄' : '⌃';
+      button.classList.toggle('aktif', !sub.hidden);
     });
   });
 
@@ -5072,7 +5325,8 @@
     [
       { daftar: dataK1Tersimpan, jumlah: 'jumlahKorektor1', tingkat: 'tingkatKorektor1' },
       { daftar: dataK2Tersimpan, jumlah: 'jumlahKorektor2', tingkat: 'tingkatKorektor2' },
-      { daftar: dataK3Tersimpan, jumlah: 'jumlahKorektor3', tingkat: 'tingkatKorektor3' }
+      { daftar: dataK3Tersimpan, jumlah: 'jumlahKorektor3', tingkat: 'tingkatKorektor3' },
+      { daftar: dataKBTersimpan, jumlah: 'jumlahKoreksiBersama', tingkat: 'tingkatKoreksiBersama' }
     ].forEach(function(info) {
       const daftar = info.daftar || [];
       const jumlahNode = document.getElementById(info.jumlah);
@@ -5097,6 +5351,10 @@
       { id: 'jumlahKorektor2Hub', daftar: dataK2Tersimpan },
       { id: 'jumlahKorektor3Hub', daftar: dataK3Tersimpan },
       { id: 'jumlahKoreksiBersamaHub', daftar: dataKBTersimpan },
+      { id: 'jumlahKorektor1HubTugas', daftar: dataK1Tersimpan },
+      { id: 'jumlahKorektor2HubTugas', daftar: dataK2Tersimpan },
+      { id: 'jumlahKorektor3HubTugas', daftar: dataK3Tersimpan },
+      { id: 'jumlahKoreksiBersamaHubTugas', daftar: dataKBTersimpan },
       { id: 'jumlahKorektor1Sidebar', daftar: dataK1Tersimpan },
       { id: 'jumlahKorektor2Sidebar', daftar: dataK2Tersimpan },
       { id: 'jumlahKorektor3Sidebar', daftar: dataK3Tersimpan },
@@ -6142,7 +6400,7 @@
       ambil(':scope > button[data-page="dashboard"]'),
       ambil(':scope > button[data-page="pengguna"]'),
       ambil(':scope > button[data-page="manajemenTugas"]'),
-      grup('kegiatan'), grup('dokumen'), grup('inputNilai'), grup('pembuatanSoal'), grup('koreksiUjian')
+      grup('kegiatan'), grup('dokumen'), grup('inputNilai'), grup('tugas')
     ].filter(Boolean);
     urutan.forEach(function(item) { daftar.appendChild(item); });
   }
@@ -6160,6 +6418,7 @@
         korektor1:      { tab: 'koreksi', induk: 'hubKoreksi' },
         korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
         korektor3:      { tab: 'koreksi', induk: 'hubKoreksi' },
+        koreksiBersama: { tab: 'koreksi', induk: 'hubKoreksi' },
         pengumuman:     { tab: 'kegiatan' }
       });
     }
@@ -6514,35 +6773,52 @@
     }
   });
 
-  // Hanya satu grup menu yang boleh terbuka: menutup semua submenu selain yang dikecualikan.
+  // Hanya satu grup menu tingkat atas yang boleh terbuka: menutup semua submenu selain yang dikecualikan.
   function tutupSubmenuLain(kecuali) {
-    document.querySelectorAll('.sidebar .nav-submenu').forEach(function (s) {
-      if (s === kecuali || s.hidden) return;
+    document.querySelectorAll('.sidebar .nav-list > .nav-grup > .nav-submenu').forEach(function (s) {
+      if (s === kecuali || (kecuali && s.contains(kecuali)) || s.hidden) return;
       s.hidden = true;
       const t = document.querySelector('.nav-group-toggle[data-menu="' + s.id.replace('menu-', '') + '"]');
       const chev = t && t.querySelector('.chev');
       if (chev) chev.textContent = '⌄';
+      if (t) t.classList.remove('aktif');
     });
   }
 
   function sorotSidebar() {
-    document.querySelectorAll('.nav-group-toggle').forEach(function (t) { t.classList.remove('aktif'); });
-    const aktif = document.querySelector('.sidebar .nav-submenu .nav-button.active');
+    document.querySelectorAll('.nav-group-toggle, .nav-subgroup-toggle').forEach(function (t) { t.classList.remove('aktif'); });
+    const aktif = document.querySelector('.sidebar .nav-button.active');
     if (!aktif) return;
 
-    const submenu = aktif.closest('.nav-submenu');
-    submenu.hidden = false;
-    tutupSubmenuLain(submenu);
+    // Buka subgrup jika tombol berada di dalam subgrup
+    const subgrupMenu = aktif.closest('.nav-subgroup-menu');
+    if (subgrupMenu) {
+      subgrupMenu.hidden = false;
+      const subToggle = document.querySelector('.nav-subgroup-toggle[data-submenu="' + subgrupMenu.id.replace('menu-', '') + '"]');
+      if (subToggle) {
+        subToggle.classList.add('aktif');
+        const sc = subToggle.querySelector('.sub-chev');
+        if (sc) sc.textContent = '⌃';
+      }
+    }
 
-    const tombol = document.querySelector('.nav-group-toggle[data-menu="' + submenu.id.replace('menu-', '') + '"]');
-    if (tombol) {
-      tombol.classList.add('aktif');
-      tombol.querySelector('.chev').textContent = '⌃';
+    // Buka submenu tingkat atas
+    const submenu = aktif.closest('.nav-submenu');
+    if (submenu) {
+      submenu.hidden = false;
+      tutupSubmenuLain(submenu);
+      const tombol = document.querySelector('.nav-group-toggle[data-menu="' + submenu.id.replace('menu-', '') + '"]');
+      if (tombol) {
+        tombol.classList.add('aktif');
+        const c = tombol.querySelector('.chev');
+        if (c) c.textContent = '⌃';
+      }
     }
   }
 
   // Keadaan awal: semua grup menu tertutup, kecuali grup yang memuat halaman aktif.
   document.querySelectorAll('.sidebar .nav-group-toggle .chev').forEach(function (c) { c.textContent = '⌄'; });
+  document.querySelectorAll('.sidebar .nav-subgroup-toggle .sub-chev').forEach(function (c) { c.textContent = '⌄'; });
   tutupSubmenuLain(null);
   sorotSidebar();
 
@@ -7508,8 +7784,8 @@ function simpanFile(f) {
   // daftarkan halaman ke navigasi LABSOMA
   try {
     Object.assign(PETA_HALAMAN, {
-      cetakTemplate: { tab: 'soal', induk: 'hubSoal' },
-      mekanismeSoal: { tab: 'soal', induk: 'hubSoal' }
+      cetakTemplate: { tab: 'tugas', induk: 'hubSoal' },
+      mekanismeSoal: { tab: 'tugas', induk: 'hubSoal' }
     });
     if (HALAMAN_SONIK.indexOf('cetakTemplate') < 0) HALAMAN_SONIK.push('cetakTemplate');
   } catch (e) { console.error('Template Soal: gagal mendaftarkan halaman', e); }
