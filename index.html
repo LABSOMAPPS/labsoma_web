@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+999<!DOCTYPE html>
 <html lang="id">
 <head>
   <base target="_top">
@@ -1987,52 +1987,289 @@
     color: #ffffff;
   }
 
-  /* 2. HUB MENU CARDS (Sesuai Screenshot 1 - Grid 2 Kolom & Squircle Icon) */
+  /* 2. HUB MENU CARDS (Grid 2 Kolom Tegak Memanjang ke Bawah & Kartu Ramping) */
+  .hub-tugas-container {
+    display: grid;
+    gap: 18px;
+    max-width: 540px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hub-group-card {
+    padding: 18px 16px;
+    border-radius: 20px;
+    box-sizing: border-box;
+  }
+
   .hub-grid {
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: 14px;
-    max-width: 920px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
   .hub-button {
+    display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 20px 14px;
-    border-radius: 22px;
+    padding: 16px 10px;
+    border-radius: 18px;
     background: var(--panel);
     border: 1px solid var(--garis);
     box-shadow: var(--bayangan-sm);
-    gap: 12px;
+    gap: 8px;
     position: relative;
+    width: 100%;
+    min-height: 112px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hub-button:hover, .hub-button:active {
+    border-color: var(--aksen);
+    transform: translateY(-2px);
+    box-shadow: var(--bayangan);
+    background: var(--panel2);
   }
 
   .hub-button .hub-icon-box {
-    width: 62px;
-    height: 62px;
-    flex: 0 0 62px;
-    border-radius: 20px;
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--aksen-soft);
     color: var(--aksen);
-    border: none;
-    box-shadow: inset 0 0 0 1px var(--aksen-border);
+    border: 1px solid var(--aksen-border);
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .hub-button:hover .hub-icon-box, .hub-button:active .hub-icon-box {
+    background: var(--aksen);
+    color: var(--aksen-teks);
+    box-shadow: 0 0 14px var(--aksen-soft);
   }
 
   .hub-button .hub-icon-box svg {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .hub-button strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--teks);
+    line-height: 1.25;
+  }
+
+  .hub-button small {
+    display: block;
+    margin-top: 2px;
+    color: var(--redup);
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   .hub-button .hub-count {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    margin-left: 0;
+    top: 8px;
+    right: 8px;
+    min-width: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
     background: var(--kuning);
     color: #091e2c;
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1;
+    text-align: center;
     border: none;
-    font-size: 12px;
-    padding: 4px 9px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+  }
+
+  /* Kartu Terpadu Koreksi Soal (Rekap Tingkat + Menu Tindakan) */
+  .koreksi-kartu-gabung {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: left !important;
+    padding: 16px 14px !important;
+    border-radius: 20px !important;
+    min-height: auto !important;
+    gap: 10px !important;
+    cursor: pointer;
+    background: var(--panel);
+    border: 1px solid var(--garis);
+    box-shadow: var(--bayangan-sm);
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .koreksi-kartu-gabung:hover, .koreksi-kartu-gabung:active {
+    border-color: var(--aksen);
+    transform: translateY(-2px);
+    box-shadow: var(--bayangan);
+    background: var(--panel2);
+  }
+
+  .koreksi-kartu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .koreksi-kartu-header .hub-icon-box {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--aksen-soft);
+    color: var(--aksen);
+    border: 1px solid var(--aksen-border);
+    margin: 0;
+    transition: all 0.2s ease;
+  }
+
+  .koreksi-kartu-gabung:hover .hub-icon-box, .koreksi-kartu-gabung:active .hub-icon-box {
+    background: var(--aksen);
+    color: var(--aksen-teks);
+    box-shadow: 0 0 14px var(--aksen-soft);
+  }
+
+  .koreksi-kartu-header .hub-icon-box svg {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+
+  .koreksi-kartu-total .koreksi-ringkasan-total {
+    font-size: 28px;
+    font-weight: 850;
+    color: var(--aksen);
+    line-height: 1;
+    margin: 0;
+  }
+
+  .koreksi-kartu-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .koreksi-kartu-body strong {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--teks);
+    display: block;
+  }
+
+  .koreksi-kartu-body small {
+    font-size: 11px;
+    color: var(--redup);
+    line-height: 1.25;
+    display: block;
+  }
+
+  .koreksi-kartu-gabung .koreksi-tingkat {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--garis);
+  }
+
+  .koreksi-kartu-gabung .koreksi-tingkat span {
+    padding: 3px 8px;
+    border: 1px solid var(--garis);
+    border-radius: 999px;
+    background: var(--panel2);
+    color: var(--redup);
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 480px) {
+    .hub-tugas-container {
+      gap: 13px;
+    }
+    .hub-group-card {
+      padding: 14px 12px;
+      border-radius: 18px;
+    }
+    .hub-grid {
+      gap: 9px;
+    }
+    .hub-button {
+      padding: 13px 8px;
+      border-radius: 16px;
+      min-height: 106px;
+      gap: 6px;
+    }
+    .hub-button .hub-icon-box {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      border-radius: 14px;
+    }
+    .hub-button .hub-icon-box svg {
+      width: 22px;
+      height: 22px;
+    }
+    .hub-button strong {
+      font-size: 13px;
+    }
+    .hub-button small {
+      font-size: 10.5px;
+    }
+    .koreksi-kartu-gabung {
+      padding: 12px 10px !important;
+      border-radius: 16px !important;
+      gap: 8px !important;
+    }
+    .koreksi-kartu-header .hub-icon-box {
+      width: 38px !important;
+      height: 38px !important;
+      flex: 0 0 38px !important;
+      border-radius: 12px !important;
+    }
+    .koreksi-kartu-header .hub-icon-box svg {
+      width: 20px !important;
+      height: 20px !important;
+    }
+    .koreksi-kartu-total .koreksi-ringkasan-total {
+      font-size: 24px !important;
+    }
+    .koreksi-kartu-body strong {
+      font-size: 13.5px !important;
+    }
+    .koreksi-kartu-body small {
+      font-size: 10.5px !important;
+    }
+    .koreksi-kartu-gabung .koreksi-tingkat span {
+      font-size: 9.5px !important;
+      padding: 2.5px 6px !important;
+    }
   }
 
   /* 3. BOTTOM NAVIGATION HP DENGAN TOMBOL TENGAH BULAT MENONJOL (Sesuai Screenshot 1) */
@@ -2408,9 +2645,9 @@
         <h1 class="page-heading">Modul Tugas</h1>
         <p class="subheading">Pusat penugasan terpadu Labsoma: Pembuatan Soal, Koreksi Soal, dan Koreksi Hasil Ujian.</p>
         
-        <div style="display:grid; gap:24px; max-width:920px;">
+        <div class="hub-tugas-container">
           <!-- 1. Pembuatan Soal -->
-          <div class="card" style="padding:20px;">
+          <div class="card hub-group-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
               <h2 class="section-title" style="margin:0;">
                 <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
@@ -2445,7 +2682,7 @@
           </div>
 
           <!-- 2. Koreksi Soal (di antara Pembuatan Soal & Koreksi Hasil Ujian) -->
-          <div class="card" style="padding:20px;">
+          <div class="card hub-group-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
               <h2 class="section-title" style="margin:0;">
                 <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
@@ -2480,7 +2717,7 @@
           </div>
 
           <!-- 3. Koreksi Hasil Ujian -->
-          <div class="card" style="padding:20px;">
+          <div class="card hub-group-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
               <h2 class="section-title" style="margin:0;">
                 <span class="nav-icon-inline" style="width:30px; height:30px; border-radius:9px; background:var(--aksen-soft); color:var(--aksen); display:inline-flex; align-items:center; justify-content:center;">
@@ -2685,55 +2922,85 @@
       <section class="page" id="page-hubKoreksi">
         <h1 class="page-heading">Koreksi Soal</h1>
         <p class="subheading">Pusat antrean dan tahapan pemeriksaan soal: Korektor 1, Korektor 2, Korektor 3 (IMNI), dan Koreksi Bersama.</p>
-        <div class="koreksi-ringkasan">
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor1" aria-label="Buka antrean Korektor 1">
-            <h2>Korektor 1</h2>
-            <strong class="koreksi-ringkasan-total" id="jumlahKorektor1">0</strong>
-            <div class="koreksi-tingkat" id="tingkatKorektor1"><span>Memuat rincian…</span></div>
+        <div class="hub-grid koreksi-unified-grid" style="margin-top: 18px;">
+          <!-- 1. Korektor 1 (Menu + Rekap Tingkat Terpadu) -->
+          <button class="hub-button koreksi-kartu-gabung" data-goto="korektor1" aria-label="Buka antrean Korektor 1">
+            <div class="koreksi-kartu-header">
+              <span class="hub-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
+              </span>
+              <div class="koreksi-kartu-total">
+                <strong class="koreksi-ringkasan-total" id="jumlahKorektor1">0</strong>
+                <span class="hub-count" id="jumlahKorektor1Hub" style="display:none;">0</span>
+              </div>
+            </div>
+            <div class="koreksi-kartu-body">
+              <strong>Korektor 1</strong>
+              <small>Antrean pemeriksaan tahap 1</small>
+            </div>
+            <div class="koreksi-tingkat" id="tingkatKorektor1">
+              <span>Memuat rincian…</span>
+            </div>
           </button>
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor2" aria-label="Buka antrean Korektor 2">
-            <h2>Korektor 2</h2>
-            <strong class="koreksi-ringkasan-total" id="jumlahKorektor2">0</strong>
-            <div class="koreksi-tingkat" id="tingkatKorektor2"><span>Memuat rincian…</span></div>
-          </button>
-          <button class="koreksi-ringkasan-kartu" data-goto="korektor3" aria-label="Buka antrean Korektor 3">
-            <h2>Korektor 3 · IMNI</h2>
-            <strong class="koreksi-ringkasan-total" id="jumlahKorektor3">0</strong>
-            <div class="koreksi-tingkat" id="tingkatKorektor3"><span>Memuat rincian…</span></div>
-          </button>
-          <button class="koreksi-ringkasan-kartu" data-goto="koreksiBersama" aria-label="Buka antrean Koreksi Bersama">
-            <h2>Koreksi Bersama</h2>
-            <strong class="koreksi-ringkasan-total" id="jumlahKoreksiBersama">0</strong>
-            <div class="koreksi-tingkat" id="tingkatKoreksiBersama"><span>Memuat rincian…</span></div>
-          </button>
-        </div>
 
-        <div class="hub-grid" style="margin-top: 20px;">
-          <button class="hub-button" data-goto="korektor1">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 8h2v8"/><path d="M9 16h6"/></svg>
-            </span>
-            <span><strong>Korektor 1</strong><small>Antrean pemeriksaan tahap 1</small></span>
-            <span class="hub-count" id="jumlahKorektor1Hub" aria-label="Jumlah antrean Korektor 1">0</span>
+          <!-- 2. Korektor 2 (Menu + Rekap Tingkat Terpadu) -->
+          <button class="hub-button koreksi-kartu-gabung" data-goto="korektor2" aria-label="Buka antrean Korektor 2">
+            <div class="koreksi-kartu-header">
+              <span class="hub-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
+              </span>
+              <div class="koreksi-kartu-total">
+                <strong class="koreksi-ringkasan-total" id="jumlahKorektor2">0</strong>
+                <span class="hub-count" id="jumlahKorektor2Hub" style="display:none;">0</span>
+              </div>
+            </div>
+            <div class="koreksi-kartu-body">
+              <strong>Korektor 2</strong>
+              <small>Antrean pemeriksaan tahap 2</small>
+            </div>
+            <div class="koreksi-tingkat" id="tingkatKorektor2">
+              <span>Memuat rincian…</span>
+            </div>
           </button>
-          <button class="hub-button" data-goto="korektor2">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M10 9a2 2 0 0 1 4 0c0 2-4 3-4 5h4"/></svg>
-            </span>
-            <span><strong>Korektor 2</strong><small>Antrean pemeriksaan tahap 2</small></span>
-            <span class="hub-count" id="jumlahKorektor2Hub" aria-label="Jumlah antrean Korektor 2">0</span>
+
+          <!-- 3. Korektor 3 · IMNI (Menu + Rekap Tingkat Terpadu) -->
+          <button class="hub-button koreksi-kartu-gabung" data-goto="korektor3" aria-label="Buka antrean Korektor 3">
+            <div class="koreksi-kartu-header">
+              <span class="hub-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg>
+              </span>
+              <div class="koreksi-kartu-total">
+                <strong class="koreksi-ringkasan-total" id="jumlahKorektor3">0</strong>
+                <span class="hub-count" id="jumlahKorektor3Hub" style="display:none;">0</span>
+              </div>
+            </div>
+            <div class="koreksi-kartu-body">
+              <strong>Korektor 3 · IMNI</strong>
+              <small>Pemeriksaan tambahan khusus tahap IMNI</small>
+            </div>
+            <div class="koreksi-tingkat" id="tingkatKorektor3">
+              <span>Memuat rincian…</span>
+            </div>
           </button>
-          <button class="hub-button" data-goto="korektor3">
-            <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 8h5a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h5"/><path d="M12 5v14"/></svg></span>
-            <span><strong>Korektor 3</strong><small>Pemeriksaan tambahan khusus tahap IMNI</small></span>
-            <span class="hub-count" id="jumlahKorektor3Hub" aria-label="Jumlah antrean Korektor 3">0</span>
-          </button>
-          <button class="hub-button" data-goto="koreksiBersama">
-            <span class="hub-icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </span>
-            <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno bersama tim</small></span>
-            <span class="hub-count" id="jumlahKoreksiBersamaHub" aria-label="Jumlah antrean Koreksi Bersama">0</span>
+
+          <!-- 4. Koreksi Bersama (Menu + Rekap Tingkat Terpadu) -->
+          <button class="hub-button koreksi-kartu-gabung" data-goto="koreksiBersama" aria-label="Buka antrean Koreksi Bersama">
+            <div class="koreksi-kartu-header">
+              <span class="hub-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </span>
+              <div class="koreksi-kartu-total">
+                <strong class="koreksi-ringkasan-total" id="jumlahKoreksiBersama">0</strong>
+                <span class="hub-count" id="jumlahKoreksiBersamaHub" style="display:none;">0</span>
+              </div>
+            </div>
+            <div class="koreksi-kartu-body">
+              <strong>Koreksi Bersama</strong>
+              <small>Pemeriksaan pleno bersama tim</small>
+            </div>
+            <div class="koreksi-tingkat" id="tingkatKoreksiBersama">
+              <span>Memuat rincian…</span>
+            </div>
           </button>
         </div>
       </section>
