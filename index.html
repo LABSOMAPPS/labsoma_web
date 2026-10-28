@@ -5023,18 +5023,18 @@
     const madrasahSelect = document.getElementById('setorSoalMadrasah');
 
     if (madrasahSelect) {
-      const madrasahSebelum = madrasahSelect.value;
+      const madrasahSebelum = (madrasahSelect.value || '').trim().toUpperCase();
       const semuaTugas = (dataAplikasiTersimpan && dataAplikasiTersimpan.semuaTugas) ? dataAplikasiTersimpan.semuaTugas : [];
       let listTugas = semuaTugas;
       if (tingkat) {
         const filterT = semuaTugas.filter(function(x) { return norm(x.tingkat) === tingkat; });
         if (filterT.length > 0) listTugas = filterT;
       }
-      let daftarMadrasah = [...new Set(listTugas.map(function(x) { return String(x.madrasah || '').trim(); }).filter(Boolean))];
-      ['Induk', 'Ranting'].forEach(function(m) {
-        if (daftarMadrasah.indexOf(m) < 0) daftarMadrasah.push(m);
+      let daftarMadrasah = [...new Set(listTugas.map(function(x) {
+        return String(x.madrasah || '').trim().toUpperCase();
+      }).concat(['INDUK', 'RANTING']).filter(Boolean))].sort(function(a, b) {
+        return String(a).localeCompare(String(b), 'id');
       });
-      daftarMadrasah.sort(function(a, b) { return String(a).localeCompare(String(b), 'id'); });
       madrasahSelect.innerHTML = '<option value="">Pilih madrasah</option>' + daftarMadrasah.map(function(m) {
         return '<option value="' + aman(m) + '">' + aman(m) + '</option>';
       }).join('');
@@ -6817,7 +6817,7 @@
     const definisiFilter = [
       ['setorSoalFilterPengunggah', 'Semua pengunggah', function(x) { return x.pengunggah; }],
       ['setorSoalFilterTingkat', 'Semua tingkat', function(x) { return x.tingkat; }],
-      ['setorSoalFilterMadrasah', 'Semua madrasah', function(x) { return x.madrasah; }],
+      ['setorSoalFilterMadrasah', 'Semua madrasah', function(x) { return x.madrasah ? String(x.madrasah).trim().toUpperCase() : ''; }],
       ['setorSoalFilterKelas', 'Semua kelas', function(x) { return kelasRingkasSetorSoal(x.kelas); }],
       ['setorSoalFilterTugas', 'Semua tugas/soal', function(x) { return x.tugas; }]
     ];
@@ -6838,8 +6838,9 @@
           const pilihan = el ? el.value : '';
           if (!pilihan) return true;
           const kolom = ({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterMadrasah: 'madrasah', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id];
-          const nilai = kolom === 'kelas' ? kelasRingkasSetorSoal(item.kelas) : String(item[kolom] || '');
-          return nilai === pilihan;
+          const nilai = kolom === 'kelas' ? kelasRingkasSetorSoal(item.kelas) : (kolom === 'madrasah' ? String(item.madrasah || '').trim().toUpperCase() : String(item[kolom] || ''));
+          const targetPilihan = kolom === 'madrasah' ? String(pilihan || '').trim().toUpperCase() : pilihan;
+          return nilai === targetPilihan;
         });
     });
     if (!hasil.length) {
@@ -6883,7 +6884,7 @@
     event.preventDefault();
     const file = document.getElementById('setorSoalFile').files[0];
     const tingkat = document.getElementById('setorSoalTingkat').value;
-    const madrasah = document.getElementById('setorSoalMadrasah') ? document.getElementById('setorSoalMadrasah').value : '';
+    const madrasah = document.getElementById('setorSoalMadrasah') ? document.getElementById('setorSoalMadrasah').value.trim().toUpperCase() : '';
     const kelas = document.getElementById('setorSoalKelas').value;
     const tugas = document.getElementById('setorSoalTugas').value;
     const tombol = document.getElementById('tombolUnggahSoal');
