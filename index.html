@@ -1,4 +1,4 @@
-999<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <base target="_top">
@@ -4189,13 +4189,20 @@
   window.alert = function(pesan) { tampilkanNotifikasi(pesan, 'info'); };
 
   /* ===== Menyerahkan berkas hasil unduhan ke pengguna =====
-     Desktop: unduh otomatis. Layar sentuh (HP/tablet): browser sering menolak unduhan otomatis yang terjadi setelah
-     proses di server, jadi ditampilkan dialog "Dokumen siap" dengan tautan yang diketuk langsung oleh pengguna
-     (ketukan langsung selalu diizinkan) plus tombol Bagikan/Simpan bila perangkat mendukung. */
+     Desktop: unduh otomatis. HP/tablet: browser sering menolak unduhan otomatis yang terjadi setelah proses di server,
+     jadi ditampilkan dialog "Dokumen siap" berisi beberapa cara yang diketuk langsung oleh pengguna:
+     (1) Unduh, (2) Bagikan/Simpan (bila perangkat mendukung), (3) Buka file (khusus PDF/gambar).
+     Dialog tidak menutup sendiri agar pengguna bisa mencoba cara lain bila satu cara gagal. */
   function layarSentuh() {
-    return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
-      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const ua = navigator.userAgent || '';
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return true;
+    if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return true;   // iPad mode desktop
+    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return true;
+    // HP dengan "Situs desktop" aktif: UA tampak seperti laptop, tetapi layar sentuh & kecil
+    return navigator.maxTouchPoints > 0 && Math.min(screen.width || 9999, screen.height || 9999) <= 820;
+  }
+  function browserDalamAplikasi() {
+    return /FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|WhatsApp|Telegram|TikTok|Snapchat|; wv\)/i.test(navigator.userAgent || '');
   }
   function ukuranBerkas(byte) {
     return byte >= 1048576 ? (byte / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(byte / 1024)) + ' KB';
@@ -4217,36 +4224,49 @@
     const ikon = document.createElement('div'); ikon.className = 'dlg-ikon';
     ikon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>';
     const judul = document.createElement('h2'); judul.textContent = 'Dokumen siap diunduh';
-    const pesan = document.createElement('p'); pesan.className = 'dlg-pesan';
-    pesan.textContent = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh”. Jika gagal, buka file lalu simpan dari menu browser.';
-    const aksi = document.createElement('div'); aksi.className = 'dlg-aksi';
+    const pesan = document.createElement('p'); pesan.className = 'dlg-pesan'; pesan.style.whiteSpace = 'pre-line';
+    let teks = nama + '\n' + ukuranBerkas(blob.size) + '\nKetuk “Unduh”. Jika tidak berhasil, coba “Bagikan / Simpan”.';
+    if (browserDalamAplikasi()) teks += '\n\nAnda membuka aplikasi dari dalam aplikasi lain (WhatsApp/Telegram/dll.) yang sering memblokir unduhan. Buka tautan ini di Chrome atau Safari.';
+    pesan.textContent = teks;
+    const aksi = document.createElement('div'); aksi.className = 'dlg-aksi'; aksi.style.flexWrap = 'wrap';
     const tutupDialog = function() { lapisan.remove(); setTimeout(function() { URL.revokeObjectURL(url); }, 300000); };
+
+    // 1) Unduh biasa: tautan blob yang diketuk langsung (selalu diizinkan browser)
+    const unduh = document.createElement('a');
+    unduh.className = 'button dlg-ya info'; unduh.textContent = '⬇ Unduh';
+    unduh.href = url; unduh.download = nama;
+    unduh.addEventListener('click', function() {
+      tampilkanNotifikasi('Unduhan dimulai. Cek folder Download atau notifikasi browser. Jika tidak muncul, coba “Bagikan / Simpan”.', 'info');
+    });
+    aksi.appendChild(unduh);
+
+    // 2) Bagikan / Simpan (menu bawaan HP: Simpan ke File, Drive, WhatsApp, dll.)
     let fileUntukDibagikan = null;
     try { if (typeof File === 'function') fileUntukDibagikan = new File([blob], nama, { type: blob.type || 'application/octet-stream' }); } catch (e) { fileUntukDibagikan = null; }
-    const shareDidukung = !!(fileUntukDibagikan && navigator.share && navigator.canShare && navigator.canShare({ files: [fileUntukDibagikan] }));
-    const unduh = document.createElement(shareDidukung ? 'button' : 'a');
-    unduh.className = 'button dlg-ya info'; unduh.textContent = shareDidukung ? '⬇ Simpan ke HP' : '⬇ Unduh';
+    let shareDidukung = false;
+    try { shareDidukung = !!(fileUntukDibagikan && navigator.share && navigator.canShare && navigator.canShare({ files: [fileUntukDibagikan] })); } catch (e) { shareDidukung = false; }
     if (shareDidukung) {
-      unduh.type = 'button';
-      unduh.addEventListener('click', function() {
+      const bagikan = document.createElement('button'); bagikan.type = 'button'; bagikan.className = 'button secondary';
+      bagikan.textContent = '📤 Bagikan / Simpan';
+      bagikan.addEventListener('click', function() {
         navigator.share({ files: [fileUntukDibagikan], title: nama })
-          .then(tutupDialog)
-          .catch(function(err) { if (!err || err.name !== 'AbortError') tampilkanNotifikasi('Menu simpan tidak terbuka. Ketuk “Buka file” lalu gunakan menu browser.', 'error'); });
+          .catch(function(err) { if (!err || err.name !== 'AbortError') tampilkanNotifikasi('Menu bagikan tidak terbuka. Coba tombol “Unduh”.', 'error'); });
       });
-    } else {
-      unduh.href = url; unduh.download = nama;
-      unduh.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
+      aksi.appendChild(bagikan);
     }
-    aksi.appendChild(unduh);
-    const buka = document.createElement('a'); buka.className = 'button secondary'; buka.href = url; buka.target = '_blank'; buka.rel = 'noopener'; buka.textContent = 'Buka file';
-    buka.addEventListener('click', function() { setTimeout(tutupDialog, 700); });
-    aksi.appendChild(buka);
+
+    // 3) Buka file: hanya berguna untuk jenis yang bisa ditampilkan browser (PDF/gambar)
+    if (/^(application\/pdf|image\/)/i.test(blob.type || '')) {
+      const buka = document.createElement('a'); buka.className = 'button secondary'; buka.href = url; buka.target = '_blank'; buka.rel = 'noopener'; buka.textContent = 'Buka file';
+      aksi.appendChild(buka);
+    }
+
     const tutup = document.createElement('button'); tutup.type = 'button'; tutup.className = 'button secondary'; tutup.textContent = 'Tutup';
     tutup.addEventListener('click', tutupDialog);
     aksi.appendChild(tutup);
     kotak.appendChild(ikon); kotak.appendChild(judul); kotak.appendChild(pesan); kotak.appendChild(aksi);
     lapisan.appendChild(kotak);
-    lapisan.addEventListener('mousedown', function(e) { if (e.target === lapisan) tutupDialog(); });
+    lapisan.addEventListener('click', function(e) { if (e.target === lapisan) tutupDialog(); });
     document.body.appendChild(lapisan);
   }
 
@@ -6914,8 +6934,8 @@
             bagian.push(bytes);
           }
           const blob = new Blob(bagian, { type: file.mime || 'application/octet-stream' });
-          serahkanBerkas(blob, file.nama);
-        } catch (err) { tampilkanNotifikasi('Dokumen gagal disiapkan untuk diunduh.', 'error'); }
+          serahkanBerkas(blob, file.nama || 'dokumen-soal');
+        } catch (err) { tampilkanNotifikasi('Dokumen gagal disiapkan untuk diunduh' + (err && err.message ? ': ' + err.message : '.'), 'error'); }
         tombol.disabled = false; tombol.textContent = 'Unduh file asli';
       })
       .withFailureHandler(function(er) {
