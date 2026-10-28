@@ -898,7 +898,7 @@
       .dm-tiga { gap: 6px; }
       .search-filters .dm-tiga select { padding: 10px 2px 10px 8px; font-size: 12.5px; }
     }
-    .search-filters.setor-soal-filters { grid-template-columns: minmax(220px, 1.5fr) repeat(5, minmax(135px, 1fr)); }
+    .search-filters.setor-soal-filters { grid-template-columns: minmax(200px, 1.4fr) repeat(6, minmax(130px, 1fr)); }
     @media (max-width: 1180px) { .search-filters.setor-soal-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
     .button {
@@ -2805,6 +2805,10 @@
               </select>
             </div>
             <div class="field">
+              <label for="setorSoalMadrasah">Madrasah</label>
+              <select id="setorSoalMadrasah" required><option value="">Pilih madrasah</option></select>
+            </div>
+            <div class="field">
               <label for="setorSoalKelas">Kelas</label>
               <select id="setorSoalKelas" required><option value="">Pilih kelas</option></select>
             </div>
@@ -2827,6 +2831,7 @@
           <input id="setorSoalFilterTanggal" type="date" aria-label="Filter tanggal diunggah" title="Tanggal diunggah">
           <select id="setorSoalFilterPengunggah" aria-label="Filter Sonik/pengunggah"><option value="">Semua pengunggah</option></select>
           <select id="setorSoalFilterTingkat" aria-label="Filter tingkat"><option value="">Semua tingkat</option></select>
+          <select id="setorSoalFilterMadrasah" aria-label="Filter madrasah"><option value="">Semua madrasah</option></select>
           <select id="setorSoalFilterKelas" aria-label="Filter kelas"><option value="">Semua kelas</option></select>
           <select id="setorSoalFilterTugas" aria-label="Filter tugas/soal"><option value="">Semua tugas/soal</option></select>
         </div>
@@ -5015,6 +5020,27 @@
     const dataTingkat = materiTersimpan().filter(function(x) { return norm(x.tingkat) === tingkat; });
     const kelasSelect = document.getElementById('setorSoalKelas');
     const tugasSelect = document.getElementById('setorSoalTugas');
+    const madrasahSelect = document.getElementById('setorSoalMadrasah');
+
+    if (madrasahSelect) {
+      const madrasahSebelum = madrasahSelect.value;
+      const semuaTugas = (dataAplikasiTersimpan && dataAplikasiTersimpan.semuaTugas) ? dataAplikasiTersimpan.semuaTugas : [];
+      let listTugas = semuaTugas;
+      if (tingkat) {
+        const filterT = semuaTugas.filter(function(x) { return norm(x.tingkat) === tingkat; });
+        if (filterT.length > 0) listTugas = filterT;
+      }
+      let daftarMadrasah = [...new Set(listTugas.map(function(x) { return String(x.madrasah || '').trim(); }).filter(Boolean))];
+      ['Induk', 'Ranting'].forEach(function(m) {
+        if (daftarMadrasah.indexOf(m) < 0) daftarMadrasah.push(m);
+      });
+      daftarMadrasah.sort(function(a, b) { return String(a).localeCompare(String(b), 'id'); });
+      madrasahSelect.innerHTML = '<option value="">Pilih madrasah</option>' + daftarMadrasah.map(function(m) {
+        return '<option value="' + aman(m) + '">' + aman(m) + '</option>';
+      }).join('');
+      if (daftarMadrasah.indexOf(madrasahSebelum) >= 0) madrasahSelect.value = madrasahSebelum;
+    }
+
     const kelasSebelum = kelasRingkasSetorSoal(kelasSelect.value);
     const daftarKelas = [...new Set(dataTingkat.map(function(x) { return kelasRingkasSetorSoal(x.kelas); }).filter(Boolean))]
       .sort(function(a, b) { return String(a).localeCompare(String(b), 'id', { numeric: true }); });
@@ -5751,6 +5777,7 @@
         pengumumanDashboard = data.pengumumanDashboard || data.pengumumanHariIni || [];
 
         tampilkanTugasDiMenuTambah(data.semuaTugas || []);
+        if (typeof updateSetorSoalDropdown === 'function') updateSetorSoalDropdown();
         tampilkanDaftarAgendaMenu(data.semuaAgenda || []);
         tampilkanDashboard(data.dashboard);
         mulaiSlideAgendaDashboard();
@@ -6164,7 +6191,9 @@
             <button class="button secondary small" data-action="editTugas" data-row="${item.nomorBaris}">✎ Edit</button>
             <button class="button small" style="background:#e05252; color:#fff;" data-action="hapusTugas" data-row="${item.nomorBaris}">🗑 Hapus</button>
             ${String(item.status || '').toLowerCase() === 'selesai'
-              ? `<button class="button secondary small" data-action="ubahStatus" data-status="Belum" data-row="${item.nomorBaris}">Belum</button>`
+              ? (item.adaSetorSoal
+                  ? `<span class="badge" style="background:var(--hijau-soft);color:var(--hijau);border-color:var(--hijau);" title="Selesai via Setor Soal (hapus dokumen di menu Setor Soal untuk membatalkan)">✓ Setor Soal</span>`
+                  : `<span class="badge" style="background:var(--hijau-soft);color:var(--hijau);border-color:var(--hijau);">✓ Selesai</span>`)
               : `<button class="button small" data-action="ubahStatus" data-status="Selesai" data-row="${item.nomorBaris}">Tandai Selesai</button>`}
           </td>
         </tr>
@@ -6777,32 +6806,38 @@
 
   function renderDaftarSetorSoal() {
     const daftar = document.getElementById('daftarSetorSoal');
-    const filterIds = ['setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'];
+    const filterIds = ['setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterMadrasah', 'setorSoalFilterKelas', 'setorSoalFilterTugas'];
     if (!daftar) return;
     const filterSebelum = {};
-    filterIds.forEach(function(id) { filterSebelum[id] = document.getElementById(id).value; });
+    filterIds.forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) filterSebelum[id] = el.value;
+    });
     const cari = String(document.getElementById('setorSoalCari').value || '').trim().toLocaleLowerCase('id');
     const definisiFilter = [
       ['setorSoalFilterPengunggah', 'Semua pengunggah', function(x) { return x.pengunggah; }],
       ['setorSoalFilterTingkat', 'Semua tingkat', function(x) { return x.tingkat; }],
+      ['setorSoalFilterMadrasah', 'Semua madrasah', function(x) { return x.madrasah; }],
       ['setorSoalFilterKelas', 'Semua kelas', function(x) { return kelasRingkasSetorSoal(x.kelas); }],
       ['setorSoalFilterTugas', 'Semua tugas/soal', function(x) { return x.tugas; }]
     ];
     definisiFilter.forEach(function(def) {
       const select = document.getElementById(def[0]);
+      if (!select) return;
       const options = [...new Set(daftarSetorSoalTersimpan.map(def[2]).filter(Boolean))].sort(function(a,b) { return String(a).localeCompare(String(b), 'id'); });
       select.innerHTML = '<option value="">' + def[1] + '</option>' + options.map(function(x) { return '<option value="' + aman(x) + '">' + aman(x) + '</option>'; }).join('');
       if (options.indexOf(filterSebelum[def[0]]) >= 0) select.value = filterSebelum[def[0]];
     });
     const filterTanggal = document.getElementById('setorSoalFilterTanggal').value;
     const hasil = daftarSetorSoalTersimpan.filter(function(item) {
-      const teks = [item.nama, item.pengunggah, item.tingkat, item.kelas, item.tugas, item.waktu].join(' ').toLocaleLowerCase('id');
+      const teks = [item.nama, item.pengunggah, item.tingkat, item.madrasah, item.kelas, item.tugas, item.waktu].join(' ').toLocaleLowerCase('id');
       return (!cari || teks.indexOf(cari) >= 0) &&
         (!filterTanggal || item.tanggalUnggah === filterTanggal) &&
         filterIds.every(function(id) {
-          const pilihan = document.getElementById(id).value;
+          const el = document.getElementById(id);
+          const pilihan = el ? el.value : '';
           if (!pilihan) return true;
-          const kolom = ({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id];
+          const kolom = ({ setorSoalFilterPengunggah: 'pengunggah', setorSoalFilterTingkat: 'tingkat', setorSoalFilterMadrasah: 'madrasah', setorSoalFilterKelas: 'kelas', setorSoalFilterTugas: 'tugas' })[id];
           const nilai = kolom === 'kelas' ? kelasRingkasSetorSoal(item.kelas) : String(item[kolom] || '');
           return nilai === pilihan;
         });
@@ -6819,7 +6854,7 @@
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
       return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong><span class="list-index">' + (indeks + 1) + '</span>' + aman(item.nama) + '</strong>' +
-        '<small>' + aman(item.tingkat) + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
+        '<small>' + aman(item.tingkat) + (item.madrasah ? ' · ' + aman(item.madrasah) : '') + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
     }).join('');
@@ -6836,19 +6871,23 @@
   }
 
   document.getElementById('setorSoalCari').addEventListener('input', renderDaftarSetorSoal);
-  ['setorSoalFilterTanggal', 'setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterKelas', 'setorSoalFilterTugas'].forEach(function(id) {
-    document.getElementById(id).addEventListener('change', renderDaftarSetorSoal);
+  ['setorSoalFilterTanggal', 'setorSoalFilterPengunggah', 'setorSoalFilterTingkat', 'setorSoalFilterMadrasah', 'setorSoalFilterKelas', 'setorSoalFilterTugas'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', renderDaftarSetorSoal);
   });
   document.getElementById('setorSoalTingkat').addEventListener('change', updateSetorSoalDropdown);
+  const setorMadrasahEl = document.getElementById('setorSoalMadrasah');
+  if (setorMadrasahEl) setorMadrasahEl.addEventListener('change', updateSetorSoalDropdown);
   document.getElementById('setorSoalKelas').addEventListener('change', updateSetorSoalDropdown);
   document.getElementById('formSetorSoal').addEventListener('submit', function(event) {
     event.preventDefault();
     const file = document.getElementById('setorSoalFile').files[0];
     const tingkat = document.getElementById('setorSoalTingkat').value;
+    const madrasah = document.getElementById('setorSoalMadrasah') ? document.getElementById('setorSoalMadrasah').value : '';
     const kelas = document.getElementById('setorSoalKelas').value;
     const tugas = document.getElementById('setorSoalTugas').value;
     const tombol = document.getElementById('tombolUnggahSoal');
-    if (!file || !tingkat || !kelas || !tugas) { tampilkanNotifikasi('Pilih tingkat, kelas, tugas/soal, dan dokumen sebelum mengunggah.', 'error'); return; }
+    if (!file || !tingkat || !madrasah || !kelas || !tugas) { tampilkanNotifikasi('Pilih tingkat, madrasah, kelas, tugas/soal, dan dokumen sebelum mengunggah.', 'error'); return; }
     if (file.size > 7 * 1024 * 1024) { tampilkanNotifikasi('Ukuran file maksimal 7 MB.', 'error'); return; }
     const reader = new FileReader();
     tombol.disabled = true;
@@ -6862,12 +6901,13 @@
           document.getElementById('formSetorSoal').hidden = true;
           tombol.disabled = false; tombol.textContent = 'Unggah Dokumen';
           muatDaftarSetorSoal();
+          if (typeof muatAplikasi === 'function') muatAplikasi();
         })
         .withFailureHandler(function(er) {
           tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
           tombol.disabled = false; tombol.textContent = 'Unggah Dokumen';
         })
-        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, kelas: kelas, tugas: tugas, base64: base64 });
+        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, madrasah: madrasah, kelas: kelas, tugas: tugas, base64: base64 });
     };
     reader.onerror = function() { tombol.disabled = false; tombol.textContent = 'Unggah Dokumen'; tampilkanNotifikasi('File tidak dapat dibaca.', 'error'); };
     reader.readAsDataURL(file);
@@ -6900,6 +6940,7 @@
         tombolBatal.disabled = false;
         tampilkanNotifikasi(pesan || 'Dokumen berhasil dihapus.', 'success');
         muatDaftarSetorSoal();
+        if (typeof muatAplikasi === 'function') muatAplikasi();
       })
       .withFailureHandler(function(error) {
         tombolKonfirmasi.disabled = false;
