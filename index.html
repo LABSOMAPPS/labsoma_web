@@ -4853,10 +4853,44 @@
     }
   }
 
-  function rincianKelasTingkat(item) {
+  function rincianKelasTingkat(item, namaAnggota) {
     const bagian = [];
     if (item.kelas) bagian.push(aman(item.kelas));
     if (item.tingkat) bagian.push(aman(item.tingkat));
+
+    let tahapUjian = item.tahapUjian || '';
+    let madrasah = item.madrasah || '';
+
+    // Cadangan: jika data dari server belum membawa tahapUjian/madrasah, cari dari daftar semuaTugas
+    if ((!tahapUjian || !madrasah) && typeof dataAplikasiTersimpan !== 'undefined' && dataAplikasiTersimpan) {
+      const semua = (dataAplikasiTersimpan.semuaTugas || []).concat(dataAplikasiTersimpan.tugasKoreksiUjian || []);
+      const tugasNorm = norm(item.tugas);
+      const klsNorm = kelasRingkasSetorSoal(item.kelas);
+      const tktNorm = norm(item.tingkat);
+      const namaNorm = norm(namaAnggota || '');
+
+      const cocok = semua.find(function(t) {
+        const namaCocok = !namaNorm || norm(t.nama) === namaNorm;
+        const tugasCocok = norm(t.tugas) === tugasNorm;
+        const klsCocok = !klsNorm || kelasRingkasSetorSoal(t.kelas) === klsNorm;
+        const tktCocok = !tktNorm || norm(t.tingkat) === tktNorm;
+        return namaCocok && tugasCocok && klsCocok && tktCocok;
+      }) || semua.find(function(t) {
+        const namaCocok = !namaNorm || norm(t.nama) === namaNorm;
+        const tugasCocok = norm(t.tugas) === tugasNorm;
+        return namaCocok && tugasCocok;
+      }) || semua.find(function(t) {
+        return norm(t.tugas) === tugasNorm && (!klsNorm || kelasRingkasSetorSoal(t.kelas) === klsNorm);
+      });
+
+      if (cocok) {
+        if (!tahapUjian && cocok.tahapUjian) tahapUjian = cocok.tahapUjian;
+        if (!madrasah && cocok.madrasah) madrasah = cocok.madrasah;
+      }
+    }
+
+    if (tahapUjian) bagian.push(aman(String(tahapUjian).trim().toUpperCase()));
+    if (madrasah) bagian.push(aman(String(madrasah).trim().toUpperCase()));
     return bagian.length ? '<span class="task-meta">' + bagian.join(' · ') + '</span>' : '';
   }
 
@@ -4888,7 +4922,7 @@
       wadah.innerHTML = terlihat.map(function(orang, indeks) {
         const daftar = (orang.daftarTugas || []).map(function(item) {
           const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
-          return '<li>' + aman(item.tugas) + rincianKelasTingkat(item) +
+          return '<li>' + aman(item.tugas) + rincianKelasTingkat(item, orang.nama) +
             '<span class="task-period">' + formatTanggal(item.mulai) + ' – ' + formatTanggal(item.selesai) + '</span>' +
             '<span class="task-status ' + kelasStatus + '">' + aman(item.status) + '</span></li>';
         }).join('');
@@ -7359,12 +7393,14 @@
       const dasar = item.kunci || ('X:' + jenis + ':' + item.nomorBaris);
       let g = peta[dasar];
       if (!g || g[jenis]) {
-        g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tahapUjian: item.tahapUjian, tingkat: item.tingkat, madrasah: item.madrasah,
+        g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tahapUjian: item.tahapUjian, tingkat: item.tingkat, madrasah: item.madrasah || '',
               mulai: item.mulai, selesai: item.selesai, soal: null, ujian: null };
         peta[dasar] = g;
         hasil.push(g);
       }
       g[jenis] = item;
+      if (!g.madrasah && item.madrasah) g.madrasah = item.madrasah;
+      if (!g.tahapUjian && item.tahapUjian) g.tahapUjian = item.tahapUjian;
     }
     (data.semuaTugas || []).forEach(function(i) { masuk(i, 'soal'); });
     (data.tugasKoreksiUjian || []).forEach(function(i) { masuk(i, 'ujian'); });
@@ -7598,7 +7634,7 @@
       const st = statusKelompok(g);
       return '<article class="tt-card ' + (st === 'Selesai' ? 'selesai' : st === 'Telat' ? 'telat' : '') + '">' +
         '<div class="tt-judul">' + aman(g.tugas) + '</div>' +
-        '<div class="tt-meta">' + [g.kelas, g.tingkat].filter(Boolean).map(aman).join(' · ') + '</div>' +
+        '<div class="tt-meta">' + [g.kelas, g.tingkat, g.tahapUjian ? String(g.tahapUjian).trim().toUpperCase() : '', g.madrasah ? String(g.madrasah).trim().toUpperCase() : ''].filter(Boolean).map(aman).join(' · ') + '</div>' +
         '<div class="tt-periode">' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai) + '</div>' +
         '<div class="tt-tahap">' + barisTahap('Pembuatan Soal', tahapSoal(g.soal)) + barisTahap('Koreksi Hasil Ujian', tahapUjian(g.ujian)) + '</div>' +
         '</article>';
