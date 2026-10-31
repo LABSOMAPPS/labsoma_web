@@ -1825,6 +1825,430 @@
     }
     body:not([data-input-role="ADMIN"]) .input-admin-only { display: none !important; }
     body[data-input-role="ADMIN"] .input-admin-only { display: flex !important; }
+  
+    /* ===== 6 KARTU & DIAGRAM DONAT BESAR (3x2 GRID FULL LAYAR) ===== */
+    .dashboard-view-pane {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      animation: fadeIn 0.35s ease-in-out;
+    }
+    .dashboard-view-pane[hidden] {
+      display: none !important;
+    }
+
+    #dashViewProgres {
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Grid 6 Kartu (2 Baris, 3 Kolom) - Mengisi Penuh Layar Tanpa Ruang Kosong */
+    .dash-grid-6 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      width: 100%;
+      flex: 1;
+      min-height: calc(100vh - 120px);
+    }
+
+    .dash-chart-box {
+      padding: 18px 22px;
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+      border: 1px solid var(--garis);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--bayangan-sm);
+      overflow: hidden;
+      position: relative;
+      height: 100%;
+    }
+
+    .dash-chart-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--garis);
+      flex-shrink: 0;
+    }
+
+    .dash-chart-title {
+      font-size: 15.5px;
+      font-weight: 800;
+      color: var(--teks);
+      letter-spacing: -0.01em;
+    }
+
+    .dash-chart-subtitle {
+      font-size: 11.5px;
+      color: var(--aksen);
+      font-weight: 700;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .dash-pill-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9.5px;
+      border-radius: 999px;
+      background: var(--panel2);
+      color: var(--teks-muted);
+      border: 1px solid var(--garis);
+      letter-spacing: 0.02em;
+      font-family: var(--font-mono);
+      white-space: nowrap;
+    }
+
+    /* Diagram Donat Jauh Lebih Besar & Jelas */
+    .dash-donut-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 22px;
+      flex: 1;
+      padding: 6px 0;
+    }
+
+    .dash-donut-ring-wrap {
+      flex: 0 0 auto;
+    }
+
+    .dash-donut-ring-compact {
+      width: 165px;
+      height: 165px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+      transition: background 0.4s ease;
+      flex-shrink: 0;
+    }
+
+    .dash-donut-inner-compact {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+
+    .dash-donut-stat-main {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--aksen);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .dash-donut-stat-lbl {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--teks-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .dash-legend-compact {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dash-leg-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13.5px;
+    }
+
+    .dash-leg-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--teks-muted);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .dash-leg-val {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--teks);
+      flex-shrink: 0;
+      font-weight: 800;
+    }
+
+    .dash-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .bg-aksen { background: var(--aksen); }
+    .bg-biru { background: var(--biru); }
+    .bg-merah { background: var(--merah); }
+    .bg-hijau { background: var(--hijau); }
+    .bg-kuning { background: var(--kuning); }
+
+    .text-aksen { color: var(--aksen) !important; }
+    .text-biru { color: var(--biru) !important; }
+    .text-merah { color: var(--merah) !important; }
+    .text-hijau { color: var(--hijau) !important; }
+
+    /* Kartu 1: Identitas Asli Labsoma (Sama Persis Seperti Tampilan Asli) */
+    .dash-card-identity {
+      background: linear-gradient(145deg, var(--panel) 0%, var(--panel2) 100%);
+      border: 1px solid var(--garis);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--bayangan-sm);
+      height: 100%;
+    }
+    .dash-card-identity::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: radial-gradient(circle, var(--aksen-soft) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Styling Tampilan Lengkap di Menu Mandiri */
+    .pg-filter-card {
+      padding: 16px 20px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 18px;
+    }
+
+    .pg-filter-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--aksen);
+      margin-bottom: 8px;
+    }
+
+    .pg-filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .pg-filter-item label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--teks-muted);
+      margin-bottom: 4px;
+    }
+
+    .pg-filter-item select {
+      width: 100%;
+      height: 36px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--garis);
+      background: var(--input);
+      color: var(--teks);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .pg-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .pg-kpi-card {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--panel);
+      border: 1px solid var(--garis);
+      box-shadow: var(--bayangan-sm);
+    }
+
+    .pg-kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .pg-kpi-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--teks-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .pg-kpi-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+    }
+    .badge-success { background: var(--aksen-soft); color: var(--aksen); border: 1px solid var(--aksen-border); }
+    .badge-info { background: var(--biru-soft); color: var(--biru); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-warning { background: var(--merah-soft); color: var(--merah); border: 1px solid rgba(248, 113, 113, 0.3); }
+
+    .pg-kpi-num {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--teks);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .pg-kpi-sub {
+      font-size: 11.5px;
+      color: var(--teks-muted);
+      font-weight: 600;
+    }
+
+    .pg-mini-bar {
+      width: 100%;
+      height: 5px;
+      background: var(--panel2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .pg-mini-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    /* Leaderboard Table in Full View */
+    .pg-leaderboard-card {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: var(--radius-lg);
+      background: var(--panel);
+      border: 1px solid var(--garis);
+    }
+
+    .pg-table-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pg-search-input {
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--garis);
+      background: var(--input);
+      color: var(--teks);
+      font-size: 12.5px;
+      outline: none;
+      min-width: 180px;
+    }
+
+    .pg-sort-select {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--garis);
+      background: var(--input);
+      color: var(--teks);
+      font-size: 12.5px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .pg-member-table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    .pg-member-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .pg-member-table th {
+      padding: 9px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--teks-muted);
+      border-bottom: 1px solid var(--garis);
+      background: var(--panel2);
+    }
+
+    .pg-member-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--garis);
+      color: var(--teks);
+    }
+
+    .pg-member-table tr:hover td {
+      background: var(--aksen-soft);
+    }
+
+    @media (max-width: 1100px) {
+      .dash-grid-6 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+        min-height: auto;
+      }
+      .pg-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 768px) {
+      .dash-grid-6 {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .pg-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pg-filter-grid { grid-template-columns: 1fr; }
+      .pg-table-tools { width: 100%; }
+      .pg-search-input, .pg-sort-select { width: 100%; }
+    }
+
   </style>
 <style id="mobile-input-standalone-page">
   @media (max-width: 768px) {
@@ -2391,11 +2815,18 @@
 
       <nav class="nav-list">
         <!-- Dashboard -->
-        <button class="nav-button active sonik-sidebar-item" data-page="dashboard">
+        <button class="nav-button active sonik-sidebar-item" data-page="dashboard" data-dash-view="biasa" id="sidebarNavDashboard">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </span>
           <span>Dashboard</span>
+        </button>
+        <!-- Progres & Grafik (di bawah Dashboard) -->
+        <button class="nav-button sonik-sidebar-item" data-page="progresGrafik" id="sidebarNavProgres">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+          </span>
+          <span>Progres &amp; Grafik</span>
         </button>
 
         <button class="nav-button sonik-sidebar-item" data-page="tipeSoal">
@@ -2585,7 +3016,12 @@
         <button class="toolbar-button" id="tombolKembaliMobile" type="button">‹ Kembali</button>
       </div><!-- PAGE: DASHBOARD -->
       <section class="page active" id="page-dashboard">
-        <div class="dashboard-top">
+
+        
+
+        <!-- 1. TAMPILAN BIASA (ASAL) -->
+        <div id="dashViewBiasa" class="dashboard-view-pane">
+          <div class="dashboard-top">
           <header class="identity">
             <div class="brand-title">Labsoma PPS</div>
             <div class="brand-subtitle">Laboratorium Soal-soal Madrasah</div>
@@ -2633,6 +3069,160 @@
           </div>
           <div class="member-grid" id="anggotaDashboard"></div>
         </section>
+        </div>
+
+        <!-- 2. TAMPILAN PROGRES DENGAN GRAFIK (ROTASI DI DASHBOARD) -->
+        <div id="dashViewProgres" class="dashboard-view-pane" hidden>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--aksen); box-shadow:0 0 8px var(--aksen);"></span>
+              <strong style="font-size:14.5px; color:var(--teks);">Ringkasan Progres &amp; Grafik</strong>
+              <span class="dash-pill-badge" id="dashPillTotalTugas">0 Tugas</span>
+            </div>
+            <button type="button" class="button secondary small" onclick="gantiTampilanDashboard('biasa', true)" style="padding:4px 10px; font-size:12px;">
+              &larr; Tampilan Asal
+            </button>
+          </div>
+          <div class="dash-screen-compact" id="wadahProgresDashboard"></div>
+        </div>
+      </section>
+
+      <!-- PAGE: PROGRES & GRAFIK (STANDALONE MENU BERANDA DATA) -->
+      <section class="page" id="page-progresGrafik">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h1 class="page-heading" style="margin:0;">Progres &amp; Grafik Tugas</h1>
+            <p class="subheading" style="margin:2px 0 0 0;">Monitoring menyeluruh tugas pembuatan materi soal madrasah, distribusi lembaga, dan alur koreksi naskah.</p>
+          </div>
+          <button type="button" class="button secondary small" onclick="segarkanDataDashboard()" title="Muat ulang data dari server">
+            <svg style="width:14px; height:14px; vertical-align:middle; margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg> Segarkan Data
+          </button>
+        </div>
+
+        <!-- Filter Cepat Analisis -->
+        <div class="card pg-filter-card">
+          <div class="pg-filter-label">Filter Cepat Analisis:</div>
+          <div class="pg-filter-grid">
+            <div class="pg-filter-item">
+              <label for="filterPgMadrasah">Madrasah:</label>
+              <select id="filterPgMadrasah" onchange="terapkanFilterProgresHalaman()">
+                <option value="">Semua Madrasah</option>
+                <option value="INDUK">INDUK</option>
+                <option value="RANTING">RANTING</option>
+                <option value="LABSOMA">LABSOMA</option>
+              </select>
+            </div>
+            <div class="pg-filter-item">
+              <label for="filterPgTahap">Tahap Ujian:</label>
+              <select id="filterPgTahap" onchange="terapkanFilterProgresHalaman()">
+                <option value="">Semua Tahap</option>
+                <option value="IMDA 1">IMDA 1</option>
+                <option value="IMNI">IMNI</option>
+              </select>
+            </div>
+            <div class="pg-filter-item">
+              <label for="filterPgTingkat">Tingkat:</label>
+              <select id="filterPgTingkat" onchange="terapkanFilterProgresHalaman()">
+                <option value="">Semua Tingkat</option>
+              </select>
+            </div>
+            <div class="pg-filter-item">
+              <label for="filterPgStatus">Status Tugas:</label>
+              <select id="filterPgStatus" onchange="terapkanFilterProgresHalaman()">
+                <option value="">Semua Status</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Belum">Belum / Proses</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" class="button secondary small" onclick="resetFilterProgresHalaman()" style="height:36px;">Reset Filter</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 KPI Cards Grid -->
+        <div class="pg-kpi-grid">
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top"><span class="pg-kpi-title">Total Beban</span></div>
+            <div class="pg-kpi-num" id="pgKpiTotal">0</div>
+            <div class="pg-kpi-sub" id="pgKpiTotalSub">Materi Soal</div>
+          </div>
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top">
+              <span class="pg-kpi-title">Selesai</span>
+              <span class="pg-kpi-badge badge-success" id="pgKpiPersenSelesai">0%</span>
+            </div>
+            <div class="pg-kpi-num text-aksen" id="pgKpiSelesai">0</div>
+            <div class="pg-mini-bar"><div class="pg-mini-bar-fill bg-aksen" id="pgBarSelesai" style="width:0%;"></div></div>
+          </div>
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top">
+              <span class="pg-kpi-title">Dalam Proses</span>
+              <span class="pg-kpi-badge badge-info" id="pgKpiPersenProses">0%</span>
+            </div>
+            <div class="pg-kpi-num text-biru" id="pgKpiProses">0</div>
+            <div class="pg-mini-bar"><div class="pg-mini-bar-fill bg-biru" id="pgBarProses" style="width:0%;"></div></div>
+          </div>
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top">
+              <span class="pg-kpi-title">Belum / Menunggu</span>
+              <span class="pg-kpi-badge badge-warning" id="pgKpiPersenBelum">0%</span>
+            </div>
+            <div class="pg-kpi-num text-merah" id="pgKpiBelum">0</div>
+            <div class="pg-mini-bar"><div class="pg-mini-bar-fill bg-merah" id="pgBarBelum" style="width:0%;"></div></div>
+          </div>
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top"><span class="pg-kpi-title">Setor Naskah</span></div>
+            <div class="pg-kpi-num text-biru" id="pgKpiSetor">0</div>
+            <div class="pg-kpi-sub">Tersimpan di Drive</div>
+          </div>
+          <div class="pg-kpi-card">
+            <div class="pg-kpi-top">
+              <span class="pg-kpi-title">Koreksi Tuntas</span>
+              <span class="pg-kpi-badge badge-success" id="pgKpiPersenKoreksi">0%</span>
+            </div>
+            <div class="pg-kpi-num text-hijau" id="pgKpiKoreksi">0</div>
+            <div class="pg-mini-bar"><div class="pg-mini-bar-fill bg-hijau" id="pgBarKoreksi" style="width:0%;"></div></div>
+          </div>
+        </div>
+
+        <!-- 5 Grafik (3 Donut + 2 Vertical Bar Charts) -->
+        <div class="dash-screen-compact" id="wadahProgresGrafikHalaman"></div>
+
+        <!-- Papan Progres Setiap Anggota (Leaderboard) -->
+        <div class="pg-leaderboard-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+            <div>
+              <h3 style="margin:0; font-size:15px; font-weight:800; color:var(--teks);">Papan Progres &amp; Rekap Performa Setiap Anggota</h3>
+              <p style="margin:2px 0 0 0; font-size:12px; color:var(--teks-muted);">Rincian beban tugas dan status penyelesaian masing-masing pembuat soal.</p>
+            </div>
+            <div class="pg-table-tools">
+              <input type="search" id="cariAnggotaHalaman" placeholder="🔍 Cari nama anggota…" oninput="terapkanFilterProgresHalaman()" class="pg-search-input">
+              <select id="urutAnggotaHalaman" onchange="terapkanFilterProgresHalaman()" class="pg-sort-select">
+                <option value="persen-desc">Paling Tuntas (100% → 0%)</option>
+                <option value="persen-asc">Paling Banyak Tanggungan (0% → 100%)</option>
+                <option value="nama-asc">Nama (A–Z)</option>
+                <option value="tugas-desc">Beban Tugas Terbanyak</option>
+              </select>
+            </div>
+          </div>
+          <div class="pg-member-table-wrap">
+            <table class="pg-member-table">
+              <thead>
+                <tr>
+                  <th style="width:40px; text-align:center;">No</th>
+                  <th>Nama Anggota</th>
+                  <th style="text-align:center;">Total Tugas</th>
+                  <th style="text-align:center;">Selesai</th>
+                  <th style="text-align:center;">Belum</th>
+                  <th style="min-width:180px;">Progres Penyelesaian</th>
+                  <th style="text-align:center;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="pgMemberLeaderboardBody"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- PAGE HUB 1: PEMBUATAN SOAL (HP) -->
@@ -4254,16 +4844,30 @@
       return;
     }
     targetSalatMillis = Number(salat.targetMillis);
-    document.getElementById('salatBerikutnya').textContent = 'Menuju waktu ' + salat.nama;
-    document.getElementById('jamSalatBerikutnya').textContent = 'Jadwal ' + salat.jam + ' WIB · ' + LOKASI.nama;
+    const txtSalat = 'Menuju waktu ' + salat.nama;
+    const txtJadwal = 'Jadwal ' + salat.jam + ' WIB · ' + LOKASI.nama;
+
+    ['salatBerikutnya', 'dashCardSalatBerikutnya', 'pgCardSalatBerikutnya'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = txtSalat;
+    });
+    ['jamSalatBerikutnya', 'dashCardJamSalatBerikutnya', 'pgCardJamSalatBerikutnya'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = txtJadwal;
+    });
 
     const sisa = Math.max(0, Math.floor((targetSalatMillis - Date.now()) / 1000));
     const jam = Math.floor(sisa / 3600);
     const menit = Math.floor((sisa % 3600) / 60);
     const detik = sisa % 60;
-    tampilan.textContent = [jam, menit, detik]
+    const txtCountdown = [jam, menit, detik]
       .map(function(angka) { return String(angka).padStart(2, '0'); })
       .join(':');
+
+    ['hitungMundurSalat', 'dashCardHitungMundurSalat', 'pgCardHitungMundurSalat'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = txtCountdown;
+    });
   }
 
   const LABEL_FILTER_DEFAULT = {
@@ -4744,6 +5348,7 @@
     rekapUjian:     { tab: 'tugas', induk: 'hubUjian' },
 
     dashboard:      { tab: 'dashboard' },
+    progresGrafik:  { tab: 'dashboard' },
     pengumuman:     { tab: 'dashboard', induk: 'dashboard' },
 
     hubKegiatan:    { tab: 'kegiatan' },
@@ -4788,9 +5393,27 @@
       page.classList.toggle('active', page.id === 'page-' + nama);
     });
     document.querySelectorAll('.sidebar .nav-button').forEach(function(button) {
-      button.classList.toggle('active', button.dataset.page === nama &&
-        (nama !== 'inputNilai' || button.dataset.inputTab === halamanInputNilaiTerpilih));
+      let aktif = button.dataset.page === nama &&
+        (nama !== 'inputNilai' || button.dataset.inputTab === halamanInputNilaiTerpilih);
+      if (aktif && nama === 'dashboard' && button.dataset.dashView) {
+        aktif = (button.dataset.dashView === tampilanDashboardAktif);
+      }
+      button.classList.toggle('active', aktif);
     });
+    if (nama === 'dashboard') {
+      if (typeof mulaiRotasiDashboard === 'function') {
+        mulaiRotasiDashboard(dataDashboardTersimpan);
+      }
+    } else {
+      if (typeof hentikanRotasiDashboard === 'function') {
+        hentikanRotasiDashboard();
+      }
+    }
+    if (nama === 'progresGrafik') {
+      if (typeof renderSemuaGrafikProgres === 'function') {
+        renderSemuaGrafikProgres();
+      }
+    }
     const info = PETA_HALAMAN[nama] || {};
     document.querySelectorAll('#bottomNav button[data-tab], #korektorNav button[data-tab]').forEach(function(b) {
       b.classList.toggle('active', b.dataset.tab === info.tab);
@@ -5075,28 +5698,661 @@
     return bagian.length ? '<span class="task-meta">' + bagian.join(' · ') + '</span>' : '';
   }
 
-  function tampilkanDashboard(data) {
-    dataDashboardTersimpan = data;
-    tampilkanAgenda('agendaHariIni', data.agendaHariIni || []);
-    document.getElementById('judulAgendaRentang').textContent = rentangAgendaTerpilih === 'bulan' ? 'Agenda Bulan Ini' : 'Agenda Pekan Ini';
-    tampilkanAgendaRentang(rentangAgendaTerpilih === 'bulan' ? data.agendaBulanIni : data.agendaPekanIni);
+  
+  // ===== TAMPILAN DASHBOARD (6 KARTU 3x2 DIAGRAM DONAT) & MENU MANDIRI (LENGKAP) =====
+  let tampilanDashboardAktif = 'biasa';
 
-    // jadwal dari server (dua hari) disimpan; pilihan salat berikutnya dihitung ulang tiap detik
-    jadwalSalatServer = Array.isArray(data.jadwalSalat) ? data.jadwalSalat : [];
-    perbaruiHitungMundurSalat();
+  const INTERVAL_GANTI_PROGRES = 10000;  // 10 detik untuk tampilan progres di dashboard
+  let timerRotasiDashboard = null;
+  let jedaRotasiManualSampai = 0;
 
-    const anggota = data.anggota || [];
+  // Filter khusus untuk halaman menu mandiri
+  let filterHalamanMadrasah = '';
+  let filterHalamanTahap = '';
+  let filterHalamanTingkat = '';
+  let filterHalamanStatus = '';
+  let filterHalamanCariAnggota = '';
+  let urutHalamanAnggota = 'persen-desc';
+
+  function hentikanRotasiDashboard() {
+    if (timerRotasiDashboard) {
+      clearTimeout(timerRotasiDashboard);
+      timerRotasiDashboard = null;
+    }
+    if (timerAnggota) {
+      clearInterval(timerAnggota);
+      timerAnggota = null;
+    }
+  }
+
+  function mulaiRotasiDashboard(data) {
+    hentikanRotasiDashboard();
+
+    const dataAktif = data || dataDashboardTersimpan;
+    if (!dataAktif) return;
+
+    // Pastikan halaman aktif saat ini benar-benar dashboard (bukan halaman lain / bukan menu progresGrafik)
+    const halSekarang = document.body.dataset.halaman || 'dashboard';
+    if (halSekarang !== 'dashboard') return;
+
+    const anggota = dataAktif.anggota || [];
+    const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
+
+    const durasi = (tampilanDashboardAktif === 'progres') ? INTERVAL_GANTI_PROGRES : INTERVAL_GANTI_ANGGOTA;
+
+    timerRotasiDashboard = setTimeout(function() {
+      if ((document.body.dataset.halaman || 'dashboard') !== 'dashboard') return;
+
+      if (Date.now() < jedaRotasiManualSampai) {
+        mulaiRotasiDashboard(dataAktif);
+        return;
+      }
+
+      if (tampilanDashboardAktif === 'biasa') {
+        if (halamanAnggota + 1 < totalHalaman) {
+          halamanAnggota++;
+          tampilkanHalamanAnggotaDashboard(dataAktif);
+          mulaiRotasiDashboard(dataAktif);
+        } else {
+          // Seluruh tugas anggota telah selesai! Ganti otomatis ke ringkasan 6 kartu di dashboard
+          halamanAnggota = 0;
+          gantiTampilanDashboard('progres', false);
+          mulaiRotasiDashboard(dataAktif);
+        }
+      } else {
+        // Tampilan 6 kartu selesai, kembali ke tugas anggota halaman 0
+        halamanAnggota = 0;
+        gantiTampilanDashboard('biasa', false);
+        tampilkanHalamanAnggotaDashboard(dataAktif);
+        mulaiRotasiDashboard(dataAktif);
+      }
+    }, durasi);
+  }
+
+  function gantiTampilanDashboard(mode, manual) {
+    tampilanDashboardAktif = (mode === 'progres') ? 'progres' : 'biasa';
+
+    const viewBiasa = document.getElementById('dashViewBiasa');
+    const viewProgres = document.getElementById('dashViewProgres');
+
+    if (viewBiasa) viewBiasa.hidden = (tampilanDashboardAktif !== 'biasa');
+    if (viewProgres) viewProgres.hidden = (tampilanDashboardAktif !== 'progres');
+
+    if (tampilanDashboardAktif === 'progres') {
+      renderTampilanProgresDashboard();
+    }
+
+    if (manual) {
+      jedaRotasiManualSampai = Date.now() + 25000;
+      mulaiRotasiDashboard(dataDashboardTersimpan);
+    }
+  }
+
+  function segarkanDataDashboard() {
+    if (typeof muatDataAplikasi === 'function') {
+      muatDataAplikasi();
+    } else if (typeof google !== 'undefined' && google.script && google.script.run) {
+      tampilkanPemuat('Memperbarui data…');
+      google.script.run
+        .withSuccessHandler(function(data) {
+          sembunyikanPemuat();
+          if (dataAplikasiTersimpan) dataAplikasiTersimpan = data;
+          if (typeof tampilkanDashboard === 'function') tampilkanDashboard(data.dashboard);
+          renderSemuaGrafikProgres();
+          renderTampilanProgresHalamanLengkap();
+        })
+        .withFailureHandler(function(err) {
+          sembunyikanPemuat();
+          tampilkanPesanModal('Gagal menyegarkan data: ' + (err.message || err));
+        })
+        .getDataAplikasi();
+    } else {
+      renderSemuaGrafikProgres();
+      renderTampilanProgresHalamanLengkap();
+    }
+  }
+
+  function ambilSemuaTugasDashboard() {
+    if (dataAplikasiTersimpan && Array.isArray(dataAplikasiTersimpan.semuaTugas) && dataAplikasiTersimpan.semuaTugas.length) {
+      return dataAplikasiTersimpan.semuaTugas;
+    }
+    if (dataDashboardTersimpan && Array.isArray(dataDashboardTersimpan.anggota)) {
+      const list = [];
+      dataDashboardTersimpan.anggota.forEach(function(org) {
+        (org.daftarTugas || []).forEach(function(t) {
+          list.push({
+            nama: org.nama,
+            tugas: t.tugas,
+            tingkat: t.tingkat || '',
+            kelas: t.kelas || '',
+            tahapUjian: t.tahapUjian || '',
+            madrasah: t.madrasah || '',
+            status: t.status || 'Belum'
+          });
+        });
+      });
+      return list;
+    }
+    return [];
+  }
+
+  function buatConicGradient(slices) {
+    const total = slices.reduce(function(acc, s) { return acc + (Number(s.val) || 0); }, 0);
+    if (total <= 0) return 'var(--panel2)';
+    let accPct = 0;
+    const stops = [];
+    slices.forEach(function(s) {
+      const v = Number(s.val) || 0;
+      const pct = (v / total) * 100;
+      const nextPct = accPct + pct;
+      stops.push(s.color + ' ' + accPct.toFixed(1) + '% ' + nextPct.toFixed(1) + '%');
+      accPct = nextPct;
+    });
+    return 'conic-gradient(' + stops.join(', ') + ')';
+  }
+
+  function hitungDataSemuaDonut(tugasList) {
+    tugasList = tugasList || ambilSemuaTugasDashboard();
+    const total = tugasList.length;
+    const selesai = tugasList.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
+    const proses = tugasList.filter(function(x) { return String(x.status || '').toLowerCase() === 'proses'; }).length;
+    const belum = Math.max(0, total - selesai - proses);
+
+    const pSelesai = total ? Math.round((selesai / total) * 100) : 0;
+    const pProses = total ? Math.round((proses / total) * 100) : 0;
+    const pBelum = total ? Math.max(0, 100 - pSelesai - pProses) : 0;
+
+    // 2. Status Donut Slices
+    const slicesStatus = [
+      { label: 'Selesai', val: selesai, color: 'var(--aksen)' },
+      { label: 'Proses', val: proses, color: 'var(--biru)' },
+      { label: 'Belum', val: belum, color: 'var(--merah)' }
+    ];
+
+    // 3. Tahap Ujian Donut Slices (IMDA 1, IMNI)
+    const kelompokTahap = ['IMDA 1', 'IMNI'];
+    const tahapLain = [...new Set(tugasList.map(function(x) { return String(x.tahapUjian || '').trim().toUpperCase(); }).filter(function(x) { return x && kelompokTahap.indexOf(x) < 0; }))];
+    const semuaTahap = kelompokTahap.concat(tahapLain);
+    const warnaTahap = ['#3b82f6', '#f59e0b', 'var(--aksen)', '#a78bfa'];
+    const dataTahap = semuaTahap.map(function(th, idx) {
+      const items = tugasList.filter(function(x) { return String(x.tahapUjian || '').trim().toUpperCase() === th; });
+      const totTh = items.length;
+      const selTh = items.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
+      const pctTh = totTh ? Math.round((selTh / totTh) * 100) : 0;
+      return { label: th, val: totTh, selesai: selTh, total: totTh, pct: pctTh, color: warnaTahap[idx % warnaTahap.length] };
+    });
+    const totalSelesaiTahap = dataTahap.reduce(function(a, b) { return a + b.selesai; }, 0);
+    const totalSemuaTahap = dataTahap.reduce(function(a, b) { return a + b.total; }, 0);
+    const pSelesaiTahap = totalSemuaTahap ? Math.round((totalSelesaiTahap / totalSemuaTahap) * 100) : 0;
+
+    // 4. Madrasah Donut Slices (INDUK, RANTING, LABSOMA)
+    const kelompokMadrasah = ['INDUK', 'RANTING', 'LABSOMA'];
+    const warnaMadrasah = { 'INDUK': 'var(--aksen)', 'RANTING': 'var(--biru)', 'LABSOMA': 'var(--kuning)' };
+    const dataMadrasah = kelompokMadrasah.map(function(m) {
+      const items = tugasList.filter(function(x) { return String(x.madrasah || '').trim().toUpperCase() === m; });
+      const totM = items.length;
+      const selM = items.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
+      const pctM = totM ? Math.round((selM / totM) * 100) : 0;
+      return { label: m, val: totM, total: totM, selesai: selM, pct: pctM, color: warnaMadrasah[m] || 'var(--panel3)' };
+    });
+    const totalSelesaiMadrasah = dataMadrasah.reduce(function(a, b) { return a + b.selesai; }, 0);
+    const totalSemuaMadrasah = dataMadrasah.reduce(function(a, b) { return a + b.total; }, 0);
+    const pSelesaiMadrasah = totalSemuaMadrasah ? Math.round((totalSelesaiMadrasah / totalSemuaMadrasah) * 100) : 0;
+
+    // 5. Tingkat Donut Slices
+    const daftarTingkat = [...new Set(tugasList.map(function(x) { return String(x.tingkat || '').trim().toUpperCase(); }).filter(Boolean))].sort();
+    const paletTingkat = ['var(--aksen)', 'var(--biru)', '#a78bfa', 'var(--kuning)', '#f472b6', '#34d399'];
+    const dataTingkat = daftarTingkat.map(function(tk, idx) {
+      const items = tugasList.filter(function(x) { return String(x.tingkat || '').trim().toUpperCase() === tk; });
+      const totTk = items.length;
+      const selTk = items.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
+      const pctTk = totTk ? Math.round((selTk / totTk) * 100) : 0;
+      return { label: tk, val: totTk, total: totTk, selesai: selTk, pct: pctTk, color: paletTingkat[idx % paletTingkat.length] };
+    });
+    const totalSelesaiTingkat = dataTingkat.reduce(function(a, b) { return a + b.selesai; }, 0);
+    const totalSemuaTingkat = dataTingkat.reduce(function(a, b) { return a + b.total; }, 0);
+    const pSelesaiTingkat = totalSemuaTingkat ? Math.round((totalSelesaiTingkat / totalSemuaTingkat) * 100) : 0;
+
+    // 6. Alur & Pipeline Koreksi Soal Donut Slices
+    const dataK1 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor1) || dataK1Tersimpan || [];
+    const dataK2 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor2) || dataK2Tersimpan || [];
+    const dataK3 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor3) || dataK3Tersimpan || [];
+    const dataKB = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKoreksiBersama) || dataKBTersimpan || [];
+    const dataRekap = (dataAplikasiTersimpan && dataAplikasiTersimpan.rekapSelesai) || dataRekapTersimpan || [];
+
+    const totalSetor = selesai;
+    const totalKoreksiTuntas = dataRekap.length;
+
+    const dataPipeline = [
+      { label: 'Setor Naskah', sub: 'Naskah masuk', val: Math.max(1, totalSetor), selesai: totalSetor, total: total || 1, pct: total ? Math.min(100, Math.round((totalSetor / total) * 100)) : 0, color: '#3b82f6' },
+      { label: 'Korektor 1', sub: 'Review 1', val: Math.max(1, dataK1.length), selesai: dataK1.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK1.length / totalSetor) * 100)) : 0, color: '#f59e0b' },
+      { label: 'Korektor 2', sub: 'Review 2', val: Math.max(1, dataK2.length), selesai: dataK2.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK2.length / totalSetor) * 100)) : 0, color: '#8b5cf6' },
+      { label: 'Korektor 3', sub: 'Review 3', val: Math.max(1, dataK3.length), selesai: dataK3.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK3.length / totalSetor) * 100)) : 0, color: '#ec4899' },
+      { label: 'Koreksi Bersama', sub: 'Final', val: Math.max(1, totalKoreksiTuntas), selesai: totalKoreksiTuntas, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((totalKoreksiTuntas / totalSetor) * 100)) : 0, color: '#10b981' }
+    ];
+    const pKoreksiTuntas = totalSetor ? Math.min(100, Math.round((totalKoreksiTuntas / totalSetor) * 100)) : 0;
+
+    return {
+      total, selesai, proses, belum, pSelesai, pProses, pBelum,
+      totalSetor, totalKoreksiTuntas, pKoreksiTuntas,
+      slicesStatus, dataMadrasah, pSelesaiMadrasah,
+      dataTahap, pSelesaiTahap,
+      dataTingkat, pSelesaiTingkat,
+      dataPipeline
+    };
+  }
+
+  // MEMBUAT 6 KARTU DALAM SUSUNAN SESUAI PERMINTAAN USER:
+  // BARIS ATAS:
+  // 1. KARTU LABSOMA (SEPERTI DI TAMPILAN DASHBOARD ASAL)
+  // 2. Status Penyelesaian (Diagram Donat)
+  // 3. Progres Berdasarkan Tahap Ujian (Diagram Donat)
+  // BARIS BAWAH:
+  // 4. Madrasah / Lembaga (Diagram Donat)
+  // 5. Tingkat Pendidikan (Diagram Donat)
+  // 6. Alur & Pipeline Koreksi Soal (Diagram Donat)
+  function buatHtmlEnamKartu(d, prefix) {
+    prefix = prefix || 'dash';
+    const donutStatusBg = buatConicGradient(d.slicesStatus);
+    const donutTahapBg = buatConicGradient(d.dataTahap);
+    const donutMadrasahBg = buatConicGradient(d.dataMadrasah);
+    const donutTingkatBg = buatConicGradient(d.dataTingkat);
+    const donutPipelineBg = buatConicGradient(d.dataPipeline);
+
+    return `
+      <div class="dash-grid-6">
+        <!-- 1. KARTU LABSOMA (SAMA PERSIS DENGAN TAMPILAN ASAL) -->
+        <header class="dash-card-identity">
+          <div class="identity-top">
+            <div class="brand-title">Labsoma PPS</div>
+            <div class="brand-subtitle">Laboratorium Soal-soal Madrasah</div>
+            <div class="hijri-date" id="${prefix}CardHijriyah">Memuat tanggal Hijriyah…</div>
+            <div class="gregorian-date" id="${prefix}CardMasehi">Memuat tanggal Masehi…</div>
+          </div>
+          <div class="main-clock" id="${prefix}CardJam">--:--:-- WIS</div>
+          <div class="next-prayer">
+            <div id="${prefix}CardSalatBerikutnya">Memuat jadwal salat Pasuruan…</div>
+            <strong id="${prefix}CardHitungMundurSalat">--:--:--</strong>
+            <div id="${prefix}CardJamSalatBerikutnya"></div>
+          </div>
+        </header>
+
+        <!-- 2. Status Penyelesaian (Diagram Donat) -->
+        <div class="card dash-chart-box">
+          <div class="dash-chart-title-bar">
+            <div>
+              <span class="dash-chart-title">Status Penyelesaian</span>
+              <span class="dash-chart-subtitle">Diagram Donat</span>
+            </div>
+            <span class="dash-pill-badge">${d.total} Tugas</span>
+          </div>
+          <div class="dash-donut-flex">
+            <div class="dash-donut-ring-wrap">
+              <div class="dash-donut-ring-compact" style="background:${donutStatusBg};">
+                <div class="dash-donut-inner-compact">
+                  <span class="dash-donut-stat-main">${d.pSelesai}%</span>
+                  <span class="dash-donut-stat-lbl">Selesai</span>
+                </div>
+              </div>
+            </div>
+            <div class="dash-legend-compact">
+              <div class="dash-leg-row">
+                <div class="dash-leg-item"><span class="dash-dot bg-aksen"></span><span>Selesai</span></div>
+                <strong class="dash-leg-val text-aksen">${d.selesai} (${d.pSelesai}%)</strong>
+              </div>
+              <div class="dash-leg-row">
+                <div class="dash-leg-item"><span class="dash-dot bg-biru"></span><span>Proses</span></div>
+                <strong class="dash-leg-val text-biru">${d.proses} (${d.pProses}%)</strong>
+              </div>
+              <div class="dash-leg-row">
+                <div class="dash-leg-item"><span class="dash-dot bg-merah"></span><span>Belum</span></div>
+                <strong class="dash-leg-val text-merah">${d.belum} (${d.pBelum}%)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Progres Berdasarkan Tahap Ujian (Diagram Donat) -->
+        <div class="card dash-chart-box">
+          <div class="dash-chart-title-bar">
+            <div>
+              <span class="dash-chart-title">Tahap Ujian</span>
+              <span class="dash-chart-subtitle">Diagram Donat</span>
+            </div>
+            <span class="dash-pill-badge">IMDA 1 &amp; IMNI</span>
+          </div>
+          <div class="dash-donut-flex">
+            <div class="dash-donut-ring-wrap">
+              <div class="dash-donut-ring-compact" style="background:${donutTahapBg};">
+                <div class="dash-donut-inner-compact">
+                  <span class="dash-donut-stat-main">${d.pSelesaiTahap}%</span>
+                  <span class="dash-donut-stat-lbl">Tuntas</span>
+                </div>
+              </div>
+            </div>
+            <div class="dash-legend-compact">
+              ${d.dataTahap.map(function(th) {
+                return `
+                  <div class="dash-leg-row">
+                    <div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${th.label}</span></div>
+                    <strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Madrasah / Lembaga (Diagram Donat) -->
+        <div class="card dash-chart-box">
+          <div class="dash-chart-title-bar">
+            <div>
+              <span class="dash-chart-title">Madrasah / Lembaga</span>
+              <span class="dash-chart-subtitle">Diagram Donat</span>
+            </div>
+            <span class="dash-pill-badge">${d.dataMadrasah.length} Lembaga</span>
+          </div>
+          <div class="dash-donut-flex">
+            <div class="dash-donut-ring-wrap">
+              <div class="dash-donut-ring-compact" style="background:${donutMadrasahBg};">
+                <div class="dash-donut-inner-compact">
+                  <span class="dash-donut-stat-main">${d.pSelesaiMadrasah}%</span>
+                  <span class="dash-donut-stat-lbl">Tuntas</span>
+                </div>
+              </div>
+            </div>
+            <div class="dash-legend-compact">
+              ${d.dataMadrasah.map(function(m) {
+                return `
+                  <div class="dash-leg-row">
+                    <div class="dash-leg-item"><span class="dash-dot" style="background:${m.color};"></span><span>${m.label}</span></div>
+                    <strong class="dash-leg-val">${m.selesai}/${m.total} (${m.pct}%)</strong>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Tingkat Pendidikan (Diagram Donat) -->
+        <div class="card dash-chart-box">
+          <div class="dash-chart-title-bar">
+            <div>
+              <span class="dash-chart-title">Tingkat Pendidikan</span>
+              <span class="dash-chart-subtitle">Diagram Donat</span>
+            </div>
+            <span class="dash-pill-badge">${d.dataTingkat.length} Jenjang</span>
+          </div>
+          <div class="dash-donut-flex">
+            <div class="dash-donut-ring-wrap">
+              <div class="dash-donut-ring-compact" style="background:${donutTingkatBg};">
+                <div class="dash-donut-inner-compact">
+                  <span class="dash-donut-stat-main">${d.pSelesaiTingkat}%</span>
+                  <span class="dash-donut-stat-lbl">Tuntas</span>
+                </div>
+              </div>
+            </div>
+            <div class="dash-legend-compact">
+              ${d.dataTingkat.length ? d.dataTingkat.map(function(tk) {
+                return `
+                  <div class="dash-leg-row">
+                    <div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span title="${tk.label}">${tk.label}</span></div>
+                    <strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong>
+                  </div>
+                `;
+              }).join('') : '<div style="color:var(--teks-muted); font-size:11.5px;">Belum ada data tingkat</div>'}
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Alur & Pipeline Koreksi Soal (Diagram Donat) -->
+        <div class="card dash-chart-box">
+          <div class="dash-chart-title-bar">
+            <div>
+              <span class="dash-chart-title">Alur &amp; Pipeline Koreksi</span>
+              <span class="dash-chart-subtitle">Diagram Donat</span>
+            </div>
+            <span class="dash-pill-badge">5 Tahap</span>
+          </div>
+          <div class="dash-donut-flex">
+            <div class="dash-donut-ring-wrap">
+              <div class="dash-donut-ring-compact" style="background:${donutPipelineBg};">
+                <div class="dash-donut-inner-compact">
+                  <span class="dash-donut-stat-main">${d.pKoreksiTuntas}%</span>
+                  <span class="dash-donut-stat-lbl">Tuntas</span>
+                </div>
+              </div>
+            </div>
+            <div class="dash-legend-compact">
+              ${d.dataPipeline.map(function(p) {
+                return `
+                  <div class="dash-leg-row">
+                    <div class="dash-leg-item"><span class="dash-dot" style="background:${p.color};"></span><span>${p.label}</span></div>
+                    <strong class="dash-leg-val">${p.selesai} (${p.pct}%)</strong>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  function renderTampilanProgresDashboard() {
+    const d = hitungDataSemuaDonut();
+    const htmlCards = buatHtmlEnamKartu(d, 'dash');
+
+    const wadahDash = document.getElementById('wadahProgresDashboard');
+    if (wadahDash) wadahDash.innerHTML = htmlCards;
+
+    const pillTotal = document.getElementById('dashPillTotalTugas');
+    if (pillTotal) pillTotal.textContent = d.total + ' Tugas';
+
+    // Perbarui jam & salat di Kartu 1 Dashboard
+    perbaruiJamDashboard();
+  }
+
+  // Render TAMPILAN LENGKAP di Menu Mandiri "Progres & Grafik" (page-progresGrafik)
+  function renderTampilanProgresHalamanLengkap() {
+    const semuaTugas = ambilSemuaTugasDashboard();
+
+    const selTingkat = document.getElementById('filterPgTingkat');
+    if (selTingkat && selTingkat.options.length <= 1 && semuaTugas.length) {
+      const opsi = [...new Set(semuaTugas.map(function(x) { return String(x.tingkat || '').trim().toUpperCase(); }).filter(Boolean))].sort();
+      opsi.forEach(function(t) {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        selTingkat.appendChild(opt);
+      });
+      if (filterHalamanTingkat) selTingkat.value = filterHalamanTingkat;
+    }
+
+    const tugasDisaring = semuaTugas.filter(function(item) {
+      const m = String(item.madrasah || '').trim().toUpperCase();
+      const th = String(item.tahapUjian || '').trim().toUpperCase();
+      const tk = String(item.tingkat || '').trim().toUpperCase();
+      const st = String(item.status || 'Belum').trim();
+
+      if (filterHalamanMadrasah && m !== filterHalamanMadrasah) return false;
+      if (filterHalamanTahap && th !== filterHalamanTahap) return false;
+      if (filterHalamanTingkat && tk !== filterHalamanTingkat) return false;
+      if (filterHalamanStatus) {
+        const isSelesai = st.toLowerCase() === 'selesai';
+        if (filterHalamanStatus === 'Selesai' && !isSelesai) return false;
+        if (filterHalamanStatus === 'Belum' && isSelesai) return false;
+      }
+      return true;
+    });
+
+    const d = hitungDataSemuaDonut(tugasDisaring);
+
+    // 1. Update 6 KPI Cards
+    const elTot = document.getElementById('pgKpiTotal');
+    const elTotSub = document.getElementById('pgKpiTotalSub');
+    const elSel = document.getElementById('pgKpiSelesai');
+    const elPSel = document.getElementById('pgKpiPersenSelesai');
+    const elBarSel = document.getElementById('pgBarSelesai');
+    const elPro = document.getElementById('pgKpiProses');
+    const elPPro = document.getElementById('pgKpiPersenProses');
+    const elBarPro = document.getElementById('pgBarProses');
+    const elBel = document.getElementById('pgKpiBelum');
+    const elPBel = document.getElementById('pgKpiPersenBelum');
+    const elBarBel = document.getElementById('pgBarBelum');
+    const elSet = document.getElementById('pgKpiSetor');
+    const elKor = document.getElementById('pgKpiKoreksi');
+    const elPKor = document.getElementById('pgKpiPersenKoreksi');
+    const elBarKor = document.getElementById('pgBarKoreksi');
+
+    if (elTot) elTot.textContent = d.total;
+    if (elTotSub) elTotSub.textContent = (filterHalamanMadrasah || filterHalamanTahap || filterHalamanTingkat) ? 'Tugas (Difilter)' : 'Materi Soal';
+    if (elSel) elSel.textContent = d.selesai;
+    if (elPSel) elPSel.textContent = d.pSelesai + '%';
+    if (elBarSel) elBarSel.style.width = d.pSelesai + '%';
+    if (elPro) elPro.textContent = d.proses;
+    if (elPPro) elPPro.textContent = d.pProses + '%';
+    if (elBarPro) elBarPro.style.width = d.pProses + '%';
+    if (elBel) elBel.textContent = d.belum;
+    if (elPBel) elPBel.textContent = d.pBelum + '%';
+    if (elBarBel) elBarBel.style.width = d.pBelum + '%';
+    if (elSet) elSet.textContent = d.totalSetor;
+    if (elKor) elKor.textContent = d.totalKoreksiTuntas;
+    const pKor = d.totalSetor ? Math.min(100, Math.round((d.totalKoreksiTuntas / d.totalSetor) * 100)) : 0;
+    if (elPKor) elPKor.textContent = pKor + '%';
+    if (elBarKor) elBarKor.style.width = pKor + '%';
+
+    // 2. Render 6 Kartu (Diagram Donat)
+    const wadahHalaman = document.getElementById('wadahProgresGrafikHalaman');
+    if (wadahHalaman) wadahHalaman.innerHTML = buatHtmlEnamKartu(d, 'pg');
+
+    // Perbarui jam & salat di Kartu 1 Halaman Progres
+    perbaruiJamDashboard();
+
+    // 3. Render Papan Progres Anggota (Leaderboard)
+    const memberTbody = document.getElementById('pgMemberLeaderboardBody');
+    if (memberTbody) {
+      const peta = {};
+      tugasDisaring.forEach(function(item) {
+        const nama = String(item.nama || '—').trim();
+        if (!peta[nama]) peta[nama] = { nama: nama, total: 0, selesai: 0, belum: 0 };
+        peta[nama].total++;
+        if (String(item.status || '').toLowerCase() === 'selesai') peta[nama].selesai++;
+        else peta[nama].belum++;
+      });
+
+      let list = Object.values(peta);
+      list.forEach(function(a) { a.persen = a.total ? Math.round((a.selesai / a.total) * 100) : 0; });
+
+      if (filterHalamanCariAnggota) {
+        list = list.filter(function(a) { return a.nama.toLowerCase().includes(filterHalamanCariAnggota); });
+      }
+
+      if (urutHalamanAnggota === 'persen-desc') {
+        list.sort(function(a, b) { return b.persen - a.persen || b.total - a.total; });
+      } else if (urutHalamanAnggota === 'persen-asc') {
+        list.sort(function(a, b) { return a.persen - b.persen || b.belum - a.belum; });
+      } else if (urutHalamanAnggota === 'nama-asc') {
+        list.sort(function(a, b) { return a.nama.localeCompare(b.nama, 'id'); });
+      } else if (urutHalamanAnggota === 'tugas-desc') {
+        list.sort(function(a, b) { return b.total - a.total || b.persen - a.persen; });
+      }
+
+      if (!list.length) {
+        memberTbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--teks-muted);">Tidak ada data anggota yang sesuai dengan filter.</td></tr>';
+      } else {
+        memberTbody.innerHTML = list.map(function(a, idx) {
+          const isLengkap = a.selesai === a.total && a.total > 0;
+          return `
+            <tr>
+              <td style="text-align:center; font-family:var(--font-mono); color:var(--teks-muted);">${idx + 1}</td>
+              <td style="font-weight:700;">${aman(a.nama)}</td>
+              <td style="text-align:center; font-family:var(--font-mono);">${a.total}</td>
+              <td style="text-align:center; font-family:var(--font-mono); font-weight:700; color:var(--aksen);">${a.selesai}</td>
+              <td style="text-align:center; font-family:var(--font-mono); color:${a.belum > 0 ? 'var(--merah)' : 'var(--teks-muted)'};">${a.belum}</td>
+              <td>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div style="width:100%; height:7px; background:var(--panel2); border-radius:999px; overflow:hidden; flex:1;">
+                    <div style="height:100%; border-radius:999px; transition:width 0.4s ease; width:${a.persen}%;" class="${isLengkap ? 'bg-aksen' : 'bg-biru'}"></div>
+                  </div>
+                  <span style="font-family:var(--font-mono); font-size:11.5px; font-weight:700; width:36px; text-align:right;">${a.persen}%</span>
+                </div>
+              </td>
+              <td style="text-align:center;">
+                ${isLengkap
+                  ? '<span class="badge" style="background:var(--aksen-soft); color:var(--aksen); border-color:var(--aksen-border);">✓ Tuntas</span>'
+                  : `<span class="badge" style="background:var(--merah-soft); color:var(--merah); border-color:rgba(248,113,113,0.3);">${a.belum} Belum</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  }
+
+  function terapkanFilterProgresHalaman() {
+    const selMadrasah = document.getElementById('filterPgMadrasah');
+    const selTahap = document.getElementById('filterPgTahap');
+    const selTingkat = document.getElementById('filterPgTingkat');
+    const selStatus = document.getElementById('filterPgStatus');
+    const inputCari = document.getElementById('cariAnggotaHalaman');
+    const selUrut = document.getElementById('urutAnggotaHalaman');
+
+    filterHalamanMadrasah = selMadrasah ? selMadrasah.value.trim().toUpperCase() : '';
+    filterHalamanTahap = selTahap ? selTahap.value.trim().toUpperCase() : '';
+    filterHalamanTingkat = selTingkat ? selTingkat.value.trim().toUpperCase() : '';
+    filterHalamanStatus = selStatus ? selStatus.value.trim() : '';
+    filterHalamanCariAnggota = inputCari ? inputCari.value.trim().toLowerCase() : '';
+    urutHalamanAnggota = selUrut ? selUrut.value : 'persen-desc';
+
+    renderTampilanProgresHalamanLengkap();
+  }
+
+  function resetFilterProgresHalaman() {
+    const selMadrasah = document.getElementById('filterPgMadrasah');
+    const selTahap = document.getElementById('filterPgTahap');
+    const selTingkat = document.getElementById('filterPgTingkat');
+    const selStatus = document.getElementById('filterPgStatus');
+    const inputCari = document.getElementById('cariAnggotaHalaman');
+
+    if (selMadrasah) selMadrasah.value = '';
+    if (selTahap) selTahap.value = '';
+    if (selTingkat) selTingkat.value = '';
+    if (selStatus) selStatus.value = '';
+    if (inputCari) inputCari.value = '';
+
+    filterHalamanMadrasah = '';
+    filterHalamanTahap = '';
+    filterHalamanTingkat = '';
+    filterHalamanStatus = '';
+    filterHalamanCariAnggota = '';
+
+    renderTampilanProgresHalamanLengkap();
+  }
+
+  function renderSemuaGrafikProgres() {
+    renderTampilanProgresDashboard();
+    renderTampilanProgresHalamanLengkap();
+  }
+
+  function tampilkanHalamanAnggotaDashboard(data) {
+    const dataAktif = data || dataDashboardTersimpan;
+    if (!dataAktif) return;
+    const anggota = dataAktif.anggota || [];
     const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
     if (halamanAnggota >= totalHalaman) halamanAnggota = 0;
 
     const awal = halamanAnggota * JUMLAH_ANGGOTA_PER_HALAMAN;
     const terlihat = anggota.slice(awal, awal + JUMLAH_ANGGOTA_PER_HALAMAN);
 
-    document.getElementById('pagerDashboard').textContent = anggota.length
-      ? 'Anggota ' + (awal + 1) + '–' + Math.min(awal + JUMLAH_ANGGOTA_PER_HALAMAN, anggota.length) + ' dari ' + anggota.length
-      : '';
+    const pager = document.getElementById('pagerDashboard');
+    if (pager) {
+      pager.textContent = anggota.length
+        ? 'Anggota ' + (awal + 1) + '–' + Math.min(awal + JUMLAH_ANGGOTA_PER_HALAMAN, anggota.length) + ' dari ' + anggota.length
+        : '';
+    }
 
     const wadah = document.getElementById('anggotaDashboard');
+    if (!wadah) return;
     if (!terlihat.length) {
       wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
@@ -5122,14 +6378,23 @@
         `;
       }).join('');
     }
+  }
 
-    if (timerAnggota) clearInterval(timerAnggota);
-    if (totalHalaman > 1) {
-      timerAnggota = setInterval(function() {
-        halamanAnggota = (halamanAnggota + 1) % totalHalaman;
-        tampilkanDashboard(data);
-      }, INTERVAL_GANTI_ANGGOTA);
+  function tampilkanDashboard(data) {
+    dataDashboardTersimpan = data;
+
+    tampilkanAgenda('agendaHariIni', data.agendaHariIni || []);
+    const judulAgenda = document.getElementById('judulAgendaRentang');
+    if (judulAgenda) {
+      judulAgenda.textContent = rentangAgendaTerpilih === 'bulan' ? 'Agenda Bulan Ini' : 'Agenda Pekan Ini';
     }
+    tampilkanAgendaRentang(rentangAgendaTerpilih === 'bulan' ? data.agendaBulanIni : data.agendaPekanIni);
+
+    jadwalSalatServer = Array.isArray(data.jadwalSalat) ? data.jadwalSalat : [];
+    perbaruiHitungMundurSalat();
+
+    tampilkanHalamanAnggotaDashboard(data);
+    mulaiRotasiDashboard(data);
   }
 
   function tampilkanAgendaRentang(daftar) {
@@ -6990,7 +8255,8 @@
       return toggle ? toggle.parentElement : null;
     };
     const urutan = [
-      ambil(':scope > button[data-page="dashboard"]'),
+      ambil('#sidebarNavDashboard') || ambil(':scope > button[data-page="dashboard"]'),
+      ambil('#sidebarNavProgres') || ambil(':scope > button[data-page="progresGrafik"]'),
       ambil(':scope > button[data-page="pengguna"]'),
       ambil(':scope > button[data-page="manajemenTugas"]'),
       grup('kegiatan'), grup('dokumen'), grup('inputNilai'), grup('tugas')
