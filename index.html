@@ -1833,53 +1833,134 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      overflow: visible;
     }
     .dashboard-donut-slide[hidden] {
       display: none !important;
     }
 
-    /* Animasi Modern & Keren Antar Pergantian Slide */
+    /* Animasi Masuk: Dua Sisi Melingkar Bertemu Seperti Dua Motor */
     .slide-active-animate {
-      animation: modernSlideIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation: modernSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
-    .slide-active-animate .dash-donut-ring-hero {
-      animation: donutRingSpin 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    .slide-active-animate .dash-donut-hero-num {
-      animation: numPopIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row {
-      animation: legendRowIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(1) { animation-delay: 0.08s; }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(2) { animation-delay: 0.15s; }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(3) { animation-delay: 0.22s; }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(4) { animation-delay: 0.29s; }
-    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(5) { animation-delay: 0.36s; }
 
     @keyframes modernSlideIn {
       0% {
         opacity: 0;
-        transform: translateY(14px) scale(0.96);
-        filter: blur(5px);
+        transform: scale(0.97);
+        filter: blur(4px);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: scale(1);
         filter: blur(0);
       }
     }
 
-    @keyframes donutRingSpin {
+    .dash-donut-svg-motor {
+      display: block;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+
+    /* Rel Masker Jalur Dual Motor (Setengah Lingkaran Kanan & Kiri) */
+    .arc-motor-track {
+      stroke-dasharray: 302;
+      stroke-dashoffset: 302;
+    }
+
+    /* Dua Jalur Membuka dan Bertemu di Titik Bawah */
+    .slide-active-animate .arc-track-right,
+    .slide-active-animate .arc-track-left {
+      animation: motorRevealIn 0.85s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+
+    @keyframes motorRevealIn {
       0% {
-        transform: scale(0.85) rotate(-22deg);
-        opacity: 0.2;
+        stroke-dashoffset: 302;
       }
       100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
+        stroke-dashoffset: 0;
       }
     }
+
+    /* Dua Motor Pelari Cahaya yang Berputar dari Atas dan Bertemu di Bawah */
+    .motor-runner {
+      transform-origin: 115px 115px;
+      opacity: 0;
+    }
+
+    .slide-active-animate .runner-right {
+      animation: runnerEast 0.85s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+    .slide-active-animate .runner-left {
+      animation: runnerWest 0.85s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+
+    @keyframes runnerEast {
+      0% {
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes runnerWest {
+      0% {
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(-180deg);
+        opacity: 0;
+      }
+    }
+
+    /* Titik Temu di Bawah yang Memercik Ketika Dua Motor Bertemu */
+    .motor-collision-spark {
+      transform-origin: 115px 211px;
+      opacity: 0;
+    }
+    .slide-active-animate .motor-collision-spark {
+      animation: sparkFlash 0.5s ease-out 0.8s forwards;
+    }
+
+    @keyframes sparkFlash {
+      0% {
+        transform: scale(0.2);
+        opacity: 0;
+      }
+      40% {
+        transform: scale(2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Pop-In Angka Tengah & Legenda */
+    .slide-active-animate .dash-donut-hero-num {
+      animation: numPopIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row {
+      animation: legendRowIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(1) { animation-delay: 0.12s; }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(2) { animation-delay: 0.18s; }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(3) { animation-delay: 0.24s; }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(4) { animation-delay: 0.30s; }
+    .slide-active-animate .dash-agenda-donut-legend .dash-leg-row:nth-child(5) { animation-delay: 0.36s; }
 
     @keyframes numPopIn {
       0% {
@@ -1905,6 +1986,64 @@
         opacity: 1;
         transform: translateX(0);
       }
+    }
+
+    /* Animasi Keluar: Menutup Kembali Melingkar dari Bawah ke Atas */
+    .slide-exit-motor .arc-track-right,
+    .slide-exit-motor .arc-track-left {
+      animation: motorConcealOut 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+    }
+
+    @keyframes motorConcealOut {
+      0% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: 302;
+      }
+    }
+
+    .slide-exit-motor .runner-right {
+      animation: runnerEastReverse 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+    }
+    .slide-exit-motor .runner-left {
+      animation: runnerWestReverse 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) forwards !important;
+    }
+
+    @keyframes runnerEastReverse {
+      0% {
+        transform: rotate(180deg);
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(0deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes runnerWestReverse {
+      0% {
+        transform: rotate(-180deg);
+        opacity: 1;
+      }
+      88% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(0deg);
+        opacity: 0;
+      }
+    }
+
+    .slide-exit-motor .dash-donut-hero-num,
+    .slide-exit-motor .dash-donut-hero-lbl,
+    .slide-exit-motor .dash-agenda-donut-legend {
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      opacity: 0;
+      transform: scale(0.94);
     }
 
     .dash-agenda-donut-wrap {
@@ -1933,31 +2072,15 @@
       padding: 6px 0;
     }
 
-    .dash-donut-ring-hero {
-      width: 230px;
-      height: 230px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(45, 212, 191, 0.2);
-      transition: background 0.4s ease;
-      flex-shrink: 0;
-    }
-
-    .dash-donut-inner-hero {
-      width: 154px;
-      height: 154px;
-      border-radius: 50%;
-      background: var(--panel);
+    .dash-donut-ring-wrap {
+      flex: 0 0 auto;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.45);
     }
 
     .dash-donut-hero-num {
-      font-size: 50px;
+      font-size: 52px;
       font-weight: 800;
       color: var(--aksen);
       font-family: var(--font-mono);
@@ -1970,7 +2093,6 @@
       font-weight: 800;
       color: var(--teks-muted);
       text-transform: uppercase;
-      margin-top: 5px;
       letter-spacing: 0.08em;
     }
 
@@ -3308,20 +3430,23 @@
           </div>
           <div class="pg-kpi-card">
             <div class="pg-kpi-top">
-              <span class="pg-kpi-title">Belum / Menunggu</span>
+              <span class="pg-kpi-title">Belum / Telat</span>
               <span class="pg-kpi-badge badge-warning" id="pgKpiPersenBelum">0%</span>
             </div>
             <div class="pg-kpi-num text-merah" id="pgKpiBelum">0</div>
             <div class="pg-mini-bar"><div class="pg-mini-bar-fill bg-merah" id="pgBarBelum" style="width:0%;"></div></div>
           </div>
           <div class="pg-kpi-card">
-            <div class="pg-kpi-top"><span class="pg-kpi-title">Setor Naskah</span></div>
-            <div class="pg-kpi-num text-biru" id="pgKpiSetor">0</div>
-            <div class="pg-kpi-sub">Tersimpan di Drive</div>
+            <div class="pg-kpi-top">
+              <span class="pg-kpi-title">Menunggu Waktu</span>
+              <span class="pg-kpi-badge" style="background:var(--kuning-soft); color:var(--kuning); border:1px solid rgba(251,191,36,0.3);">Jadwal Nanti</span>
+            </div>
+            <div class="pg-kpi-num" style="color:var(--kuning);" id="pgKpiSetor">0</div>
+            <div class="pg-kpi-sub">Belum tanggal mulai</div>
           </div>
           <div class="pg-kpi-card">
             <div class="pg-kpi-top">
-              <span class="pg-kpi-title">Koreksi Tuntas</span>
+              <span class="pg-kpi-title">Masuk Koreksi</span>
               <span class="pg-kpi-badge badge-success" id="pgKpiPersenKoreksi">0%</span>
             </div>
             <div class="pg-kpi-num text-hijau" id="pgKpiKoreksi">0</div>
@@ -5975,26 +6100,58 @@
   function hitungDataSemuaDonut(tugasList) {
     tugasList = tugasList || ambilSemuaTugasDashboard();
     const total = tugasList.length;
-    const selesai = tugasList.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
-    const proses = tugasList.filter(function(x) { return String(x.status || '').toLowerCase() === 'proses'; }).length;
-    const belum = Math.max(0, total - selesai - proses);
+
+    // Tanggal hari ini ISO YYYY-MM-DD
+    const hariIni = (dataDashboardTersimpan && dataDashboardTersimpan.tanggal) || tanggalHariIniLokal();
+
+    // 1. KLASIFIKASI STATUS PENYELESAIAN (SELESAI, PROSES, TELAT/BELUM, MENUNGGU WAKTU)
+    let selesai = 0;
+    let proses = 0;
+    let telat = 0;
+    let menunggu = 0;
+
+    tugasList.forEach(function(item) {
+      const isSelesai = String(item.status || '').toLowerCase() === 'selesai';
+      if (isSelesai) {
+        selesai++;
+      } else {
+        const mulai = String(item.mulai || '').trim();
+        const selesaiTgl = String(item.selesai || '').trim();
+
+        if (selesaiTgl && hariIni > selesaiTgl) {
+          // Tugas yang sudah lewat tenggatnya
+          telat++;
+        } else if (mulai && hariIni < mulai) {
+          // Tugas yang belum sampai tanggal mulainya
+          menunggu++;
+        } else {
+          // Tugas yang sudah sampai waktunya namun belum selesai
+          proses++;
+        }
+      }
+    });
 
     const pSelesai = total ? Math.round((selesai / total) * 100) : 0;
     const pProses = total ? Math.round((proses / total) * 100) : 0;
-    const pBelum = total ? Math.max(0, 100 - pSelesai - pProses) : 0;
+    const pTelat = total ? Math.round((telat / total) * 100) : 0;
+    const pMenunggu = total ? Math.max(0, 100 - pSelesai - pProses - pTelat) : 0;
 
-    // 2. Status Donut Slices
+    // 4 Kategori Status Lengkap
     const slicesStatus = [
       { label: 'Selesai', val: selesai, color: 'var(--aksen)' },
-      { label: 'Proses', val: proses, color: 'var(--biru)' },
-      { label: 'Belum', val: belum, color: 'var(--merah)' }
+      { label: 'Dalam Proses', val: proses, color: 'var(--biru)' },
+      { label: 'Belum / Telat', val: telat, color: 'var(--merah)' },
+      { label: 'Menunggu Waktu', val: menunggu, color: 'var(--kuning)' }
     ];
 
-    // 3. Tahap Ujian Donut Slices (IMDA 1, IMNI)
-    const kelompokTahap = ['IMDA 1', 'IMNI'];
-    const tahapLain = [...new Set(tugasList.map(function(x) { return String(x.tahapUjian || '').trim().toUpperCase(); }).filter(function(x) { return x && kelompokTahap.indexOf(x) < 0; }))];
-    const semuaTahap = kelompokTahap.concat(tahapLain);
-    const warnaTahap = ['#3b82f6', '#f59e0b', 'var(--aksen)', '#a78bfa'];
+    // 2. TAHAP UJIAN: HANYA TAHAP YANG BENAR-BENAR ADA DI DATABASE (TIDAK ADA IMDA 1 JIKA 0)
+    const semuaTahap = [...new Set(tugasList.map(function(x) {
+      return String(x.tahapUjian || '').trim().toUpperCase();
+    }).filter(Boolean))].filter(function(th) {
+      return tugasList.some(function(x) { return String(x.tahapUjian || '').trim().toUpperCase() === th; });
+    }).sort();
+
+    const warnaTahap = ['#3b82f6', '#f59e0b', 'var(--aksen)', '#a78bfa', '#ec4899', '#14b8a6'];
     const dataTahap = semuaTahap.map(function(th, idx) {
       const items = tugasList.filter(function(x) { return String(x.tahapUjian || '').trim().toUpperCase() === th; });
       const totTh = items.length;
@@ -6006,7 +6163,7 @@
     const totalSemuaTahap = dataTahap.reduce(function(a, b) { return a + b.total; }, 0);
     const pSelesaiTahap = totalSemuaTahap ? Math.round((totalSelesaiTahap / totalSemuaTahap) * 100) : 0;
 
-    // 4. Madrasah Donut Slices (INDUK, RANTING, LABSOMA)
+    // 3. MADRASAH / LEMBAGA:
     const kelompokMadrasah = ['INDUK', 'RANTING', 'LABSOMA'];
     const warnaMadrasah = { 'INDUK': 'var(--aksen)', 'RANTING': 'var(--biru)', 'LABSOMA': 'var(--kuning)' };
     const dataMadrasah = kelompokMadrasah.map(function(m) {
@@ -6020,7 +6177,7 @@
     const totalSemuaMadrasah = dataMadrasah.reduce(function(a, b) { return a + b.total; }, 0);
     const pSelesaiMadrasah = totalSemuaMadrasah ? Math.round((totalSelesaiMadrasah / totalSemuaMadrasah) * 100) : 0;
 
-    // 5. Tingkat Donut Slices
+    // 4. TINGKAT PENDIDIKAN:
     const daftarTingkat = [...new Set(tugasList.map(function(x) { return String(x.tingkat || '').trim().toUpperCase(); }).filter(Boolean))].sort();
     const paletTingkat = ['var(--aksen)', 'var(--biru)', '#a78bfa', 'var(--kuning)', '#f472b6', '#34d399'];
     const dataTingkat = daftarTingkat.map(function(tk, idx) {
@@ -6034,37 +6191,117 @@
     const totalSemuaTingkat = dataTingkat.reduce(function(a, b) { return a + b.total; }, 0);
     const pSelesaiTingkat = totalSemuaTingkat ? Math.round((totalSelesaiTingkat / totalSemuaTingkat) * 100) : 0;
 
-    // 6. Alur & Pipeline Koreksi Soal Donut Slices
+    // 5. ALUR & PIPELINE KOREKSI SOAL (SESUAI ANTREAN AKTIF):
+    // Setor Naskah dihapus.
+    // Ditambahkan: Belum Masuk Koreksi (Soal yang Belum Disetor).
+    // Koreksi Bersama sesuai naskah aktual di antrean KB.
     const dataK1 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor1) || dataK1Tersimpan || [];
     const dataK2 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor2) || dataK2Tersimpan || [];
     const dataK3 = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKorektor3) || dataK3Tersimpan || [];
     const dataKB = (dataAplikasiTersimpan && dataAplikasiTersimpan.antrianKoreksiBersama) || dataKBTersimpan || [];
-    const dataRekap = (dataAplikasiTersimpan && dataAplikasiTersimpan.rekapSelesai) || dataRekapTersimpan || [];
 
-    const totalSetor = selesai;
-    const totalKoreksiTuntas = dataRekap.length;
+    const soalBelum = Math.max(0, total - selesai);
+    const k1Count = dataK1.length;
+    const k2Count = dataK2.length;
+    const k3Count = dataK3.length;
+    const kbCount = dataKB.length;
+    const tuntasKB = tugasList.filter(function(x) {
+      return String(x.statusKoreksiBersama || '').toLowerCase() === 'selesai';
+    }).length;
 
     const dataPipeline = [
-      { label: 'Setor Naskah', sub: 'Naskah masuk', val: Math.max(1, totalSetor), selesai: totalSetor, total: total || 1, pct: total ? Math.min(100, Math.round((totalSetor / total) * 100)) : 0, color: '#3b82f6' },
-      { label: 'Korektor 1', sub: 'Review 1', val: Math.max(1, dataK1.length), selesai: dataK1.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK1.length / totalSetor) * 100)) : 0, color: '#f59e0b' },
-      { label: 'Korektor 2', sub: 'Review 2', val: Math.max(1, dataK2.length), selesai: dataK2.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK2.length / totalSetor) * 100)) : 0, color: '#8b5cf6' },
-      { label: 'Korektor 3', sub: 'Review 3', val: Math.max(1, dataK3.length), selesai: dataK3.length, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((dataK3.length / totalSetor) * 100)) : 0, color: '#ec4899' },
-      { label: 'Koreksi Bersama', sub: 'Final', val: Math.max(1, totalKoreksiTuntas), selesai: totalKoreksiTuntas, total: totalSetor || 1, pct: totalSetor ? Math.min(100, Math.round((totalKoreksiTuntas / totalSetor) * 100)) : 0, color: '#10b981' }
+      { label: 'Belum Masuk Koreksi', val: soalBelum, selesai: soalBelum, total: total || 1, pct: total ? Math.round((soalBelum / total) * 100) : 0, color: 'var(--merah)' },
+      { label: 'Korektor 1', val: k1Count, selesai: k1Count, total: total || 1, pct: total ? Math.round((k1Count / total) * 100) : 0, color: '#3b82f6' },
+      { label: 'Korektor 2', val: k2Count, selesai: k2Count, total: total || 1, pct: total ? Math.round((k2Count / total) * 100) : 0, color: '#f59e0b' },
+      { label: 'Korektor 3 (IMNI)', val: k3Count, selesai: k3Count, total: total || 1, pct: total ? Math.round((k3Count / total) * 100) : 0, color: '#a855f7' },
+      { label: 'Koreksi Bersama', val: kbCount, selesai: kbCount, total: total || 1, pct: total ? Math.round((kbCount / total) * 100) : 0, color: '#10b981' }
     ];
-    const pKoreksiTuntas = totalSetor ? Math.min(100, Math.round((totalKoreksiTuntas / totalSetor) * 100)) : 0;
+
+    if (tuntasKB > 0) {
+      dataPipeline.push({
+        label: 'Tuntas Koreksi', val: tuntasKB, selesai: tuntasKB, total: total || 1, pct: total ? Math.round((tuntasKB / total) * 100) : 0, color: '#06b6d4'
+      });
+    }
+
+    const totalMasukKoreksi = total - soalBelum; // jumlah naskah yang sudah masuk alur koreksi
+    const pKoreksiTuntas = total ? Math.round((totalMasukKoreksi / total) * 100) : 0;
 
     return {
-      total, selesai, proses, belum, pSelesai, pProses, pBelum,
-      totalSetor, totalKoreksiTuntas, pKoreksiTuntas,
+      total, selesai, proses, telat, menunggu,
+      pSelesai, pProses, pTelat, pMenunggu,
+      soalBelum, totalMasukKoreksi, pKoreksiTuntas,
       slicesStatus, dataMadrasah, pSelesaiMadrasah,
       dataTahap, pSelesaiTahap,
       dataTingkat, pSelesaiTingkat,
       dataPipeline
     };
   }
+  function buatSvgDonutDualMotor(slices, centerPct, centerLbl, maskId) {
+    maskId = maskId || ('motorMask_' + Math.random().toString(36).substr(2, 6));
+    const cx = 115, cy = 115, R = 96, strokeW = 38;
+    const C = 2 * Math.PI * R; // ~ 603.1858
+    const total = slices.reduce(function(acc, s) { return acc + (Number(s.val) || 0); }, 0);
 
-  // RENDER SEBUAH DIAGRAM DONAT BESAR UNTUK SATU SLIDE CAROUSEL
-  function renderSlideDonut(judul, subjudul, badge, conicBg, centerPct, centerLbl, legendItems) {
+    let offset = 0;
+    let svgSlices = '';
+    slices.forEach(function(s) {
+      const v = Number(s.val) || 0;
+      const length = total > 0 ? (v / total) * C : 0;
+      if (length > 0) {
+        svgSlices += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${s.color}" stroke-width="${strokeW}" stroke-dasharray="${length.toFixed(2)} ${(C - length).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" />`;
+        offset += length;
+      }
+    });
+
+    if (total <= 0) {
+      svgSlices = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--panel2)" stroke-width="${strokeW}" />`;
+    }
+
+    return `
+      <svg width="230" height="230" viewBox="0 0 230 230" class="dash-donut-svg-motor">
+        <defs>
+          <filter id="glow_${maskId}" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+
+          <!-- Masker Dual-Motor: Berputar dari atas (115,19) dan bertemu di bawah (115,211) -->
+          <mask id="${maskId}">
+            <rect width="230" height="230" fill="black" />
+            <path class="arc-motor-track arc-track-right" d="M 115,19 A 96,96 0 0,1 115,211" fill="none" stroke="white" stroke-width="44" stroke-linecap="round" />
+            <path class="arc-motor-track arc-track-left" d="M 115,19 A 96,96 0 0,0 115,211" fill="none" stroke="white" stroke-width="44" stroke-linecap="round" />
+          </mask>
+        </defs>
+
+        <!-- Latar belakang lingkaran rel donat -->
+        <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--panel2)" stroke-width="${strokeW}" />
+
+        <!-- Irisan donat dengan masking dua sisi melingkar -->
+        <g transform="rotate(-90 ${cx} ${cy})" mask="url(#${maskId})">
+          ${svgSlices}
+        </g>
+
+        <!-- Lubang dalam donat & teks persentase -->
+        <circle cx="${cx}" cy="${cy}" r="77" fill="var(--panel)" />
+        <text x="${cx}" y="108" class="dash-donut-hero-num" text-anchor="middle" dominant-baseline="central">${centerPct}%</text>
+        <text x="${cx}" y="136" class="dash-donut-hero-lbl" text-anchor="middle" dominant-baseline="central">${centerLbl}</text>
+
+        <!-- Dua Motor pelari cahaya yang berputar dari atas dan bertemu di bawah -->
+        <g class="motor-runners-group">
+          <circle cx="${cx}" cy="19" class="motor-runner runner-right" r="6" fill="#ffffff" filter="url(#glow_${maskId})" />
+          <circle cx="${cx}" cy="19" class="motor-runner runner-left" r="6" fill="#ffffff" filter="url(#glow_${maskId})" />
+          <!-- Percikan cahaya saat keduanya bertemu di titik bawah -->
+          <circle cx="${cx}" cy="211" class="motor-collision-spark" r="8" fill="var(--aksen)" filter="url(#glow_${maskId})" />
+        </g>
+      </svg>
+    `;
+  }
+
+  function renderSlideDonut(judul, subjudul, badge, slices, centerPct, centerLbl, legendItems, maskId) {
+    const svgDonut = buatSvgDonutDualMotor(slices, centerPct, centerLbl, maskId);
     return `
       <div class="dash-agenda-donut-wrap">
         <div class="dash-agenda-donut-header">
@@ -6076,12 +6313,7 @@
         </div>
         <div class="dash-agenda-donut-body">
           <div class="dash-donut-ring-wrap">
-            <div class="dash-donut-ring-hero" style="background:${conicBg};">
-              <div class="dash-donut-inner-hero">
-                <span class="dash-donut-hero-num">${centerPct}%</span>
-                <span class="dash-donut-hero-lbl">${aman(centerLbl)}</span>
-              </div>
-            </div>
+            ${svgDonut}
           </div>
           <div class="dash-agenda-donut-legend">
             ${legendItems}
@@ -6091,7 +6323,7 @@
     `;
   }
 
-  // UPDATE SELURUH SLIDE DIAGRAM DONAT DI AREA AGENDA
+  // UPDATE SELURUH SLIDE DIAGRAM DONAT DI AREA AGENDA DENGAN DUAL MOTOR EFFECT
   function perbaruiSlideDonutDiAgenda() {
     const d = hitungDataSemuaDonut();
 
@@ -6100,10 +6332,11 @@
     if (elStatus) {
       const legStatus = `
         <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-aksen"></span><span>Selesai</span></div><strong class="dash-leg-val text-aksen">${d.selesai} (${d.pSelesai}%)</strong></div>
-        <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-biru"></span><span>Proses</span></div><strong class="dash-leg-val text-biru">${d.proses} (${d.pProses}%)</strong></div>
-        <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-merah"></span><span>Belum</span></div><strong class="dash-leg-val text-merah">${d.belum} (${d.pBelum}%)</strong></div>
+        <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-biru"></span><span>Dalam Proses</span></div><strong class="dash-leg-val text-biru">${d.proses} (${d.pProses}%)</strong></div>
+        <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-merah"></span><span>Belum / Telat</span></div><strong class="dash-leg-val text-merah">${d.telat} (${d.pTelat}%)</strong></div>
+        <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-kuning"></span><span>Menunggu Waktu</span></div><strong class="dash-leg-val" style="color:var(--kuning);">${d.menunggu} (${d.pMenunggu}%)</strong></div>
       `;
-      elStatus.innerHTML = renderSlideDonut('Status Penyelesaian', 'Diagram Donat', d.total + ' Tugas', buatConicGradient(d.slicesStatus), d.pSelesai, 'Selesai', legStatus);
+      elStatus.innerHTML = renderSlideDonut('Status Penyelesaian', 'Diagram Donat', d.total + ' Tugas', d.slicesStatus, d.pSelesai, 'Selesai', legStatus, 'maskStatus');
     }
 
     // 2. Slide Tahap Ujian
@@ -6112,7 +6345,7 @@
       const legTahap = d.dataTahap.map(function(th) {
         return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${aman(th.label)}</span></div><strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong></div>`;
       }).join('');
-      elTahap.innerHTML = renderSlideDonut('Progres Tahap Ujian', 'Diagram Donat', 'IMDA 1 & IMNI', buatConicGradient(d.dataTahap), d.pSelesaiTahap, 'Tuntas', legTahap);
+      elTahap.innerHTML = renderSlideDonut('Progres Tahap Ujian', 'Diagram Donat', d.dataTahap.length + ' Tahap Ujian', d.dataTahap, d.pSelesaiTahap, 'Tuntas', legTahap, 'maskTahap');
     }
 
     // 3. Slide Madrasah / Lembaga
@@ -6121,7 +6354,7 @@
       const legMadrasah = d.dataMadrasah.map(function(m) {
         return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${m.color};"></span><span>${aman(m.label)}</span></div><strong class="dash-leg-val">${m.selesai}/${m.total} (${m.pct}%)</strong></div>`;
       }).join('');
-      elMadrasah.innerHTML = renderSlideDonut('Madrasah / Lembaga', 'Diagram Donat', d.dataMadrasah.length + ' Lembaga', buatConicGradient(d.dataMadrasah), d.pSelesaiMadrasah, 'Tuntas', legMadrasah);
+      elMadrasah.innerHTML = renderSlideDonut('Madrasah / Lembaga', 'Diagram Donat', d.dataMadrasah.length + ' Lembaga', d.dataMadrasah, d.pSelesaiMadrasah, 'Tuntas', legMadrasah, 'maskMadrasah');
     }
 
     // 4. Slide Tingkat Pendidikan
@@ -6130,7 +6363,7 @@
       const legTingkat = d.dataTingkat.length ? d.dataTingkat.map(function(tk) {
         return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span title="${aman(tk.label)}">${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div>`;
       }).join('') : '<div style="color:var(--teks-muted); font-size:12px;">Belum ada data tingkat</div>';
-      elTingkat.innerHTML = renderSlideDonut('Tingkat Pendidikan', 'Diagram Donat', d.dataTingkat.length + ' Jenjang', buatConicGradient(d.dataTingkat), d.pSelesaiTingkat, 'Tuntas', legTingkat);
+      elTingkat.innerHTML = renderSlideDonut('Tingkat Pendidikan', 'Diagram Donat', d.dataTingkat.length + ' Jenjang', d.dataTingkat, d.pSelesaiTingkat, 'Tuntas', legTingkat, 'maskTingkat');
     }
 
     // 5. Slide Alur & Pipeline Koreksi Soal
@@ -6139,11 +6372,11 @@
       const legPipeline = d.dataPipeline.map(function(p) {
         return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${p.color};"></span><span>${aman(p.label)}</span></div><strong class="dash-leg-val">${p.selesai} (${p.pct}%)</strong></div>`;
       }).join('');
-      elPipeline.innerHTML = renderSlideDonut('Alur & Pipeline Koreksi', 'Diagram Donat', '5 Tahap Koreksi', buatConicGradient(d.dataPipeline), d.pKoreksiTuntas, 'Tuntas', legPipeline);
+      elPipeline.innerHTML = renderSlideDonut('Alur & Pipeline Koreksi', 'Diagram Donat', d.totalMasukKoreksi + '/' + d.total + ' Masuk Koreksi', d.dataPipeline, d.pKoreksiTuntas, 'Masuk Koreksi', legPipeline, 'maskPipeline');
     }
   }
 
-  // TAMPILKAN SLIDE AKTIF DI AREA AGENDA (TOTAL 6 SLIDE: 1 AGENDA + 5 DIAGRAM DONAT)
+  // TAMPILKAN SLIDE AKTIF DENGAN ANIMASI DUAL MOTOR MASUK & INDIKATOR KAPSUL
   function gambarSlideAgendaDashboard() {
     perbaruiSlideDonutDiAgenda();
 
@@ -6159,51 +6392,49 @@
     const totalSlide = 6;
     if (indeksSlideAgenda >= totalSlide) indeksSlideAgenda = 0;
 
-    // Sembunyikan seluruh slide terlebih dahulu
-    if (slideAgenda) slideAgenda.hidden = true;
+    const semuaSlide = [slideAgenda, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline];
+    semuaSlide.forEach(function(sl) {
+      if (sl) {
+        sl.hidden = true;
+        sl.classList.remove('slide-active-animate', 'slide-exit-motor');
+      }
+    });
     if (slidePengumuman) slidePengumuman.hidden = true;
-    if (slideStatus) slideStatus.hidden = true;
-    if (slideTahap) slideTahap.hidden = true;
-    if (slideMadrasah) slideMadrasah.hidden = true;
-    if (slideTingkat) slideTingkat.hidden = true;
-    if (slidePipeline) slidePipeline.hidden = true;
 
-    let namaSlide = '';
+    const infoSlide = [
+      { nama: 'Agenda', el: slideAgenda },
+      { nama: 'Status Penyelesaian', el: slideStatus },
+      { nama: 'Tahap Ujian', el: slideTahap },
+      { nama: 'Madrasah / Lembaga', el: slideMadrasah },
+      { nama: 'Tingkat Pendidikan', el: slideTingkat },
+      { nama: 'Alur & Pipeline Koreksi', el: slidePipeline }
+    ];
 
-    if (indeksSlideAgenda === 0) {
-      // 1. Slide Agenda (atau Pengumuman jika ada)
-      if (slideAgenda) slideAgenda.hidden = false;
-      namaSlide = 'Agenda';
-    } else if (indeksSlideAgenda === 1) {
-      // 2. Slide Status Penyelesaian (Diagram Donat)
-      if (slideStatus) slideStatus.hidden = false;
-      namaSlide = 'Status Penyelesaian';
-    } else if (indeksSlideAgenda === 2) {
-      // 3. Slide Tahap Ujian (Diagram Donat)
-      if (slideTahap) slideTahap.hidden = false;
-      namaSlide = 'Tahap Ujian';
-    } else if (indeksSlideAgenda === 3) {
-      // 4. Slide Madrasah / Lembaga (Diagram Donat)
-      if (slideMadrasah) slideMadrasah.hidden = false;
-      namaSlide = 'Madrasah / Lembaga';
-    } else if (indeksSlideAgenda === 4) {
-      // 5. Slide Tingkat Pendidikan (Diagram Donat)
-      if (slideTingkat) slideTingkat.hidden = false;
-      namaSlide = 'Tingkat Pendidikan';
-    } else if (indeksSlideAgenda === 5) {
-      // 6. Slide Alur & Pipeline Koreksi Soal (Diagram Donat)
-      if (slidePipeline) slidePipeline.hidden = false;
-      namaSlide = 'Alur & Pipeline Koreksi';
+    const slideAktif = infoSlide[indeksSlideAgenda] ? infoSlide[indeksSlideAgenda].el : slideAgenda;
+    if (slideAktif) {
+      slideAktif.hidden = false;
+      // Re-trigger entrance animation
+      void slideAktif.offsetWidth;
+      slideAktif.classList.add('slide-active-animate');
     }
 
     if (indikator) {
-      indikator.innerHTML = `
-        <span style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="majuSlideAgendaOtomatis()">
-          <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--aksen);"></span>
-          <strong>${indeksSlideAgenda + 1} dari 6</strong> · ${namaSlide}
-        </span>
-      `;
+      const capsules = infoSlide.map(function(s, idx) {
+        const isActive = (idx === indeksSlideAgenda);
+        if (isActive) {
+          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/6 · ${s.nama}</span></button>`;
+        } else {
+          return `<button type="button" class="dash-slide-capsule" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span></button>`;
+        }
+      }).join('');
+
+      indikator.innerHTML = `<div class="dash-slide-track" role="tablist">${capsules}</div>`;
     }
+  }
+
+  function lompatSlideAgendaOtomatis(idx) {
+    indeksSlideAgenda = Number(idx) || 0;
+    gambarSlideAgendaDashboard();
   }
 
   function majuSlideAgendaOtomatis() {
@@ -6211,15 +6442,29 @@
     gambarSlideAgendaDashboard();
   }
 
-  // MULAI ROTASI 6 SLIDE DI AREA AGENDA (SETIAP 6 DETIK)
+  let timerTransisiKeluar = null;
+
+  // ANIMASI KELUAR: DUA SISI MELINGKAR DARI BAWAH KEMBALI KE ATAS MENUTUP
+  function transisiKeluarSlideSebelumMaju() {
+    const slideAktif = document.querySelector('.dashboard-donut-slide:not([hidden]), #dashboardAgendaSlide:not([hidden])');
+    if (slideAktif) {
+      slideAktif.classList.remove('slide-active-animate');
+      slideAktif.classList.add('slide-exit-motor');
+    }
+    if (timerTransisiKeluar) clearTimeout(timerTransisiKeluar);
+    timerTransisiKeluar = setTimeout(function() {
+      majuSlideAgendaOtomatis();
+    }, 620);
+  }
   function mulaiSlideAgendaDashboard() {
     if (timerAgendaCarousel) { clearInterval(timerAgendaCarousel); timerAgendaCarousel = null; }
+    if (timerTransisiKeluar) { clearTimeout(timerTransisiKeluar); timerTransisiKeluar = null; }
     indeksSlideAgenda = 0;
     gambarSlideAgendaDashboard();
     timerAgendaCarousel = setInterval(function() {
       // Hanya berputar jika sedang di halaman dashboard
       if ((document.body.dataset.halaman || 'dashboard') !== 'dashboard') return;
-      majuSlideAgendaOtomatis();
+      transisiKeluarSlideSebelumMaju();
     }, INTERVAL_SLIDE_AGENDA);
   }
 
@@ -6283,16 +6528,15 @@
     if (elPro) elPro.textContent = d.proses;
     if (elPPro) elPPro.textContent = d.pProses + '%';
     if (elBarPro) elBarPro.style.width = d.pProses + '%';
-    if (elBel) elBel.textContent = d.belum;
-    if (elPBel) elPBel.textContent = d.pBelum + '%';
-    if (elBarBel) elBarBel.style.width = d.pBelum + '%';
-    if (elSet) elSet.textContent = d.totalSetor;
-    if (elKor) elKor.textContent = d.totalKoreksiTuntas;
-    const pKor = d.totalSetor ? Math.min(100, Math.round((d.totalKoreksiTuntas / d.totalSetor) * 100)) : 0;
-    if (elPKor) elPKor.textContent = pKor + '%';
-    if (elBarKor) elBarKor.style.width = pKor + '%';
+    if (elBel) elBel.textContent = d.telat;
+    if (elPBel) elPBel.textContent = d.pTelat + '%';
+    if (elBarBel) elBarBel.style.width = d.pTelat + '%';
+    if (elSet) elSet.textContent = d.menunggu;
+    if (elKor) elKor.textContent = d.totalMasukKoreksi;
+    if (elPKor) elPKor.textContent = d.pKoreksiTuntas + '%';
+    if (elBarKor) elBarKor.style.width = d.pKoreksiTuntas + '%';
 
-    // 2. Render 6 Kartu Diagram Donat di halaman mandiri
+    // 2. Render 5 Diagram Donat di halaman mandiri
     const wadahHalaman = document.getElementById('wadahProgresGrafikHalaman');
     if (wadahHalaman) {
       const donutStatusBg = buatConicGradient(d.slicesStatus);
@@ -6316,8 +6560,9 @@
               </div>
               <div class="dash-legend-compact">
                 <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-aksen"></span><span>Selesai</span></div><strong class="dash-leg-val text-aksen">${d.selesai} (${d.pSelesai}%)</strong></div>
-                <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-biru"></span><span>Proses</span></div><strong class="dash-leg-val text-biru">${d.proses} (${d.pProses}%)</strong></div>
-                <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-merah"></span><span>Belum</span></div><strong class="dash-leg-val text-merah">${d.belum} (${d.pBelum}%)</strong></div>
+                <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-biru"></span><span>Dalam Proses</span></div><strong class="dash-leg-val text-biru">${d.proses} (${d.pProses}%)</strong></div>
+                <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-merah"></span><span>Belum / Telat</span></div><strong class="dash-leg-val text-merah">${d.telat} (${d.pTelat}%)</strong></div>
+                <div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot bg-kuning"></span><span>Menunggu Waktu</span></div><strong class="dash-leg-val" style="color:var(--kuning);">${d.menunggu} (${d.pMenunggu}%)</strong></div>
               </div>
             </div>
           </div>
@@ -6325,7 +6570,7 @@
           <div class="card dash-chart-box">
             <div class="dash-chart-title-bar">
               <div><span class="dash-chart-title">Tahap Ujian</span><span class="dash-chart-subtitle">Diagram Donat</span></div>
-              <span class="dash-pill-badge">IMDA 1 &amp; IMNI</span>
+              <span class="dash-pill-badge">${d.dataTahap.length} Tahap Ujian</span>
             </div>
             <div class="dash-donut-flex">
               <div class="dash-donut-ring-wrap">
@@ -6373,7 +6618,7 @@
               </div>
               <div class="dash-legend-compact">
                 ${d.dataTingkat.length ? d.dataTingkat.map(function(tk) {
-                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span>${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div>`;
+                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span title="${aman(tk.label)}">${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div>`;
                 }).join('') : '<div style="color:var(--teks-muted); font-size:12px;">Belum ada data tingkat</div>'}
               </div>
             </div>
@@ -6382,12 +6627,12 @@
           <div class="card dash-chart-box">
             <div class="dash-chart-title-bar">
               <div><span class="dash-chart-title">Alur &amp; Pipeline Koreksi</span><span class="dash-chart-subtitle">Diagram Donat</span></div>
-              <span class="dash-pill-badge">5 Tahap</span>
+              <span class="dash-pill-badge">${d.totalMasukKoreksi}/${d.total} Masuk Koreksi</span>
             </div>
             <div class="dash-donut-flex">
               <div class="dash-donut-ring-wrap">
                 <div class="dash-donut-ring-compact" style="background:${donutPipelineBg};">
-                  <div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${d.pKoreksiTuntas}%</span><span class="dash-donut-stat-lbl">Tuntas</span></div>
+                  <div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${d.pKoreksiTuntas}%</span><span class="dash-donut-stat-lbl">Masuk</span></div>
                 </div>
               </div>
               <div class="dash-legend-compact">
@@ -6461,7 +6706,6 @@
       }
     }
   }
-
   function terapkanFilterProgresHalaman() {
     const selMadrasah = document.getElementById('filterPgMadrasah');
     const selTahap = document.getElementById('filterPgTahap');
