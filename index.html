@@ -230,7 +230,9 @@
 
     .nav-list .nav-group-toggle {
       margin-top: 4px;
-      color: var(--teks);
+      color: var(--redup);
+      font-size: 13.5px;
+      font-weight: 500;
     }
 
     .nav-list .nav-button:hover,
@@ -3216,24 +3218,46 @@
     letter-spacing: 0.03em;
   }
 
-  .nav-list .nav-button .nav-icon-inline {
+  .nav-list .nav-button .nav-icon-inline,
+  .nav-list .nav-group-toggle .nav-icon-inline {
     width: 30px;
     height: 30px;
     border-radius: 9px;
     background: var(--aksen-soft);
     color: var(--aksen);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     transition: all 0.18s ease;
   }
 
-  .nav-list .nav-button.active {
+  .nav-list .nav-button .nav-icon-inline svg,
+  .nav-list .nav-group-toggle .nav-icon-inline svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+  }
+
+  .nav-list .nav-button.active,
+  .nav-list .nav-group-toggle.aktif {
     background: var(--aksen-soft);
     color: var(--aksen);
     box-shadow: inset 4px 0 0 var(--aksen);
   }
 
-  .nav-list .nav-button.active .nav-icon-inline {
+  .nav-list .nav-button.active .nav-icon-inline,
+  .nav-list .nav-group-toggle.aktif .nav-icon-inline {
     background: var(--aksen);
     color: #ffffff;
+  }
+
+  .nav-group-toggle .chev {
+    order: 3;
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--redup);
+    transition: transform 0.2s ease;
   }
 
   /* 2. HUB MENU CARDS (Grid 2 Kolom Tegak Memanjang ke Bawah & Kartu Ramping) */
@@ -3639,14 +3663,15 @@
       </div>
 
       <nav class="nav-list">
-        <!-- Dashboard -->
+        <!-- 1. Dashboard -->
         <button class="nav-button active sonik-sidebar-item" data-page="dashboard" data-dash-view="biasa" id="sidebarNavDashboard">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </span>
           <span>Dashboard</span>
         </button>
-        <!-- Progres & Grafik (di bawah Dashboard) -->
+
+        <!-- 2. Progres & Grafik -->
         <button class="nav-button sonik-sidebar-item" data-page="progresGrafik" id="sidebarNavProgres">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
@@ -3654,6 +3679,7 @@
           <span>Progres &amp; Grafik</span>
         </button>
 
+        <!-- Menu Pintasan Khusus Anggota (SONIK) -->
         <button class="nav-button sonik-sidebar-item" data-page="tipeSoal">
           <span class="nav-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></span>
           <span>Tipe</span>
@@ -3679,34 +3705,15 @@
           <span>Template Soal</span>
         </button>
 
-        <!-- Input Nilai: submenu setara dengan Pembuatan Soal dan Koreksi Hasil Ujian -->
-        <div class="nav-grup sonik-sidebar-item sonik-input-sidebar-item">
-          <button class="nav-group-toggle" type="button" data-menu="inputNilai">
-            <span class="chev">⌃</span>
-            <span class="nav-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 4 4L8 20H4v-4z"/><path d="m14 6 4 4"/></svg></span>
-            <span>Input Nilai</span>
-          </button>
-          <div class="nav-submenu" id="menu-inputNilai" hidden>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="input" data-input-title="Input Nilai">Input Nilai</button>
-            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="admin_guru" data-input-title="Guru & Jadwal">Guru &amp; Jadwal</button>
-            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="admin_tugas" data-input-title="Manajemen Tugas">Manajemen Tugas</button>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="data_fan" data-input-title="Data Fan">Data Fan</button>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="alpa" data-input-title="Cek Alpa">Cek Alpa</button>
-            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="siswa" data-input-title="Data Induk Siswa">Data Induk Siswa</button>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="komplen" data-input-title="Komplain">Komplain</button>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="analisa" data-input-title="Analisa Nilai">Analisa Nilai</button>
-            <button class="nav-button" data-page="inputNilai" data-input-tab="analisasoal" data-input-title="Analisa Soal">Analisa Soal</button>
-          </div>
-        </div>
-
-        <!-- Manajemen Tugas (Admin & Korektor) -->
+        <!-- 3. Manajemen Tugas (Admin & Korektor) -->
         <button class="nav-button staf-only" data-page="manajemenTugas">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
           </span>
           <span>Manajemen Tugas</span>
         </button>
-        <!-- Pengguna (Khusus Admin/TU) -->
+
+        <!-- 4. Pengguna (Khusus Admin/TU) -->
         <button class="nav-button hanya-admin" data-page="pengguna">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -3714,7 +3721,24 @@
           <span>Pengguna</span>
         </button>
 
-        <!-- Dokumen -->
+        <!-- 5. Kegiatan (Menu Grup) -->
+        <div class="nav-grup">
+          <button class="nav-group-toggle" type="button" data-menu="kegiatan">
+            <span class="chev">⌃</span>
+            <span class="nav-icon-inline">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </span>
+            <span>Kegiatan</span>
+          </button>
+          <div class="nav-submenu" id="menu-kegiatan">
+            <button class="nav-button" data-page="agenda">Agenda</button>
+            <button class="nav-button" data-page="kalender">Kalender</button>
+            <button class="nav-button" data-page="rapat">Rapat</button>
+            <button class="nav-button" data-page="catatan">Catatan</button>
+          </div>
+        </div>
+
+        <!-- 6. Dokumen (Menu Grup) -->
         <div class="nav-grup">
           <button class="nav-group-toggle" type="button" data-menu="dokumen">
             <span class="chev">⌃</span>
@@ -3730,7 +3754,7 @@
           </div>
         </div>
 
-        <!-- Grub Tugas (Menaungi Pembuatan Soal, Koreksi Soal, dan Koreksi Hasil Ujian) -->
+        <!-- 7. Tugas (Menu Grup - Di Atasnya Input Nilai) -->
         <div class="nav-grup" data-menu-parent="tugas">
           <button class="nav-group-toggle" type="button" data-menu="tugas">
             <span class="chev">⌃</span>
@@ -3758,7 +3782,7 @@
               </div>
             </div>
 
-            <!-- 2. Grub Koreksi Soal (di antara Pembuatan Soal dan Koreksi Hasil Ujian) -->
+            <!-- 2. Grub Koreksi Soal -->
             <div class="nav-subgrup">
               <button class="nav-subgroup-toggle" type="button" data-submenu="koreksiSoal">
                 <span class="sub-chev">⌃</span>
@@ -3792,22 +3816,35 @@
           </div>
         </div>
 
-        <!-- Kegiatan -->
-        <div class="nav-grup">
-          <button class="nav-group-toggle" type="button" data-menu="kegiatan">
+        <!-- 8. Input Nilai (Menu Grup - Di Bawah Tugas) -->
+        <div class="nav-grup sonik-sidebar-item sonik-input-sidebar-item">
+          <button class="nav-group-toggle" type="button" data-menu="inputNilai">
             <span class="chev">⌃</span>
             <span class="nav-icon-inline">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 4 4L8 20H4v-4z"/><path d="m14 6 4 4"/></svg>
             </span>
-            <span>Kegiatan</span>
+            <span>Input Nilai</span>
           </button>
-          <div class="nav-submenu" id="menu-kegiatan">
-            <button class="nav-button" data-page="agenda">Agenda</button>
-            <button class="nav-button" data-page="kalender">Kalender</button>
-            <button class="nav-button" data-page="rapat">Rapat</button>
-            <button class="nav-button" data-page="catatan">Catatan</button>
+          <div class="nav-submenu" id="menu-inputNilai" hidden>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="input" data-input-title="Input Nilai">Input Nilai</button>
+            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="admin_guru" data-input-title="Guru & Jadwal">Guru &amp; Jadwal</button>
+            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="admin_tugas" data-input-title="Manajemen Tugas">Manajemen Tugas</button>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="data_fan" data-input-title="Data Fan">Data Fan</button>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="alpa" data-input-title="Cek Alpa">Cek Alpa</button>
+            <button class="nav-button input-admin-only" data-page="inputNilai" data-input-tab="siswa" data-input-title="Data Induk Siswa">Data Induk Siswa</button>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="komplen" data-input-title="Komplain">Komplain</button>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="analisa" data-input-title="Analisa Nilai">Analisa Nilai</button>
+            <button class="nav-button" data-page="inputNilai" data-input-tab="analisasoal" data-input-title="Analisa Soal">Analisa Soal</button>
           </div>
         </div>
+
+        <!-- 9. Analisa (Menu Terakhir di Paling Bawah Setelah Input Nilai) -->
+        <button class="nav-button sonik-sidebar-item" data-page="analisa" id="sidebarNavAnalisa">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          </span>
+          <span>Analisa</span>
+        </button>
       </nav>
 
       <div class="sidebar-user">
@@ -4140,6 +4177,34 @@
               <tbody id="pgMemberLeaderboardBody"></tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- PAGE: ANALISA (Aplikasi Analisa Eksternal: inputnilaipk-umum) -->
+      <section class="page" id="page-analisa">
+        <div class="analisa-header-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h1 class="page-heading" style="margin:0; font-size:22px; display:inline-flex; align-items:center; gap:8px;">
+              <span style="display:inline-flex; color:var(--aksen);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+              </span>
+              Aplikasi Analisa
+            </h1>
+            <p class="subheading" style="margin:2px 0 0; font-size:13px; color:var(--redup);">Integrasi aplikasi analisa nilai &amp; soal Labsoma PPS tanpa membuka tab baru.</p>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:8px;">
+            <button type="button" class="button secondary small" onclick="segarkanIframeAnalisa()" title="Muat ulang aplikasi analisa" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Segarkan
+            </button>
+            <a href="https://labsomapps.github.io/inputnilaipk-umum/" target="_blank" rel="noopener noreferrer" class="button secondary small" title="Buka di tab baru" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Buka Tab Baru
+            </a>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; border-radius:var(--radius-lg); height:calc(100vh - 170px); min-height:560px; background:var(--panel);">
+          <iframe id="analisaFrame" src="about:blank" data-src="https://labsomapps.github.io/inputnilaipk-umum/" title="Aplikasi Analisa" style="display:block; width:100%; height:100%; border:0; background:transparent;" allow="fullscreen; clipboard-read; clipboard-write;"></iframe>
         </div>
       </section>
 
@@ -6264,6 +6329,7 @@
 
   /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
   const PETA_HALAMAN = {
+    analisa:        { tab: 'analisa' },
     inputNilai:     { tab: 'inputNilai' },
 
     hubTugas:       { tab: 'tugas' },
@@ -6349,6 +6415,12 @@
     } else {
       if (timerAgendaCarousel) { clearInterval(timerAgendaCarousel); timerAgendaCarousel = null; }
       if (timerAnggota) { clearInterval(timerAnggota); timerAnggota = null; }
+    }
+    if (nama === 'analisa') {
+      const f = document.getElementById('analisaFrame');
+      if (f && (f.src === 'about:blank' || !f.src || f.src.indexOf('inputnilaipk-umum') === -1)) {
+        f.src = f.dataset.src || 'https://labsomapps.github.io/inputnilaipk-umum/';
+      }
     }
     if (nama === 'progresGrafik') {
       if (typeof renderTampilanProgresHalamanLengkap === 'function') {
@@ -6559,6 +6631,16 @@
   }
 
   /* (Slide switcher aktif dipindahkan dan disempurnakan dengan 7 slide di bawah) */
+  function segarkanIframeAnalisa() {
+    const f = document.getElementById('analisaFrame');
+    if (f) {
+      f.src = 'about:blank';
+      setTimeout(function() {
+        f.src = f.dataset.src || 'https://labsomapps.github.io/inputnilaipk-umum/';
+      }, 60);
+    }
+  }
+
   function rincianKelasTingkat(item, namaAnggota) {
     const bagian = [];
     if (item.kelas) bagian.push(aman(item.kelas));
@@ -9719,7 +9801,11 @@
       ambil('#sidebarNavProgres') || ambil(':scope > button[data-page="progresGrafik"]'),
       ambil(':scope > button[data-page="pengguna"]'),
       ambil(':scope > button[data-page="manajemenTugas"]'),
-      grup('kegiatan'), grup('dokumen'), grup('inputNilai'), grup('tugas')
+      grup('kegiatan'),
+      grup('dokumen'),
+      grup('tugas'),
+      grup('inputNilai'),
+      ambil('#sidebarNavAnalisa') || ambil(':scope > button[data-page="analisa"]')
     ].filter(Boolean);
     urutan.forEach(function(item) { daftar.appendChild(item); });
   }
@@ -10291,7 +10377,7 @@
 
 
   /* ===== MANAJEMEN TUGAS, TUGAS TERKAIT & TAMPILAN SONIK ===== */
-  const HALAMAN_SONIK = ['tugasTerkait', 'inputNilai', 'pengumuman', 'dashboard', 'batasPelajaran', 'tipeSoal', 'setorSoal', 'dataMateri'];
+  const HALAMAN_SONIK = ['analisa', 'tugasTerkait', 'inputNilai', 'pengumuman', 'dashboard', 'batasPelajaran', 'tipeSoal', 'setorSoal', 'dataMateri'];
   let sesiAktif = null;
   let mtDaftar = [];
   let mtAnggota = [];
@@ -11257,6 +11343,7 @@ function simpanFile(f) {
       mekanismeSoal: { tab: 'tugas', induk: 'hubSoal' }
     });
     if (HALAMAN_SONIK.indexOf('cetakTemplate') < 0) HALAMAN_SONIK.push('cetakTemplate');
+  if (HALAMAN_SONIK.indexOf('analisa') < 0) HALAMAN_SONIK.push('analisa');
   } catch (e) { console.error('Template Soal: gagal mendaftarkan halaman', e); }
 
   const bukaSebelumnya = bukaHalaman;
