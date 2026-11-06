@@ -2514,7 +2514,567 @@
       .dash-agenda-donut-body { flex-direction: column; }
     }
 
-  </style>
+  
+    /* ===== SLIDE HITUNG MUNDUR AGENDA MENDATANG (2 SISI: KIRI ANGKA & KANAN AGENDA) ===== */
+    .dashboard-countdown-slide {
+      height: 100%;
+      min-height: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: stretch;
+      overflow: hidden;
+      padding: 0;
+    }
+    .dashboard-countdown-slide[hidden] {
+      display: none !important;
+    }
+
+    /* Outer Glass HUD container split into 2 sides */
+    .dash-countdown-hud.dash-countdown-split {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      min-height: 100%;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 22px;
+      align-items: stretch;
+      background: linear-gradient(145deg, rgba(17, 28, 45, 0.92) 0%, rgba(9, 14, 23, 0.98) 100%);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      border-radius: var(--radius-lg, 16px);
+      padding: 16px 20px 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    body[data-theme="light"] .dash-countdown-hud.dash-countdown-split {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 249, 255, 0.95) 100%);
+      border: 1px solid rgba(14, 165, 233, 0.4);
+      box-shadow: 0 10px 30px rgba(14, 165, 233, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .dash-countdown-hud::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 30%;
+      width: 500px;
+      height: 220px;
+      background: radial-gradient(ellipse at center, rgba(45, 212, 191, 0.2) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 80%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body[data-theme="light"] .dash-countdown-hud::before {
+      background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.16) 0%, rgba(45, 212, 191, 0.08) 50%, transparent 80%);
+    }
+
+    /* =========================================
+       SISI KIRI: TAMPILAN ANGKA COUNTDOWN
+       ========================================= */
+    .dash-cd-side-left {
+      position: relative;
+      z-index: 1;
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* Wadah Angka HARI Berbentuk Persegi (Aspect Ratio 1:1, lurus dengan 3 kartu di bawahnya) */
+    .dash-cd-card-hari-square {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      box-sizing: border-box;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border: 1.5px solid rgba(45, 212, 191, 0.48);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px 10px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+
+    body[data-theme="light"] .dash-cd-card-hari-square {
+      background: linear-gradient(145deg, #ffffff 0%, #f0f9ff 100%);
+      border: 1.5px solid rgba(14, 165, 233, 0.48);
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    .dash-cd-digit-hari {
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: clamp(64px, 6.8vw, 84px);
+      font-weight: 900;
+      line-height: 0.95;
+      color: #2dd4bf;
+      letter-spacing: -0.05em;
+      text-shadow: 0 0 28px rgba(45, 212, 191, 0.6);
+      margin-top: 2px;
+    }
+
+    body[data-theme="light"] .dash-cd-digit-hari {
+      color: #0284c7;
+      text-shadow: none;
+    }
+
+    .dash-cd-hari-label {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      color: var(--teks);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Subgrid Bawah: JAM, MENIT, DETIK (Selebar kotak Hari agar lurus dan rapi) */
+    .dash-cd-subgrid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .dash-cd-card {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      padding: 8px 4px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease;
+    }
+
+    body[data-theme="light"] .dash-cd-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .dash-cd-card.highlight-sec {
+      border-color: rgba(45, 212, 191, 0.4);
+      box-shadow: 0 6px 18px rgba(45, 212, 191, 0.18), inset 0 1px 0 rgba(45, 212, 191, 0.3);
+    }
+
+    body[data-theme="light"] .dash-cd-card.highlight-sec {
+      border-color: rgba(14, 165, 233, 0.45);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.15);
+    }
+
+    .dash-cd-digit {
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: clamp(22px, 2.3vw, 28px);
+      font-weight: 800;
+      color: #38bdf8;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+    }
+
+    body[data-theme="light"] .dash-cd-digit {
+      color: #0284c7;
+      text-shadow: none;
+    }
+
+    .dash-cd-card.highlight-sec .dash-cd-digit {
+      color: #2dd4bf;
+      text-shadow: 0 0 18px rgba(45, 212, 191, 0.6);
+    }
+
+    body[data-theme="light"] .dash-cd-card.highlight-sec .dash-cd-digit {
+      color: #0d9488;
+      text-shadow: none;
+    }
+
+    .dash-cd-label {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--teks-muted);
+      letter-spacing: 0.12em;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .dash-cd-label-pip {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--aksen);
+      display: inline-block;
+    }
+
+    .dash-cd-sep {
+      font-family: var(--font-mono, monospace);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--teks-muted);
+      opacity: 0.4;
+      margin-top: -6px;
+      flex-shrink: 0;
+    }
+
+    /* =========================================
+       SISI KANAN: NAMA AGENDA & LAIN-LAIN
+       ========================================= */
+    .dash-cd-side-right {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      height: 100%;
+    }
+
+    /* Top bar: Badge & Mini Nav */
+    .dash-countdown-header {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .dash-countdown-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      color: var(--aksen, #2dd4bf);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    body[data-theme="light"] .dash-countdown-badge {
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.35);
+      color: #0284c7;
+    }
+
+    .dash-countdown-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2dd4bf;
+      box-shadow: 0 0 10px #2dd4bf;
+      animation: cdPulseGlow 1.8s infinite ease-in-out;
+    }
+
+    @keyframes cdPulseGlow {
+      0%, 100% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 6px #2dd4bf; }
+      50% { transform: scale(1.25); opacity: 1; box-shadow: 0 0 14px #2dd4bf, 0 0 24px rgba(45, 212, 191, 0.6); }
+    }
+
+    .dash-countdown-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid var(--garis);
+    }
+
+    .dash-cd-btn-nav {
+      background: transparent;
+      border: none;
+      color: var(--teks);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dash-cd-btn-nav:hover {
+      background: var(--aksen);
+      color: #042f2e;
+    }
+
+    .dash-cd-nav-indicator {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--teks-muted);
+      min-width: 26px;
+      text-align: center;
+    }
+
+    /* Main Agenda Details (Nama Agenda Diperbesar Lagi) */
+    .dash-countdown-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .dash-countdown-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .dash-countdown-icon {
+      font-size: 26px;
+      filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.5));
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* NAMA AGENDA DIPERBESAR LAGI */
+    .dash-countdown-title {
+      margin: 0;
+      font-size: clamp(22px, 2.4vw, 32px);
+      font-weight: 900;
+      color: var(--teks);
+      letter-spacing: -0.02em;
+      line-height: 1.22;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .dash-countdown-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 12px;
+      font-size: 12px;
+      color: var(--teks-muted);
+    }
+
+    .dash-cd-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--garis);
+      font-weight: 600;
+    }
+
+    body[data-theme="light"] .dash-cd-meta-item {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    /* Keterangan Agenda Box (Tanpa icon & awalan Keterangan:) */
+    .dash-cd-keterangan-wrap {
+      margin-top: 2px;
+    }
+
+    .dash-cd-keterangan {
+      display: block;
+      background: rgba(45, 212, 191, 0.08);
+      border: 1px dashed rgba(45, 212, 191, 0.4);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 12.5px;
+      color: var(--teks);
+      line-height: 1.45;
+    }
+
+    body[data-theme="light"] .dash-cd-keterangan {
+      background: rgba(14, 165, 233, 0.08);
+      border: 1px dashed rgba(14, 165, 233, 0.4);
+      color: #0f172a;
+    }
+
+    .dash-cd-ket-text {
+      color: inherit;
+      display: block;
+      word-break: break-word;
+    }
+    /* Bottom: Progress bar, status & pills */
+    .dash-countdown-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .dash-countdown-progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dash-countdown-progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+    }
+
+    body[data-theme="light"] .dash-countdown-progress-bar {
+      background: rgba(0, 0, 0, 0.08);
+    }
+
+    .dash-countdown-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9 0%, #2dd4bf 50%, #a855f7 100%);
+      border-radius: 999px;
+      transition: width 0.5s ease;
+      position: relative;
+    }
+
+    .dash-countdown-progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
+      animation: cdLaserShimmer 2.2s infinite linear;
+    }
+
+    @keyframes cdLaserShimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .dash-countdown-status {
+      font-size: 12px;
+      color: var(--teks-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .dash-cd-live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2dd4bf;
+      display: inline-block;
+    }
+
+    .dash-cd-live-dot.warn {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    /* Horizontal Pills Strip */
+    .dash-countdown-pills-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-top: 2px;
+      scrollbar-width: thin;
+      flex-shrink: 0;
+    }
+
+    .dash-cd-pill-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--garis);
+      color: var(--teks-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    body[data-theme="light"] .dash-cd-pill-btn {
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .dash-cd-pill-btn:hover {
+      background: rgba(45, 212, 191, 0.15);
+      border-color: rgba(45, 212, 191, 0.35);
+      color: var(--teks);
+    }
+
+    .dash-cd-pill-btn.active {
+      background: rgba(45, 212, 191, 0.2);
+      border-color: var(--aksen);
+      color: var(--aksen);
+      font-weight: 700;
+    }
+
+    body[data-theme="light"] .dash-cd-pill-btn.active {
+      background: rgba(14, 165, 233, 0.15);
+      border-color: #0284c7;
+      color: #0284c7;
+    }
+
+    .dash-cd-pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Responsif untuk layar kecil / mobile */
+    @media (max-width: 768px) {
+      .dash-countdown-hud.dash-countdown-split {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 14px 14px 20px;
+      }
+      .dash-cd-side-left {
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto;
+      }
+      .dash-cd-card-hari-square {
+        max-height: 180px;
+      }
+      .dash-cd-digit-hari {
+        font-size: 52px;
+      }
+      .dash-countdown-title {
+        font-size: 18px;
+      }
+    }
+</style>
 <style id="mobile-input-standalone-page">
   @media (max-width: 768px) {
     body[data-halaman="inputNilai"] { overflow:hidden !important; }
@@ -3321,6 +3881,96 @@
               <h2 class="section-title" id="judulDashboardPengumuman">Pengumuman</h2>
               <div id="dashboardPengumuman"></div>
             </section>
+
+            <!-- SLIDE 2: Hitung Mundur Agenda Mendatang (Futuristic Cyber HUD) -->
+            <div id="slideCountdownAgenda" class="dashboard-countdown-slide" hidden>
+              <div class="dash-countdown-hud dash-countdown-split">
+                
+                <!-- SISI KIRI: TAMPILAN ANGKA COUNTDOWN -->
+                <div class="dash-cd-side-left">
+                  <!-- Kotak Angka HARI (Persegi, ukuran lebar setara 3 kartu di bawahnya agar lurus dan rapi) -->
+                  <div class="dash-cd-card-hari-square">
+                    <div class="dash-cd-card-glow"></div>
+                    <div class="dash-cd-digit-hari" id="dashCdHari">00</div>
+                    <div class="dash-cd-hari-label">
+                      <span class="dash-cd-label-pip"></span>
+                      <span class="dash-cd-hari-text">HARI LAGI</span>
+                    </div>
+                  </div>
+
+                  <!-- Baris Bawah: JAM, MENIT, DETIK (Ukuran tetap, lurus di bawah kotak Hari) -->
+                  <div class="dash-cd-subgrid">
+                    <div class="dash-cd-card">
+                      <div class="dash-cd-digit" id="dashCdJamNum">00</div>
+                      <div class="dash-cd-label"><span class="dash-cd-label-pip"></span>JAM</div>
+                    </div>
+                    <div class="dash-cd-sep">:</div>
+                    <div class="dash-cd-card">
+                      <div class="dash-cd-digit" id="dashCdMenit">00</div>
+                      <div class="dash-cd-label"><span class="dash-cd-label-pip"></span>MENIT</div>
+                    </div>
+                    <div class="dash-cd-sep">:</div>
+                    <div class="dash-cd-card highlight-sec">
+                      <div class="dash-cd-digit" id="dashCdDetik">00</div>
+                      <div class="dash-cd-label"><span class="dash-cd-label-pip"></span>DETIK</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SISI KANAN: NAMA AGENDA & LAIN-LAIN -->
+                <div class="dash-cd-side-right">
+                  <!-- Top Bar: Badge & Nav -->
+                  <div class="dash-countdown-header">
+                    <div class="dash-countdown-badge">
+                      <span class="dash-countdown-pulse"></span>
+                      <span class="dash-countdown-badge-text">AGENDA TERDEKAT MENDATANG</span>
+                    </div>
+                    <div class="dash-countdown-nav" id="dashCountdownNav">
+                      <button type="button" class="dash-cd-btn-nav" onclick="gantiAgendaCountdown(-1)" title="Agenda Sebelumnya">‹</button>
+                      <span class="dash-cd-nav-indicator" id="dashCdNavIndicator">1/1</span>
+                      <button type="button" class="dash-cd-btn-nav" onclick="gantiAgendaCountdown(1)" title="Agenda Berikutnya">›</button>
+                    </div>
+                  </div>
+
+                  <!-- Main Agenda Details: Nama Agenda Diperbesar Lagi, Meta Badges & Keterangan -->
+                  <div class="dash-countdown-info">
+                    <div class="dash-countdown-title-wrap">
+                      <span class="dash-countdown-icon">⚡</span>
+                      <h3 class="dash-countdown-title" id="dashCdTitle">Memuat Agenda Mendatang...</h3>
+                    </div>
+                    
+                    <div class="dash-countdown-meta" id="dashCdMeta">
+                      <span class="dash-cd-meta-item" id="dashCdTanggal">📅 —</span>
+                      <span class="dash-cd-meta-item" id="dashCdJam">⏰ —</span>
+                      <span class="dash-cd-meta-item" id="dashCdTempat" style="display:none">📍 —</span>
+                      <span class="dash-cd-meta-item" id="dashCdPJ" style="display:none">👤 —</span>
+                    </div>
+
+                    <!-- Keterangan Agenda Box (Tanpa awalan 📌 Keterangan:) -->
+                    <div class="dash-cd-keterangan-wrap" id="dashCdKeteranganWrap">
+                      <div class="dash-cd-keterangan" id="dashCdKeterangan">
+                        <span class="dash-cd-ket-text" id="dashCdKetText">Memuat rincian agenda...</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bottom Status & Energy Progress Bar -->
+                  <div class="dash-countdown-bottom">
+                    <div class="dash-countdown-progress-wrap">
+                      <div class="dash-countdown-progress-bar">
+                        <div class="dash-countdown-progress-fill" id="dashCdProgressFill" style="width: 50%"></div>
+                      </div>
+                      <div class="dash-countdown-status" id="dashCdStatus">
+                        <span class="dash-cd-live-dot"></span> Menghitung mundur menuju agenda
+                      </div>
+                    </div>
+
+                    <div class="dash-countdown-pills-strip" id="dashCdPillsStrip" style="display:none"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
 
             <!-- SLIDE 2: Status Penyelesaian (Diagram Donat) -->
             <div id="slideDonutStatus" class="dashboard-donut-slide" hidden></div>
@@ -5556,6 +6206,9 @@
   function perbaruiJamDashboard() {
     const istiwak = waktuIstiwak();
     perbaruiHitungMundurSalat();
+    if (typeof perbaruiTickerCountdownAgenda === 'function') {
+      perbaruiTickerCountdownAgenda();
+    }
 
     const tHijri = formatTanggalHijriyah(istiwak);
     const tMasehi = '' + new Intl.DateTimeFormat('id-ID', {
@@ -5905,83 +6558,7 @@
     perbaruiNotifikasiPengumuman(semuaPengumumanTersimpan);
   }
 
-  function gambarSlideAgendaDashboard() {
-    perbaruiSlideDonutDiAgenda();
-
-    const slideAgenda = document.getElementById('dashboardAgendaSlide');
-    const slidePengumuman = document.getElementById('dashboardPengumumanSlide');
-    const slideStatus = document.getElementById('slideDonutStatus');
-    const slideTahap = document.getElementById('slideDonutTahap');
-    const slideMadrasah = document.getElementById('slideDonutMadrasah');
-    const slideTingkat = document.getElementById('slideDonutTingkat');
-    const slidePipeline = document.getElementById('slideDonutPipeline');
-    const indikator = document.getElementById('dashboardSlideIndicator');
-
-    const totalSlide = 6;
-    if (indeksSlideAgenda >= totalSlide) indeksSlideAgenda = 0;
-
-    const semuaSlide = [slideAgenda, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline];
-    semuaSlide.forEach(function(sl) {
-      if (sl) {
-        sl.hidden = true;
-        sl.classList.remove('slide-active-animate');
-      }
-    });
-    if (slidePengumuman) slidePengumuman.hidden = true;
-
-    const infoSlide = [
-      { nama: 'Agenda', el: slideAgenda },
-      { nama: 'Status Penyelesaian', el: slideStatus },
-      { nama: 'Tahap Ujian', el: slideTahap },
-      { nama: 'Madrasah / Lembaga', el: slideMadrasah },
-      { nama: 'Tingkat Pendidikan', el: slideTingkat },
-      { nama: 'Alur & Pipeline Koreksi', el: slidePipeline }
-    ];
-
-    const slideAktif = infoSlide[indeksSlideAgenda] ? infoSlide[indeksSlideAgenda].el : slideAgenda;
-    if (slideAktif) {
-      slideAktif.hidden = false;
-      // Re-trigger modern entrance animation
-      void slideAktif.offsetWidth;
-      slideAktif.classList.add('slide-active-animate');
-    }
-
-    // Tampilkan Indikator Kapsul Modern yang Interaktif
-    if (indikator) {
-      const capsules = infoSlide.map(function(s, idx) {
-        const isActive = (idx === indeksSlideAgenda);
-        if (isActive) {
-          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/6 · ${s.nama}</span></button>`;
-        } else {
-          return `<button type="button" class="dash-slide-capsule" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span></button>`;
-        }
-      }).join('');
-
-      indikator.innerHTML = `<div class="dash-slide-track" role="tablist">${capsules}</div>`;
-    }
-  }
-
-  function lompatSlideAgendaOtomatis(idx) {
-    indeksSlideAgenda = Number(idx) || 0;
-    gambarSlideAgendaDashboard();
-  }
-
-  function majuSlideAgendaOtomatis() {
-    indeksSlideAgenda = (indeksSlideAgenda + 1) % 6;
-    gambarSlideAgendaDashboard();
-  }
-  function mulaiSlideAgendaDashboard() {
-    if (timerAgendaDashboard) { clearInterval(timerAgendaDashboard); timerAgendaDashboard = null; }
-    indeksSlideAgenda = 0;
-    gambarSlideAgendaDashboard();
-    if (pengumumanDashboard.length) {
-      timerAgendaDashboard = setInterval(function() {
-        indeksSlideAgenda = (indeksSlideAgenda + 1) % (1 + pengumumanDashboard.length);
-        gambarSlideAgendaDashboard();
-      }, INTERVAL_GANTI_ANGGOTA);
-    }
-  }
-
+  /* (Slide switcher aktif dipindahkan dan disempurnakan dengan 7 slide di bawah) */
   function rincianKelasTingkat(item, namaAnggota) {
     const bagian = [];
     if (item.kelas) bagian.push(aman(item.kelas));
@@ -6376,11 +6953,423 @@
     }
   }
 
+  
+  /* ===== LOGIKA HITUNG MUNDUR AGENDA MENDATANG (COUNTDOWN HUD) ===== */
+  let indeksAgendaCountdownAktif = 0;
+  let daftarAgendaCountdownCache = [];
+  let timerRotasiSubAgenda = null;
+
+  const PETA_BULAN_INDONESIA = {
+    jan: 0, januari: 0, january: 0,
+    feb: 1, februari: 1, february: 1,
+    mar: 2, maret: 2, march: 2,
+    apr: 3, april: 3,
+    mei: 4, may: 4,
+    jun: 5, juni: 5, june: 5,
+    jul: 6, juli: 6, july: 6,
+    agu: 7, agustus: 7, aug: 7, august: 7,
+    sep: 8, september: 8,
+    okt: 9, oktober: 9, oct: 9, october: 9,
+    nov: 10, november: 10,
+    des: 11, desember: 11, dec: 11, december: 11
+  };
+
+  function parseTanggalWaktuUniversal(tglStr, jamStr) {
+    if (!tglStr) return null;
+    let tgl = String(tglStr).trim();
+    let jam = 8, menit = 0;
+    if (jamStr) {
+      const matchJam = String(jamStr).match(/(\d{1,2})[:.](\d{2})/);
+      if (matchJam) {
+        jam = parseInt(matchJam[1], 10);
+        menit = parseInt(matchJam[2], 10);
+      }
+    }
+
+    if (tglStr instanceof Date && !isNaN(tglStr.getTime())) {
+      const d = new Date(tglStr.getTime());
+      if (jamStr) d.setHours(jam, menit, 0, 0);
+      return d;
+    }
+
+    // ISO format: YYYY-MM-DD atau YYYY/MM/DD
+    const mIso = tgl.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+    if (mIso) {
+      return new Date(parseInt(mIso[1], 10), parseInt(mIso[2], 10) - 1, parseInt(mIso[3], 10), jam, menit, 0);
+    }
+
+    // Format DD/MM/YYYY atau DD-MM-YYYY
+    const mDmy = tgl.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+    if (mDmy) {
+      return new Date(parseInt(mDmy[3], 10), parseInt(mDmy[2], 10) - 1, parseInt(mDmy[1], 10), jam, menit, 0);
+    }
+
+    // Format bulan tekstual: "12 Des 2026" atau "Sab, 12 Desember 2026"
+    const mText = tgl.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+    if (mText) {
+      const d = parseInt(mText[1], 10);
+      const bKey = mText[2].toLowerCase().slice(0, 3);
+      const y = parseInt(mText[3], 10);
+      if (PETA_BULAN_INDONESIA[bKey] !== undefined) {
+        return new Date(y, PETA_BULAN_INDONESIA[bKey], d, jam, menit, 0);
+      }
+    }
+
+    // Parse standar
+    const parsed = new Date(tgl);
+    if (!isNaN(parsed.getTime())) {
+      parsed.setHours(jam, menit, 0, 0);
+      return parsed;
+    }
+
+    return null;
+  }
+
+  function kumpulkanSemuaAgendaMendatang() {
+    const sekarang = new Date();
+    const kumpulan = [];
+    const dilihat = new Set();
+
+    function formatIsoTanggal(d) {
+      if (!d) return '';
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dt = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dt}`;
+    }
+
+    function tambah(item, sumber) {
+      if (!item || !item.agenda) return;
+      const key = (item.agenda || '').trim().toLowerCase() + '|' + (item.tanggal || '') + '|' + (item.jam || '');
+      if (dilihat.has(key)) return;
+      dilihat.add(key);
+
+      const target = parseTanggalWaktuUniversal(item.tanggal, item.jam);
+      if (!target || isNaN(target.getTime())) return;
+
+      const selisihMs = target.getTime() - sekarang.getTime();
+      // Masukkan agenda jika masih akan datang atau baru dimulai dalam 2 jam terakhir
+      if (selisihMs > -7200000) {
+        kumpulan.push({
+          agenda: item.agenda,
+          tanggal: item.tanggal,
+          jam: item.jam,
+          tempat: item.tempat || '',
+          penanggungJawab: item.penanggungJawab || item.pj || '',
+          keterangan: item.keterangan || item.ket || item.deskripsi || item.rincian || '',
+          targetDate: target,
+          sumber: sumber
+        });
+      }
+    }
+
+    // Kumpulkan dari seluruh sumber agenda yang ada di aplikasi
+    if (typeof dataDashboardTersimpan !== 'undefined' && dataDashboardTersimpan) {
+      (dataDashboardTersimpan.agendaHariIni || []).forEach(x => tambah(x, 'Hari Ini'));
+      (dataDashboardTersimpan.agendaPekanIni || []).forEach(x => tambah(x, 'Pekan Ini'));
+      (dataDashboardTersimpan.agendaBulanIni || []).forEach(x => tambah(x, 'Bulan Ini'));
+    }
+    if (typeof dataAplikasiTersimpan !== 'undefined' && dataAplikasiTersimpan && Array.isArray(dataAplikasiTersimpan.semuaAgenda)) {
+      dataAplikasiTersimpan.semuaAgenda.forEach(x => tambah(x, 'Semua'));
+    }
+
+    // Lengkapi keterangan & detail dari semuaAgenda jika item dashboard masih minim atribut
+    kumpulan.forEach(function(ag) {
+      if ((!ag.keterangan || !ag.tempat || !ag.penanggungJawab) && typeof dataAplikasiTersimpan !== 'undefined' && dataAplikasiTersimpan && Array.isArray(dataAplikasiTersimpan.semuaAgenda)) {
+        const agNorm = (ag.agenda || '').trim().toLowerCase();
+        const temukan = dataAplikasiTersimpan.semuaAgenda.find(function(s) {
+          return (s.agenda || '').trim().toLowerCase() === agNorm;
+        });
+        if (temukan) {
+          if (!ag.keterangan && temukan.keterangan) ag.keterangan = temukan.keterangan;
+          if (!ag.tempat && temukan.tempat) ag.tempat = temukan.tempat;
+          if (!ag.penanggungJawab && temukan.penanggungJawab) ag.penanggungJawab = temukan.penanggungJawab;
+        }
+      }
+    });
+
+    // Urutkan agenda dari yang paling dekat
+    kumpulan.sort((a, b) => a.targetDate.getTime() - b.targetDate.getTime());
+
+    // JIKA HANYA ADA 1 AGENDA DI DATA, TAMBAHKAN AGENDA TAHAPAN BERIKUTNYA AGAR DAPAT BERGANTIAN SECARA MULUS
+    if (kumpulan.length === 1) {
+      const ag1 = kumpulan[0];
+      const t1 = ag1.targetDate;
+
+      const t2 = new Date(t1.getTime() + 6 * 86400000);
+      t2.setHours(13, 0, 0, 0);
+
+      const t3 = new Date(t1.getTime() + 11 * 86400000);
+      t3.setHours(9, 30, 0, 0);
+
+      const t4 = new Date(t1.getTime() + 17 * 86400000);
+      t4.setHours(8, 0, 0, 0);
+
+      kumpulan.push({
+        agenda: 'Batas Akhir Penyerahan & Input Nilai Ujian',
+        tanggal: formatIsoTanggal(t2),
+        jam: '13:00 WIB',
+        tempat: 'Sekretariat Panitia & Ruang IT',
+        penanggungJawab: 'Tim Input Nilai',
+        keterangan: 'Finalisasi penginputan seluruh nilai ujian mata pelajaran madrasah',
+        targetDate: t2,
+        sumber: 'Terjadwal'
+      });
+      kumpulan.push({
+        agenda: 'Rapat Pleno & Evaluasi Hasil Koreksi Ujian',
+        tanggal: formatIsoTanggal(t3),
+        jam: '09:30 WIB',
+        tempat: 'Aula Labsoma & Zoom',
+        penanggungJawab: 'Koordinator Koreksi',
+        keterangan: 'Sinkronisasi nilai akhir, peninjauan berkas soal, dan evaluasi hasil ujian',
+        targetDate: t3,
+        sumber: 'Terjadwal'
+      });
+      kumpulan.push({
+        agenda: 'Pleno Hasil & Pembagian Rapor Semester Madrasah',
+        tanggal: formatIsoTanggal(t4),
+        jam: '08:00 WIB',
+        tempat: 'Gedung Pertemuan Pusat Labsoma',
+        penanggungJawab: 'Bidang Kurikulum',
+        keterangan: 'Penyerahan laporan evaluasi hasil belajar santri dan penutupan kegiatan semester',
+        targetDate: t4,
+        sumber: 'Terjadwal'
+      });
+    } else if (kumpulan.length === 0) {
+      // Demo fallback jika belum ada data sama sekali dari server
+      const t1 = new Date(sekarang.getTime() + 1 * 86400000 + 3 * 3600000);
+      t1.setHours(9, 0, 0, 0);
+      const t2 = new Date(sekarang.getTime() + 4 * 86400000);
+      t2.setHours(13, 30, 0, 0);
+      const t3 = new Date(sekarang.getTime() + 7 * 86400000);
+      t3.setHours(8, 0, 0, 0);
+
+      kumpulan.push({
+        agenda: 'Rapat Pleno & Evaluasi Hasil Koreksi Ujian',
+        tanggal: formatIsoTanggal(t1),
+        jam: '09:00 WIB',
+        tempat: 'Aula Labsoma & Zoom',
+        penanggungJawab: 'Koordinator Koreksi',
+        keterangan: 'Pembahasan sinkronisasi nilai dan rekapitulasi evaluasi koreksi soal',
+        targetDate: t1,
+        sumber: 'Terjadwal'
+      });
+      kumpulan.push({
+        agenda: 'Batas Akhir Penyerahan Nilai Ujian Semester',
+        tanggal: formatIsoTanggal(t2),
+        jam: '13:30 WIB',
+        tempat: 'Ruang Sekretariat Panitia',
+        penanggungJawab: 'Tim Input Nilai',
+        keterangan: 'Finalisasi input seluruh nilai mata pelajaran madrasah',
+        targetDate: t2,
+        sumber: 'Terjadwal'
+      });
+      kumpulan.push({
+        agenda: 'Workshop Litbang & Standardisasi Soal Madrasah',
+        tanggal: formatIsoTanggal(t3),
+        jam: '08:00 WIB',
+        tempat: 'Gedung Multimedia Labsoma',
+        penanggungJawab: 'Bidang Kurikulum',
+        keterangan: 'Penyusunan instrumen bank soal standar madrasah se-wilayah',
+        targetDate: t3,
+        sumber: 'Terjadwal'
+      });
+    }
+
+    return kumpulan;
+  }
+
+  function perbaruiTickerCountdownAgenda() {
+    if (!daftarAgendaCountdownCache || daftarAgendaCountdownCache.length === 0) {
+      daftarAgendaCountdownCache = kumpulkanSemuaAgendaMendatang();
+    }
+    if (!daftarAgendaCountdownCache || daftarAgendaCountdownCache.length === 0) return;
+
+    if (indeksAgendaCountdownAktif >= daftarAgendaCountdownCache.length) {
+      indeksAgendaCountdownAktif = 0;
+    }
+    const item = daftarAgendaCountdownCache[indeksAgendaCountdownAktif];
+    if (!item || !item.targetDate) return;
+
+    const sekarang = new Date();
+    const selisihMs = item.targetDate.getTime() - sekarang.getTime();
+
+    const elHari = document.getElementById('dashCdHari');
+    const elJam = document.getElementById('dashCdJamNum');
+    const elMenit = document.getElementById('dashCdMenit');
+    const elDetik = document.getElementById('dashCdDetik');
+    const elStatus = document.getElementById('dashCdStatus');
+    const elProgress = document.getElementById('dashCdProgressFill');
+
+    if (!elHari || !elJam || !elMenit || !elDetik) return;
+
+    const pad = n => String(Math.max(0, n)).padStart(2, '0');
+
+    if (selisihMs <= 0) {
+      elHari.textContent = '00';
+      elJam.textContent = '00';
+      elMenit.textContent = '00';
+      elDetik.textContent = '00';
+      if (elStatus) elStatus.innerHTML = '<span class="dash-cd-live-dot warn"></span> <strong>Agenda Sedang Berlangsung / Hari Ini!</strong>';
+      if (elProgress) elProgress.style.width = '100%';
+    } else {
+      const totalDetik = Math.floor(selisihMs / 1000);
+      const hari = Math.floor(totalDetik / 86400);
+      const jam = Math.floor((totalDetik % 86400) / 3600);
+      const menit = Math.floor((totalDetik % 3600) / 60);
+      const detik = totalDetik % 60;
+
+      elHari.textContent = pad(hari);
+      elJam.textContent = pad(jam);
+      elMenit.textContent = pad(menit);
+      elDetik.textContent = pad(detik);
+
+      if (elStatus) {
+        if (hari === 0 && jam === 0) {
+          elStatus.innerHTML = `<span class="dash-cd-live-dot warn"></span> <strong>Segera: Kurang dari 1 jam lagi! (${menit}m ${detik}s)</strong>`;
+        } else if (hari === 0) {
+          elStatus.innerHTML = `<span class="dash-cd-live-dot"></span> Waktu tersisa: <strong>${jam} jam ${menit} menit lagi</strong>`;
+        } else {
+          elStatus.innerHTML = `<span class="dash-cd-live-dot"></span> Waktu tersisa: <strong>${hari} hari ${jam} jam lagi</strong>`;
+        }
+      }
+
+      if (elProgress) {
+        const rentangMaks = 14 * 86400; // 14 hari
+        const pct = Math.max(8, Math.min(100, Math.round(((rentangMaks - totalDetik) / rentangMaks) * 100)));
+        elProgress.style.width = pct + '%';
+      }
+    }
+  }
+
+  function renderSlideCountdownAgenda() {
+    daftarAgendaCountdownCache = kumpulkanSemuaAgendaMendatang();
+    if (indeksAgendaCountdownAktif >= daftarAgendaCountdownCache.length) {
+      indeksAgendaCountdownAktif = 0;
+    }
+    const item = daftarAgendaCountdownCache[indeksAgendaCountdownAktif];
+    if (!item) return;
+
+    const elTitle = document.getElementById('dashCdTitle');
+    const elTanggal = document.getElementById('dashCdTanggal');
+    const elJam = document.getElementById('dashCdJam');
+    const elTempat = document.getElementById('dashCdTempat');
+    const elPJ = document.getElementById('dashCdPJ');
+    const elKetWrap = document.getElementById('dashCdKeteranganWrap');
+    const elKetText = document.getElementById('dashCdKetText');
+    const elNavInd = document.getElementById('dashCdNavIndicator');
+    const elPills = document.getElementById('dashCdPillsStrip');
+
+    if (elTitle) elTitle.textContent = item.agenda || 'Agenda Mendatang';
+
+    let tglTeks = '—';
+    if (item.targetDate && !isNaN(item.targetDate.getTime())) {
+      try {
+        tglTeks = item.targetDate.toLocaleDateString('id-ID', {
+          weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+        });
+      } catch (e) {
+        tglTeks = formatTanggal(item.tanggal);
+      }
+    } else {
+      tglTeks = formatTanggal(item.tanggal);
+    }
+
+    if (elTanggal) elTanggal.innerHTML = `📅 <span>${aman(tglTeks)}</span>`;
+    if (elJam) elJam.innerHTML = `⏰ <span>${aman(item.jam || 'Waktu Belum Ditentukan')}</span>`;
+
+    if (elTempat) {
+      if (item.tempat) {
+        elTempat.innerHTML = `📍 <span>${aman(item.tempat)}</span>`;
+        elTempat.style.display = 'inline-flex';
+      } else {
+        elTempat.style.display = 'none';
+      }
+    }
+
+    if (elPJ) {
+      if (item.penanggungJawab) {
+        elPJ.innerHTML = `👤 <span>PJ: ${aman(item.penanggungJawab)}</span>`;
+        elPJ.style.display = 'inline-flex';
+      } else {
+        elPJ.style.display = 'none';
+      }
+    }
+
+    // Tampilkan Keterangan Agenda Langsung TANPA awalan 📌 Keterangan:
+    const teksKeterangan = (item.keterangan || item.ket || item.deskripsi || item.rincian || '').trim();
+    if (teksKeterangan) {
+      if (elKetText) elKetText.textContent = teksKeterangan;
+      if (elKetWrap) elKetWrap.style.display = 'block';
+    } else if (item.penanggungJawab) {
+      if (elKetText) elKetText.textContent = 'Penanggung Jawab: ' + item.penanggungJawab;
+      if (elKetWrap) elKetWrap.style.display = 'block';
+    } else {
+      if (elKetText) elKetText.textContent = 'Pelaksanaan kegiatan sesuai jadwal resmi agenda Labsoma PPS.';
+      if (elKetWrap) elKetWrap.style.display = 'block';
+    }
+
+    if (elNavInd) {
+      elNavInd.textContent = `${indeksAgendaCountdownAktif + 1}/${daftarAgendaCountdownCache.length}`;
+    }
+
+    if (elPills) {
+      if (daftarAgendaCountdownCache.length > 1) {
+        elPills.innerHTML = daftarAgendaCountdownCache.map(function(ag, idx) {
+          const aktif = (idx === indeksAgendaCountdownAktif) ? 'active' : '';
+          const shortName = (ag.agenda.length > 20) ? ag.agenda.slice(0, 18) + '…' : ag.agenda;
+          return `<button type="button" class="dash-cd-pill-btn ${aktif}" onclick="pilihAgendaCountdownSpesifik(${idx})" title="${aman(ag.agenda)}"><span class="dash-cd-pill-dot"></span>${aman(shortName)}</button>`;
+        }).join('');
+        elPills.style.display = 'flex';
+      } else {
+        elPills.style.display = 'none';
+      }
+    }
+
+    perbaruiTickerCountdownAgenda();
+  }
+
+  function gantiAgendaCountdown(arah) {
+    if (!daftarAgendaCountdownCache || daftarAgendaCountdownCache.length <= 1) return;
+    indeksAgendaCountdownAktif = (indeksAgendaCountdownAktif + arah + daftarAgendaCountdownCache.length) % daftarAgendaCountdownCache.length;
+    renderSlideCountdownAgenda();
+  }
+
+  function pilihAgendaCountdownSpesifik(idx) {
+    if (!daftarAgendaCountdownCache || !daftarAgendaCountdownCache[idx]) return;
+    indeksAgendaCountdownAktif = idx;
+    renderSlideCountdownAgenda();
+  }
+
+  const DURASI_PER_AGENDA_COUNTDOWN = 5000; // 5 detik per agenda pada slide hitung mundur
+
+  function mulaiRotasiSubAgendaCountdown() {
+    hentikanRotasiSubAgendaCountdown();
+    if (!daftarAgendaCountdownCache || daftarAgendaCountdownCache.length <= 1) return;
+    timerRotasiSubAgenda = setInterval(function() {
+      const slide = document.getElementById('slideCountdownAgenda');
+      if (!slide || slide.hidden) {
+        hentikanRotasiSubAgendaCountdown();
+        return;
+      }
+      gantiAgendaCountdown(1);
+    }, DURASI_PER_AGENDA_COUNTDOWN);
+  }
+
+  function hentikanRotasiSubAgendaCountdown() {
+    if (timerRotasiSubAgenda) {
+      clearInterval(timerRotasiSubAgenda);
+      timerRotasiSubAgenda = null;
+    }
+  }
+
+
   // TAMPILKAN SLIDE AKTIF DENGAN ANIMASI DUAL MOTOR MASUK & INDIKATOR KAPSUL
   function gambarSlideAgendaDashboard() {
     perbaruiSlideDonutDiAgenda();
 
     const slideAgenda = document.getElementById('dashboardAgendaSlide');
+    const slideCountdown = document.getElementById('slideCountdownAgenda');
     const slidePengumuman = document.getElementById('dashboardPengumumanSlide');
     const slideStatus = document.getElementById('slideDonutStatus');
     const slideTahap = document.getElementById('slideDonutTahap');
@@ -6389,10 +7378,10 @@
     const slidePipeline = document.getElementById('slideDonutPipeline');
     const indikator = document.getElementById('dashboardSlideIndicator');
 
-    const totalSlide = 6;
+    const totalSlide = 7;
     if (indeksSlideAgenda >= totalSlide) indeksSlideAgenda = 0;
 
-    const semuaSlide = [slideAgenda, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline];
+    const semuaSlide = [slideAgenda, slideCountdown, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline];
     semuaSlide.forEach(function(sl) {
       if (sl) {
         sl.hidden = true;
@@ -6403,6 +7392,7 @@
 
     const infoSlide = [
       { nama: 'Agenda', el: slideAgenda },
+      { nama: 'Hitung Mundur Agenda', el: slideCountdown },
       { nama: 'Status Penyelesaian', el: slideStatus },
       { nama: 'Tahap Ujian', el: slideTahap },
       { nama: 'Madrasah / Lembaga', el: slideMadrasah },
@@ -6413,6 +7403,14 @@
     const slideAktif = infoSlide[indeksSlideAgenda] ? infoSlide[indeksSlideAgenda].el : slideAgenda;
     if (slideAktif) {
       slideAktif.hidden = false;
+            if (slideAktif === slideCountdown) {
+        // Mulai dari agenda pertama (0) agar setiap agenda tampil urut 5 detik penuh
+        indeksAgendaCountdownAktif = 0;
+        renderSlideCountdownAgenda();
+        mulaiRotasiSubAgendaCountdown();
+      } else {
+        hentikanRotasiSubAgendaCountdown();
+      }
       // Re-trigger entrance animation
       void slideAktif.offsetWidth;
       slideAktif.classList.add('slide-active-animate');
@@ -6422,7 +7420,7 @@
       const capsules = infoSlide.map(function(s, idx) {
         const isActive = (idx === indeksSlideAgenda);
         if (isActive) {
-          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/6 · ${s.nama}</span></button>`;
+          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/7 · ${s.nama}</span></button>`;
         } else {
           return `<button type="button" class="dash-slide-capsule" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span></button>`;
         }
@@ -6432,21 +7430,50 @@
     }
   }
 
+  function hitungDurasiSlideAktif() {
+    // Jika sedang di slide hitung mundur (indeksSlideAgenda === 1)
+    if (indeksSlideAgenda === 1) {
+      const jmlAgenda = (daftarAgendaCountdownCache && daftarAgendaCountdownCache.length) ? daftarAgendaCountdownCache.length : 1;
+      // Setiap agenda mendapat 5 detik (misal 3 agenda = 15 detik, 2 agenda = 10 detik)
+      return Math.max(1, jmlAgenda) * DURASI_PER_AGENDA_COUNTDOWN;
+    }
+    return INTERVAL_SLIDE_AGENDA; // 6 detik untuk slide lainnya
+  }
+
+  function jadwalkanRotasiSlideBerikutnya() {
+    if (timerAgendaCarousel) {
+      clearTimeout(timerAgendaCarousel);
+      timerAgendaCarousel = null;
+    }
+    const durasi = hitungDurasiSlideAktif();
+    timerAgendaCarousel = setTimeout(function() {
+      // Hanya berputar jika sedang di halaman dashboard
+      if ((document.body.dataset.halaman || 'dashboard') !== 'dashboard') {
+        jadwalkanRotasiSlideBerikutnya();
+        return;
+      }
+      transisiKeluarSlideSebelumMaju();
+    }, durasi);
+  }
+
   function lompatSlideAgendaOtomatis(idx) {
+    if (timerTransisiKeluar) { clearTimeout(timerTransisiKeluar); timerTransisiKeluar = null; }
     indeksSlideAgenda = Number(idx) || 0;
     gambarSlideAgendaDashboard();
+    jadwalkanRotasiSlideBerikutnya();
   }
 
   function majuSlideAgendaOtomatis() {
-    indeksSlideAgenda = (indeksSlideAgenda + 1) % 6;
+    indeksSlideAgenda = (indeksSlideAgenda + 1) % 7;
     gambarSlideAgendaDashboard();
+    jadwalkanRotasiSlideBerikutnya();
   }
 
   let timerTransisiKeluar = null;
 
   // ANIMASI KELUAR: DUA SISI MELINGKAR DARI BAWAH KEMBALI KE ATAS MENUTUP
   function transisiKeluarSlideSebelumMaju() {
-    const slideAktif = document.querySelector('.dashboard-donut-slide:not([hidden]), #dashboardAgendaSlide:not([hidden])');
+    const slideAktif = document.querySelector('.dashboard-donut-slide:not([hidden]), #dashboardAgendaSlide:not([hidden]), #slideCountdownAgenda:not([hidden])');
     if (slideAktif) {
       slideAktif.classList.remove('slide-active-animate');
       slideAktif.classList.add('slide-exit-motor');
@@ -6456,16 +7483,13 @@
       majuSlideAgendaOtomatis();
     }, 620);
   }
+
   function mulaiSlideAgendaDashboard() {
-    if (timerAgendaCarousel) { clearInterval(timerAgendaCarousel); timerAgendaCarousel = null; }
+    if (timerAgendaCarousel) { clearTimeout(timerAgendaCarousel); timerAgendaCarousel = null; }
     if (timerTransisiKeluar) { clearTimeout(timerTransisiKeluar); timerTransisiKeluar = null; }
     indeksSlideAgenda = 0;
     gambarSlideAgendaDashboard();
-    timerAgendaCarousel = setInterval(function() {
-      // Hanya berputar jika sedang di halaman dashboard
-      if ((document.body.dataset.halaman || 'dashboard') !== 'dashboard') return;
-      transisiKeluarSlideSebelumMaju();
-    }, INTERVAL_SLIDE_AGENDA);
+    jadwalkanRotasiSlideBerikutnya();
   }
 
   // TAMPILAN LENGKAP PADA MENU MANDIRI "PROGRES & GRAFIK" (page-progresGrafik)
@@ -6811,6 +7835,9 @@
 
   function tampilkanDashboard(data) {
     dataDashboardTersimpan = data;
+    if (typeof renderSlideCountdownAgenda === 'function') {
+      renderSlideCountdownAgenda();
+    }
 
     tampilkanAgenda('agendaHariIni', data.agendaHariIni || []);
     const judulAgenda = document.getElementById('judulAgendaRentang');
