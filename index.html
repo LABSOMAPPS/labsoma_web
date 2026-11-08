@@ -7611,7 +7611,13 @@
     }, 620);
   }
 
-  function mulaiSlideAgendaDashboard() {
+  // pertahankanPosisi = true dipakai saat data dimuat ulang otomatis (tiap 60 detik):
+  // isi slide diperbarui, tetapi posisi & jadwal rotasi TIDAK direset ke slide 1.
+  function mulaiSlideAgendaDashboard(pertahankanPosisi) {
+    if (pertahankanPosisi === true && timerAgendaCarousel) {
+      gambarSlideAgendaDashboard();
+      return;
+    }
     if (timerAgendaCarousel) { clearTimeout(timerAgendaCarousel); timerAgendaCarousel = null; }
     if (timerTransisiKeluar) { clearTimeout(timerTransisiKeluar); timerTransisiKeluar = null; }
     indeksSlideAgenda = 0;
@@ -7990,8 +7996,8 @@
     tampilkanHalamanAnggotaDashboard(data);
     mulaiRotasiAnggotaDashboard(data);
 
-    // 2. Jalankan rotasi 6 slide di Area Agenda (1 Agenda + 5 Diagram Donat)
-    mulaiSlideAgendaDashboard();
+    // 2. Jalankan rotasi slide di Area Agenda; saat refresh data otomatis, posisi slide dipertahankan
+    mulaiSlideAgendaDashboard(true);
   }
 
   function tampilkanAgendaRentang(daftar) {
@@ -8907,7 +8913,7 @@
         if (typeof updateSetorSoalDropdown === 'function') updateSetorSoalDropdown();
         tampilkanDaftarAgendaMenu(data.semuaAgenda || []);
         tampilkanDashboard(data.dashboard);
-        mulaiSlideAgendaDashboard();
+        mulaiSlideAgendaDashboard(true);
         tampilkanPengumuman(semuaPengumumanTersimpan.length ? semuaPengumumanTersimpan : (data.pengumumanHariIni || []));
         tampilkanRekap(dataRekapTersimpan);
         tampilkanAntrianK1(dataK1Tersimpan);
