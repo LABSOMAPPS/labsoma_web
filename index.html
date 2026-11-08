@@ -7544,7 +7544,7 @@
       const capsules = infoSlide.map(function(s, idx) {
         const isActive = (idx === indeksSlideAgenda);
         if (isActive) {
-          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/7 · ${s.nama}</span></button>`;
+          return `<button type="button" class="dash-slide-capsule active" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span><span class="dash-slide-label">${idx + 1}/${infoSlide.length} · ${s.nama}</span></button>`;
         } else {
           return `<button type="button" class="dash-slide-capsule" onclick="lompatSlideAgendaOtomatis(${idx})" title="${s.nama}"><span class="dash-slide-pip"></span></button>`;
         }
@@ -7589,7 +7589,7 @@
 
   function majuSlideAgendaOtomatis() {
     const jumlahSlide = document.querySelectorAll('#dashboardAgendaSlide, #slideCountdownAgenda, .dashboard-donut-slide').length;
-    indeksSlideAgenda = (indeksSlideAgenda + 1) % Math.max(1, jumlahSlide);
+    indeksSlideAgenda = (indeksSlideAgenda + 1) % Math.max(1, document.querySelectorAll('#dashboardAgendaSlide, #slideCountdownAgenda, .dashboard-donut-slide').length);
     gambarSlideAgendaDashboard();
     jadwalkanRotasiSlideBerikutnya();
   }
