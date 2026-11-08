@@ -2312,6 +2312,10 @@
       min-width: 0;
     }
 
+    .dash-category-progress { display:flex; flex-direction:column; gap:5px; margin-top:4px; }
+    .dash-category-progress-track { height:6px; overflow:hidden; border-radius:999px; background:var(--panel3); }
+    .dash-category-progress-fill { height:100%; border-radius:inherit; transition:width .35s ease; }
+
     .dash-card-identity {
       background: linear-gradient(145deg, var(--panel) 0%, var(--panel2) 100%);
       border: 1px solid var(--garis);
@@ -7686,7 +7690,7 @@
               </div>
               <div class="dash-legend-compact">
                 ${d.dataTahap.map(function(th) {
-                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${aman(th.label)}</span></div><strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong></div>`;
+                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${aman(th.label)}</span></div><strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong></div><div class="dash-category-progress" role="progressbar" aria-label="Progres ${aman(th.label)}" aria-valuenow="${th.pct}" aria-valuemin="0" aria-valuemax="100"><div class="dash-category-progress-track"><div class="dash-category-progress-fill" style="width:${th.pct}%;background:${th.color};"></div></div></div>`;
                 }).join('')}
               </div>
             </div>
@@ -7724,7 +7728,7 @@
               </div>
               <div class="dash-legend-compact">
                 ${d.dataTingkat.length ? d.dataTingkat.map(function(tk) {
-                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span title="${aman(tk.label)}">${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div>`;
+                  return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span title="${aman(tk.label)}">${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div><div class="dash-category-progress" role="progressbar" aria-label="Progres ${aman(tk.label)}" aria-valuenow="${tk.pct}" aria-valuemin="0" aria-valuemax="100"><div class="dash-category-progress-track"><div class="dash-category-progress-fill" style="width:${tk.pct}%;background:${tk.color};"></div></div></div>`;
                 }).join('') : '<div style="color:var(--teks-muted); font-size:12px;">Belum ada data tingkat</div>'}
               </div>
             </div>
@@ -7748,6 +7752,14 @@
               </div>
             </div>
           </div>
+          ${d.dataTahap.map(function(th, idx) {
+            const bg = buatConicGradient([th]);
+            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Tahap Ujian: ${aman(th.label)}</span><span class="dash-chart-subtitle">Progres per Tahap</span></div><span class="dash-pill-badge">${th.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${th.pct}%</span><span class="dash-donut-stat-lbl">Tuntas</span></div></div></div><div class="dash-legend-compact"><div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${aman(th.label)}</span></div><strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong></div></div></div></div>`;
+          }).join('')}
+          ${d.dataTingkat.map(function(tk) {
+            const bg = buatConicGradient([tk]);
+            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Jenjang: ${aman(tk.label)}</span><span class="dash-chart-subtitle">Progres per Jenjang</span></div><span class="dash-pill-badge">${tk.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${tk.pct}%</span><span class="dash-donut-stat-lbl">Tuntas</span></div></div></div><div class="dash-legend-compact"><div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span>${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div></div></div></div>`;
+          }).join('')}
         </div>
       `;
     }
