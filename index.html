@@ -7588,8 +7588,10 @@
   }
 
   function majuSlideAgendaOtomatis() {
-    const jumlahSlide = document.querySelectorAll('#dashboardAgendaSlide, #slideCountdownAgenda, .dashboard-donut-slide').length;
-    indeksSlideAgenda = (indeksSlideAgenda + 1) % Math.max(1, document.querySelectorAll('#dashboardAgendaSlide, #slideCountdownAgenda, .dashboard-donut-slide').length);
+    // Samakan batas carousel dengan urutan slide yang benar-benar dirender.
+    perbaruiSlideDonutDiAgenda();
+    const jumlahSlide = 2 + document.querySelectorAll('.dashboard-donut-slide').length;
+    indeksSlideAgenda = (indeksSlideAgenda + 1) % Math.max(1, jumlahSlide);
     gambarSlideAgendaDashboard();
     jadwalkanRotasiSlideBerikutnya();
   }
