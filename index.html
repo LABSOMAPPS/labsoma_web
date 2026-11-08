@@ -6799,6 +6799,24 @@
     const pTelat = total ? Math.round((telat / total) * 100) : 0;
     const pMenunggu = total ? Math.max(0, 100 - pSelesai - pProses - pTelat) : 0;
 
+    function hitungStatusKategori(items) {
+      let s = 0, pr = 0, tl = 0, me = 0;
+      items.forEach(function(item) {
+        if (String(item.status || '').toLowerCase() === 'selesai') { s++; return; }
+        const mulai = String(item.mulai || '').trim();
+        const tenggat = String(item.selesai || '').trim();
+        if (tenggat && hariIni > tenggat) tl++;
+        else if (mulai && hariIni < mulai) me++;
+        else pr++;
+      });
+      return [
+        { label: 'Selesai', val: s, color: 'var(--aksen)' },
+        { label: 'Dalam Proses', val: pr, color: 'var(--biru)' },
+        { label: 'Belum / Telat', val: tl, color: 'var(--merah)' },
+        { label: 'Menunggu Waktu', val: me, color: 'var(--kuning)' }
+      ];
+    }
+
     // 4 Kategori Status Lengkap
     const slicesStatus = [
       { label: 'Selesai', val: selesai, color: 'var(--aksen)' },
@@ -6820,7 +6838,7 @@
       const totTh = items.length;
       const selTh = items.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
       const pctTh = totTh ? Math.round((selTh / totTh) * 100) : 0;
-      return { label: th, val: totTh, selesai: selTh, total: totTh, pct: pctTh, color: warnaTahap[idx % warnaTahap.length] };
+      return { label: th, val: totTh, selesai: selTh, total: totTh, pct: pctTh, color: warnaTahap[idx % warnaTahap.length], slicesStatus: hitungStatusKategori(items) };
     });
     const totalSelesaiTahap = dataTahap.reduce(function(a, b) { return a + b.selesai; }, 0);
     const totalSemuaTahap = dataTahap.reduce(function(a, b) { return a + b.total; }, 0);
@@ -6848,7 +6866,7 @@
       const totTk = items.length;
       const selTk = items.filter(function(x) { return String(x.status || '').toLowerCase() === 'selesai'; }).length;
       const pctTk = totTk ? Math.round((selTk / totTk) * 100) : 0;
-      return { label: tk, val: totTk, total: totTk, selesai: selTk, pct: pctTk, color: paletTingkat[idx % paletTingkat.length] };
+      return { label: tk, val: totTk, total: totTk, selesai: selTk, pct: pctTk, color: paletTingkat[idx % paletTingkat.length], slicesStatus: hitungStatusKategori(items) };
     });
     const totalSelesaiTingkat = dataTingkat.reduce(function(a, b) { return a + b.selesai; }, 0);
     const totalSemuaTingkat = dataTingkat.reduce(function(a, b) { return a + b.total; }, 0);
@@ -7036,6 +7054,27 @@
         return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${p.color};"></span><span>${aman(p.label)}</span></div><strong class="dash-leg-val">${p.selesai} (${p.pct}%)</strong></div>`;
       }).join('');
       elPipeline.innerHTML = renderSlideDonut('Alur & Pipeline Koreksi', 'Diagram Donat', d.totalMasukKoreksi + '/' + d.total + ' Masuk Koreksi', d.dataPipeline, d.pKoreksiTuntas, 'Masuk Koreksi', legPipeline, 'maskPipeline');
+    }
+
+    // Slide tambahan per kategori: satu slide untuk setiap tahap dan jenjang.
+    const shell = document.getElementById('agendaShellDashboard');
+    if (shell) {
+      shell.querySelectorAll('.slide-kategori-tambahan').forEach(function(el) { el.remove(); });
+      function tambahSlideKategori(kategori, item, index) {
+        const slide = document.createElement('div');
+        slide.id = 'slideKategoriTambahan' + index;
+        slide.className = 'dashboard-donut-slide slide-kategori-tambahan';
+        slide.hidden = true;
+        const pct = item.total ? Math.round(item.selesai / item.total * 100) : 0;
+        const legend = item.slicesStatus.map(function(s) {
+          const p = item.total ? Math.round(s.val / item.total * 100) : 0;
+          return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${s.color};"></span><span>${aman(s.label)}</span></div><strong class="dash-leg-val">${s.val} (${p}%)</strong></div>`;
+        }).join('');
+        slide.innerHTML = renderSlideDonut(kategori + ': ' + item.label, 'Progres per Kategori', item.total + ' Tugas', item.slicesStatus, pct, 'Selesai', legend, 'maskKategori' + index);
+        shell.insertBefore(slide, document.getElementById('dashboardSlideIndicator'));
+      }
+      d.dataTahap.forEach(function(item, i) { tambahSlideKategori('Tahap Ujian', item, 'Tahap' + i); });
+      d.dataTingkat.forEach(function(item, i) { tambahSlideKategori('Jenjang', item, 'Tingkat' + i); });
     }
   }
 
@@ -7464,10 +7503,8 @@
     const slidePipeline = document.getElementById('slideDonutPipeline');
     const indikator = document.getElementById('dashboardSlideIndicator');
 
-    const totalSlide = 7;
-    if (indeksSlideAgenda >= totalSlide) indeksSlideAgenda = 0;
-
-    const semuaSlide = [slideAgenda, slideCountdown, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline];
+    const slideKategori = Array.from(document.querySelectorAll('.slide-kategori-tambahan'));
+    const semuaSlide = [slideAgenda, slideCountdown, slideStatus, slideTahap, slideMadrasah, slideTingkat, slidePipeline].concat(slideKategori);
     semuaSlide.forEach(function(sl) {
       if (sl) {
         sl.hidden = true;
@@ -7484,7 +7521,8 @@
       { nama: 'Madrasah / Lembaga', el: slideMadrasah },
       { nama: 'Tingkat Pendidikan', el: slideTingkat },
       { nama: 'Alur & Pipeline Koreksi', el: slidePipeline }
-    ];
+    ].concat(slideKategori.map(function(el) { return { nama: el.querySelector('.section-title') ? el.querySelector('.section-title').textContent : 'Progres Kategori', el: el }; }));
+    if (indeksSlideAgenda >= infoSlide.length) indeksSlideAgenda = 0;
 
     const slideAktif = infoSlide[indeksSlideAgenda] ? infoSlide[indeksSlideAgenda].el : slideAgenda;
     if (slideAktif) {
@@ -7550,7 +7588,8 @@
   }
 
   function majuSlideAgendaOtomatis() {
-    indeksSlideAgenda = (indeksSlideAgenda + 1) % 7;
+    const jumlahSlide = document.querySelectorAll('#dashboardAgendaSlide, #slideCountdownAgenda, .dashboard-donut-slide').length;
+    indeksSlideAgenda = (indeksSlideAgenda + 1) % Math.max(1, jumlahSlide);
     gambarSlideAgendaDashboard();
     jadwalkanRotasiSlideBerikutnya();
   }
@@ -7752,13 +7791,15 @@
               </div>
             </div>
           </div>
-          ${d.dataTahap.map(function(th, idx) {
-            const bg = buatConicGradient([th]);
-            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Tahap Ujian: ${aman(th.label)}</span><span class="dash-chart-subtitle">Progres per Tahap</span></div><span class="dash-pill-badge">${th.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${th.pct}%</span><span class="dash-donut-stat-lbl">Tuntas</span></div></div></div><div class="dash-legend-compact"><div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${th.color};"></span><span>${aman(th.label)}</span></div><strong class="dash-leg-val">${th.selesai}/${th.total} (${th.pct}%)</strong></div></div></div></div>`;
+          ${d.dataTahap.map(function(th) {
+            const bg = buatConicGradient(th.slicesStatus);
+            const leg = th.slicesStatus.map(function(s) { const pct = th.total ? Math.round(s.val / th.total * 100) : 0; return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${s.color};"></span><span>${aman(s.label)}</span></div><strong class="dash-leg-val">${s.val} (${pct}%)</strong></div>`; }).join('');
+            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Tahap Ujian: ${aman(th.label)}</span><span class="dash-chart-subtitle">Progres per Tahap</span></div><span class="dash-pill-badge">${th.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${th.pct}%</span><span class="dash-donut-stat-lbl">Selesai</span></div></div></div><div class="dash-legend-compact">${leg}</div></div></div>`;
           }).join('')}
           ${d.dataTingkat.map(function(tk) {
-            const bg = buatConicGradient([tk]);
-            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Jenjang: ${aman(tk.label)}</span><span class="dash-chart-subtitle">Progres per Jenjang</span></div><span class="dash-pill-badge">${tk.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${tk.pct}%</span><span class="dash-donut-stat-lbl">Tuntas</span></div></div></div><div class="dash-legend-compact"><div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${tk.color};"></span><span>${aman(tk.label)}</span></div><strong class="dash-leg-val">${tk.selesai}/${tk.total} (${tk.pct}%)</strong></div></div></div></div>`;
+            const bg = buatConicGradient(tk.slicesStatus);
+            const leg = tk.slicesStatus.map(function(s) { const pct = tk.total ? Math.round(s.val / tk.total * 100) : 0; return `<div class="dash-leg-row"><div class="dash-leg-item"><span class="dash-dot" style="background:${s.color};"></span><span>${aman(s.label)}</span></div><strong class="dash-leg-val">${s.val} (${pct}%)</strong></div>`; }).join('');
+            return `<div class="card dash-chart-box"><div class="dash-chart-title-bar"><div><span class="dash-chart-title">Jenjang: ${aman(tk.label)}</span><span class="dash-chart-subtitle">Progres per Jenjang</span></div><span class="dash-pill-badge">${tk.total} Tugas</span></div><div class="dash-donut-flex"><div class="dash-donut-ring-wrap"><div class="dash-donut-ring-compact" style="background:${bg};"><div class="dash-donut-inner-compact"><span class="dash-donut-stat-main">${tk.pct}%</span><span class="dash-donut-stat-lbl">Selesai</span></div></div></div><div class="dash-legend-compact">${leg}</div></div></div>`;
           }).join('')}
         </div>
       `;
