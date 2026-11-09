@@ -3653,6 +3653,19 @@
   }
 </style>
 
+<style id="tambahan-hijriyah-catatan">
+  /* Semua tampilan tanggal memakai Hijriyah: sembunyikan baris tanggal Masehi di header */
+  #tanggalMasehi, #dashCardMasehi, #pgCardMasehi, #pengumumanMasehi, .live-gregorian-date, .gregorian-date { display: none !important; }
+  /* Input tanggal: teks bawaan (Masehi) disembunyikan, diganti label Hijriyah */
+  .tgl-hijri-wrap { position: relative; display: block; width: 100%; }
+  .tgl-hijri-wrap > input.tgl-hijri { width: 100%; color: transparent !important; -webkit-text-fill-color: transparent; caret-color: transparent; }
+  .tgl-hijri::-webkit-datetime-edit, .tgl-hijri::-webkit-datetime-edit-fields-wrapper { color: transparent; }
+  .tgl-hijri-label { position: absolute; left: 0; right: 40px; top: 0; bottom: 0; display: flex; align-items: center; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--teks); }
+  .tgl-hijri-label.kosong { color: var(--teks-muted); }
+  .kal-hijri-bulan { display: block; font-size: 10px; font-weight: 600; color: var(--teks-muted); line-height: 1.1; }
+  .catatan-rapat-ref small { color: var(--teks-muted); }
+  #filterCatatanRapat { max-width: 420px; }
+</style>
 </head>
 
 <body>
@@ -4734,7 +4747,7 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Daftar Rapat</h1>
-            <p class="subheading">Kelola rapat, peserta, dan kehadiran.</p>
+            <p class="subheading">Kelola rapat, peserta, kehadiran, dan catatan (otomatis tersinkron dengan menu Catatan).</p>
           </div>
           <button class="button" id="tombolTambahRapat" type="button">＋ Tambah Rapat</button>
         </div>
@@ -4771,6 +4784,27 @@
           <div id="pilihanNamaPesertaRapat" class="rapat-roster"></div>
           <button class="button" id="simpanPesertaRapat" type="button">Simpan Peserta</button>
           <div id="isiPesertaRapat"></div>
+        </section>
+
+        <section class="card rapat-peserta" id="panelCatatanRapat" hidden>
+          <div class="rapat-heading">
+            <h2 id="judulPanelCatatanRapat">Catatan Rapat</h2>
+            <button class="button secondary" id="tutupPanelCatatanRapat" type="button">Tutup</button>
+          </div>
+          <form id="formCatatanRapat">
+            <input type="hidden" id="catatanRapatBaris">
+            <div class="form-grid">
+              <div class="field"><label>Pokok masalah</label><input name="pokokMasalah" required></div>
+              <div class="field"><label>PIC</label><input name="pic"></div>
+              <div class="field full"><label>Notula rapat</label><textarea name="notula" rows="4"></textarea></div>
+              <div class="field full"><label>Keterangan</label><input name="ket"></div>
+            </div>
+            <div class="form-actions">
+              <button class="button" type="submit" id="simpanCatatanRapat">Simpan Catatan</button>
+              <button class="button secondary" type="button" id="batalEditCatatanRapat" hidden>Batal Edit</button>
+            </div>
+          </form>
+          <div id="isiCatatanRapat"></div>
         </section>
       </section>
 
@@ -5193,12 +5227,14 @@
         <form class="card form-card" id="formCatatan" hidden>
           <div class="form-grid">
             <div class="field"><label>Pokok masalah</label><input name="pokokMasalah" required></div>
+            <div class="field"><label>Rapat terkait</label><select name="nomorRapat" id="catatanPilihRapat"><option value="">— Tanpa rapat —</option></select></div>
             <div class="field"><label>PIC</label><input name="pic"></div>
             <div class="field full"><label>Notula rapat</label><textarea name="notula" rows="4"></textarea></div>
             <div class="field full"><label>Keterangan</label><input name="ket"></div>
           </div>
           <div class="form-actions"><button class="button">Simpan Catatan</button><button class="button secondary" type="button" data-batal-form="formCatatan">Batal</button></div>
         </form>
+        <div class="search-filters" style="margin-bottom:12px"><select id="filterCatatanRapat" aria-label="Filter catatan menurut rapat"><option value="">Semua rapat</option></select></div>
         <div id="daftarCatatan"></div>
       </section>
 
@@ -5813,6 +5849,7 @@
   let daftarRapatTersimpan = [];
   let daftarAnggotaRapatTersimpan = [];
   let rapatTerpilih = 0;
+  let rapatCatatanTerpilih = 0;
   let dataDashboardTersimpan = null;
   let dataAplikasiTersimpan = null;
   let bulanKalenderAktif = new Date();
@@ -6324,11 +6361,35 @@
     }).format(wib);
   }
 
+  // Semua tanggal data (format ISO yyyy-MM-dd dari server) ditampilkan dalam kalender Hijriyah.
+  function isoKeHijriyah(iso) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || '').trim());
+    if (!m) return null;
+    const tgl = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12));
+    if (isNaN(tgl.getTime())) return null;
+    return hitungHijriyah(tgl);
+  }
+
   function formatTanggal(iso) {
     if (!iso) return '—';
-    const bagian = String(iso).split('-');
-    if (bagian.length !== 3) return aman(iso);
-    return bagian[2] + '/' + bagian[1] + '/' + bagian[0];
+    const hj = isoKeHijriyah(iso);
+    if (!hj) return aman(iso);
+    return hj.d + ' ' + BULAN_HIJRIYAH[hj.m - 1] + ' ' + hj.y + ' H';
+  }
+
+  function formatTanggalHijriyahPanjang(iso) {
+    const hj = isoKeHijriyah(iso);
+    if (!hj) return String(iso || '');
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso).trim());
+    const hari = new Intl.DateTimeFormat('id-ID', { timeZone: 'UTC', weekday: 'long' }).format(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)));
+    return hari + ', ' + hj.d + ' ' + BULAN_HIJRIYAH[hj.m - 1] + ' ' + hj.y + ' H';
+  }
+
+  // Waktu unggah dari server berformat "dd/MM/yyyy HH:mm" -> tanggalnya diubah ke Hijriyah, jamnya tetap
+  function formatWaktuUnggahHijriyah(teks) {
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})(.*)$/.exec(String(teks || '').trim());
+    if (!m) return String(teks || '');
+    return formatTanggal(m[3] + '-' + m[2] + '-' + m[1]) + (m[4] || '');
   }
 
   /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
@@ -7390,9 +7451,9 @@
     let tglTeks = '—';
     if (item.targetDate && !isNaN(item.targetDate.getTime())) {
       try {
-        tglTeks = item.targetDate.toLocaleDateString('id-ID', {
-          weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
-        });
+        const hjAgenda = hitungHijriyah(item.targetDate);
+        tglTeks = new Intl.DateTimeFormat('id-ID', { timeZone: ZONA_WAKTU, weekday: 'short' }).format(item.targetDate) +
+          ', ' + hjAgenda.d + ' ' + BULAN_HIJRIYAH[hjAgenda.m - 1] + ' ' + hjAgenda.y + ' H';
       } catch (e) {
         tglTeks = formatTanggal(item.tanggal);
       }
@@ -8040,10 +8101,50 @@
   /* ----- Catatan Rapat: edit langsung di baris tabel (semua kolom) ----- */
   let catatanSedangEdit = null;
 
+  /* ----- Sinkron Rapat ↔ Catatan: catatan menyimpan "Nomor Rapat" sehingga muncul di kedua menu ----- */
+  function daftarRapatUntukCatatan() {
+    return ((dataAplikasiTersimpan && dataAplikasiTersimpan.rapat) || daftarRapatTersimpan || []);
+  }
+
+  function opsiRapatHtml(terpilih, teksKosong) {
+    return '<option value="">' + aman(teksKosong) + '</option>' + daftarRapatUntukCatatan().map(function(r) {
+      return '<option value="' + r.nomorBaris + '"' + (Number(terpilih) === Number(r.nomorBaris) ? ' selected' : '') + '>' + aman(r.nama) + ' · ' + formatTanggal(r.tanggal) + '</option>';
+    }).join('');
+  }
+
+  function selRapatCatatan(x) {
+    if (!Number(x.nomorRapat)) return '<span>—</span>';
+    return '<div class="catatan-rapat-ref"><strong>' + aman(x.namaRapat) + '</strong><br><small>' + (x.jenisRapat ? aman(x.jenisRapat) + ' · ' : '') + formatTanggal(x.tanggalRapat) + '</small><br>' +
+      '<button class="button secondary small" type="button" data-ke-rapat="' + Number(x.nomorRapat) + '">Buka di Rapat</button></div>';
+  }
+
   function gambarCatatan(catatan) {
-    const rows = (catatan || []).map(function(x) {
+    const filter = document.getElementById('filterCatatanRapat');
+    const nilaiFilter = filter ? filter.value : '';
+    if (filter) {
+      filter.innerHTML = '<option value="">Semua rapat</option><option value="none">Tanpa rapat</option>' + daftarRapatUntukCatatan().map(function(r) {
+        return '<option value="' + r.nomorBaris + '">' + aman(r.nama) + ' · ' + formatTanggal(r.tanggal) + '</option>';
+      }).join('');
+      filter.value = nilaiFilter;
+      if (filter.value !== nilaiFilter) filter.value = '';
+    }
+    const pilihForm = document.getElementById('catatanPilihRapat');
+    if (pilihForm && document.activeElement !== pilihForm) {
+      const nilaiForm = pilihForm.value;
+      pilihForm.innerHTML = opsiRapatHtml(nilaiForm, '— Tanpa rapat —');
+      pilihForm.value = nilaiForm;
+      if (pilihForm.value !== nilaiForm) pilihForm.value = '';
+    }
+    const tampil = (catatan || []).filter(function(x) {
+      const f = filter ? filter.value : '';
+      if (!f) return true;
+      if (f === 'none') return !Number(x.nomorRapat);
+      return Number(x.nomorRapat) === Number(f);
+    });
+    const rows = tampil.map(function(x) {
       if (catatanSedangEdit !== null && Number(x.nomorBaris) === catatanSedangEdit) {
         return '<tr class="catatan-sedang-edit" data-catatan-baris="' + x.nomorBaris + '"><td>' + aman(x.no) + '</td>' +
+          '<td><select class="catatan-edit" data-cf="nomorRapat" aria-label="Rapat terkait">' + opsiRapatHtml(x.nomorRapat, '— Tanpa rapat —') + '</select></td>' +
           '<td><input class="catatan-edit" data-cf="pokokMasalah" value="' + aman(x.pokokMasalah) + '" aria-label="Pokok masalah"></td>' +
           '<td><textarea class="catatan-edit" data-cf="notula" aria-label="Notula rapat">' + aman(x.notula) + '</textarea></td>' +
           '<td><input class="catatan-edit" data-cf="pic" value="' + aman(x.pic) + '" aria-label="PIC"></td>' +
@@ -8051,12 +8152,104 @@
           '<td><div class="catatan-aksi"><button class="button small" type="button" data-catatan-simpan="1">Simpan</button>' +
           '<button class="button secondary small" type="button" data-catatan-batal="1">Batal</button></div></td></tr>';
       }
-      return '<tr data-catatan-baris="' + x.nomorBaris + '"><td>' + aman(x.no) + '</td><td>' + aman(x.pokokMasalah) + '</td><td>' + aman(x.notula) +
+      return '<tr data-catatan-baris="' + x.nomorBaris + '"><td>' + aman(x.no) + '</td><td>' + selRapatCatatan(x) + '</td><td>' + aman(x.pokokMasalah) + '</td><td>' + aman(x.notula) +
         '</td><td>' + aman(x.pic) + '</td><td>' + aman(x.ket) + '</td><td>' +
         (x.nomorBaris ? '<button class="button secondary small" type="button" data-catatan-edit="' + x.nomorBaris + '">✎ Edit</button>' : '') + '</td></tr>';
     });
-    document.getElementById('daftarCatatan').innerHTML = renderTabel(['NO', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET', 'Aksi'], rows);
+    document.getElementById('daftarCatatan').innerHTML = renderTabel(['NO', 'RAPAT', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET', 'Aksi'], rows);
   }
+
+  document.getElementById('filterCatatanRapat').addEventListener('change', function() {
+    catatanSedangEdit = null;
+    gambarCatatan((dataAplikasiTersimpan || {}).catatan || []);
+  });
+
+  // Dari menu Catatan -> loncat ke menu Rapat dan buka panel catatan rapat tersebut
+  document.getElementById('daftarCatatan').addEventListener('click', function(event) {
+    const tujuan = event.target.closest('[data-ke-rapat]');
+    if (!tujuan) return;
+    const rapat = daftarRapatTersimpan.find(function(item) { return Number(item.nomorBaris) === Number(tujuan.dataset.keRapat); });
+    bukaHalaman('rapat');
+    if (rapat) bukaPanelCatatanRapat(rapat);
+  });
+
+  /* ----- Panel Catatan di menu Rapat ----- */
+  function resetFormCatatanRapat() {
+    const form = document.getElementById('formCatatanRapat');
+    form.reset();
+    document.getElementById('catatanRapatBaris').value = '';
+    document.getElementById('batalEditCatatanRapat').hidden = true;
+    document.getElementById('simpanCatatanRapat').textContent = 'Simpan Catatan';
+  }
+
+  function bukaPanelCatatanRapat(rapat) {
+    rapatCatatanTerpilih = Number(rapat.nomorBaris);
+    const panel = document.getElementById('panelCatatanRapat');
+    panel.hidden = false;
+    resetFormCatatanRapat();
+    perbaruiPanelCatatanRapat();
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function perbaruiPanelCatatanRapat() {
+    const panel = document.getElementById('panelCatatanRapat');
+    if (!panel || panel.hidden || !rapatCatatanTerpilih) return;
+    const rapat = daftarRapatTersimpan.find(function(item) { return Number(item.nomorBaris) === rapatCatatanTerpilih; });
+    if (!rapat) { panel.hidden = true; rapatCatatanTerpilih = 0; return; }
+    document.getElementById('judulPanelCatatanRapat').textContent = 'Catatan: ' + rapat.nama + ' · ' + formatTanggal(rapat.tanggal);
+    const daftar = (((dataAplikasiTersimpan || {}).catatan) || []).filter(function(c) { return Number(c.nomorRapat) === rapatCatatanTerpilih; });
+    const rows = daftar.map(function(c, i) {
+      return '<tr><td>' + (i + 1) + '</td><td>' + aman(c.pokokMasalah) + '</td><td>' + aman(c.notula) + '</td><td>' + aman(c.pic) + '</td><td>' + aman(c.ket) + '</td><td>' +
+        '<button class="button secondary small" type="button" data-catatan-rapat-edit="' + c.nomorBaris + '">✎ Edit</button></td></tr>';
+    });
+    document.getElementById('isiCatatanRapat').innerHTML = daftar.length
+      ? renderTabel(['NO', 'POKOK MASALAH', 'NOTULA RAPAT', 'PIC', 'KET', 'Aksi'], rows)
+      : '<div class="card empty">Belum ada catatan untuk rapat ini.</div>';
+  }
+
+  document.getElementById('tutupPanelCatatanRapat').addEventListener('click', function() {
+    document.getElementById('panelCatatanRapat').hidden = true;
+    rapatCatatanTerpilih = 0;
+  });
+
+  document.getElementById('batalEditCatatanRapat').addEventListener('click', resetFormCatatanRapat);
+
+  document.getElementById('isiCatatanRapat').addEventListener('click', function(event) {
+    const tombol = event.target.closest('[data-catatan-rapat-edit]');
+    if (!tombol) return;
+    const c = (((dataAplikasiTersimpan || {}).catatan) || []).find(function(item) { return Number(item.nomorBaris) === Number(tombol.dataset.catatanRapatEdit); });
+    if (!c) return;
+    const form = document.getElementById('formCatatanRapat');
+    form.elements.pokokMasalah.value = c.pokokMasalah || '';
+    form.elements.pic.value = c.pic || '';
+    form.elements.notula.value = c.notula || '';
+    form.elements.ket.value = c.ket || '';
+    document.getElementById('catatanRapatBaris').value = c.nomorBaris;
+    document.getElementById('batalEditCatatanRapat').hidden = false;
+    document.getElementById('simpanCatatanRapat').textContent = 'Perbarui Catatan';
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    form.elements.pokokMasalah.focus();
+  });
+
+  document.getElementById('formCatatanRapat').addEventListener('submit', function(event) {
+    event.preventDefault();
+    if (!rapatCatatanTerpilih) return;
+    const form = event.currentTarget, data = Object.fromEntries(new FormData(form).entries());
+    data.nomorRapat = rapatCatatanTerpilih;
+    const baris = document.getElementById('catatanRapatBaris').value;
+    mintaPin().then(function(pin) {
+      if (!pin) return;
+      const runner = google.script.run
+        .withSuccessHandler(function(pesan) {
+          tampilkanNotifikasi(pesan || 'Catatan disimpan.', 'success');
+          resetFormCatatanRapat();
+          muatAplikasi();
+        })
+        .withFailureHandler(function(error) { tampilkanNotifikasi(error && error.message ? error.message : String(error), 'error'); });
+      if (baris) runner.editCatatan(Number(baris), data, pin);
+      else runner.simpanCatatan(data, pin);
+    });
+  });
 
   document.getElementById('daftarCatatan').addEventListener('click', function(event) {
     const catatan = (dataAplikasiTersimpan || {}).catatan || [];
@@ -8546,23 +8739,37 @@
     return semua.filter(function(p) { return p.mulai <= iso && p.selesai >= iso; });
   }
 
+  // Batas bulan Hijriyah yang memuat tanggal "anchor": tanggal 1 (Date, jam 12 siang) dan jumlah harinya.
+  function batasBulanHijriyah(anchor) {
+    const h0 = hitungHijriyah(anchor);
+    const awal = new Date(anchor.getFullYear(), anchor.getMonth(), anchor.getDate() - (h0.d - 1), 12);
+    let jumlah = 0, kursor = new Date(awal.getTime());
+    while (hitungHijriyah(kursor).m === h0.m && jumlah < 31) { jumlah++; kursor = new Date(kursor.getFullYear(), kursor.getMonth(), kursor.getDate() + 1, 12); }
+    return { awal: awal, jumlah: jumlah, hijri: h0 };
+  }
+
+  function geserBulanKalender(arah) {
+    const b = batasBulanHijriyah(bulanKalenderAktif);
+    bulanKalenderAktif = new Date(b.awal.getFullYear(), b.awal.getMonth(), b.awal.getDate() + (arah < 0 ? -1 : b.jumlah), 12);
+    gambarKalender(dataAplikasiTersimpan || {});
+  }
+
   function gambarKalender(data) {
     data = data || {};
     const semua = kumpulkanPeristiwa(data);
-    const y = bulanKalenderAktif.getFullYear(), m = bulanKalenderAktif.getMonth();
-    document.getElementById('judulBulanKalender').textContent = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(bulanKalenderAktif);
+    const b = batasBulanHijriyah(bulanKalenderAktif);
+    document.getElementById('judulBulanKalender').textContent = BULAN_HIJRIYAH[b.hijri.m - 1] + ' ' + b.hijri.y + ' H';
     let html = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(function(n) { return '<div class="calendar-cell calendar-weekday">' + n + '</div>'; }).join('');
-    const offset = (new Date(y, m, 1).getDay() + 6) % 7, total = new Date(y, m + 1, 0).getDate(), prev = new Date(y, m, 0).getDate(), today = tanggalHariIniLokal();
+    const offset = (b.awal.getDay() + 6) % 7, today = tanggalHariIniLokal();
     for (let i = 0; i < 42; i++) {
-      let d, muted = false;
-      if (i < offset) { d = new Date(y, m - 1, prev - offset + i + 1); muted = true; }
-      else if (i >= offset + total) { d = new Date(y, m + 1, i - offset - total + 1); muted = true; }
-      else d = new Date(y, m, i - offset + 1);
-
+      const d = new Date(b.awal.getFullYear(), b.awal.getMonth(), b.awal.getDate() + i - offset, 12);
+      const muted = i < offset || i >= offset + b.jumlah;
+      const hj = hitungHijriyah(d);
       const iso = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2),
             jumlah = peristiwaPada(iso, semua).length;
       html += '<div class="calendar-cell ' + (muted ? 'muted ' : '') + (iso === today ? 'today ' : '') + (iso === tanggalKalenderDipilih ? 'selected' : '') +
-        '" data-tanggal="' + iso + '" role="button" tabindex="0"><b>' + d.getDate() + '</b>' +
+        '" data-tanggal="' + iso + '" role="button" tabindex="0"><b>' + hj.d + '</b>' +
+        (hj.d === 1 ? '<span class="kal-hijri-bulan">' + BULAN_HIJRIYAH[hj.m - 1] + '</span>' : '') +
         (jumlah ? '<span class="calendar-count" title="' + jumlah + ' peristiwa">' + jumlah + '</span>' : '') + '</div>';
     }
     document.getElementById('gridKalender').innerHTML = html;
@@ -8575,8 +8782,7 @@
     const daftar = peristiwaPada(iso, semua).sort(function(a, b) {
       return (a.jam || '99:99').localeCompare(b.jam || '99:99') || String(a.judul).localeCompare(String(b.judul), 'id');
     });
-    const judulTanggal = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
-      .format(new Date(iso + 'T00:00:00Z'));
+    const judulTanggal = formatTanggalHijriyahPanjang(iso);
     const kembali = tanggalKalenderDipilih && tanggalKalenderDipilih !== hariIni
       ? '<button class="button secondary small" type="button" data-kalender-hariini="1">Kembali ke hari ini</button>' : '';
     const kepala = '<div class="pt-judul-bar"><h2>Peristiwa · ' + aman(judulTanggal) +
@@ -8618,8 +8824,8 @@
     gambarKalender(dataAplikasiTersimpan || {});
   });
 
-  document.getElementById('kalenderSebelumnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() - 1, 1); gambarKalender(dataAplikasiTersimpan || {}); });
-  document.getElementById('kalenderBerikutnya').addEventListener('click', function() { bulanKalenderAktif.setMonth(bulanKalenderAktif.getMonth() + 1, 1); gambarKalender(dataAplikasiTersimpan || {}); });
+  document.getElementById('kalenderSebelumnya').addEventListener('click', function() { geserBulanKalender(-1); });
+  document.getElementById('kalenderBerikutnya').addEventListener('click', function() { geserBulanKalender(1); });
 
   function sambungkanFormTambahan(id, method) {
     document.getElementById(id).addEventListener('submit', function(event) {
@@ -8638,6 +8844,45 @@
     });
   }
   sambungkanFormTambahan('formCatatan', 'simpanCatatan');
+
+  /* ----- Input tanggal: tampil Hijriyah (nilai tetap ISO untuk server) ----- */
+  (function pasangTanggalHijriyah() {
+    function perbarui(input) {
+      const label = input._tglLabel;
+      if (!label) return;
+      const v = input.value || '';
+      if (input._tglNilai === v) return;
+      input._tglNilai = v;
+      if (v) { label.textContent = formatTanggal(v); label.classList.remove('kosong'); }
+      else { label.textContent = 'Pilih tanggal'; label.classList.add('kosong'); }
+    }
+    function bungkus(input) {
+      if (input.classList.contains('tgl-hijri') || !input.parentNode) return;
+      const wrap = document.createElement('span');
+      wrap.className = 'tgl-hijri-wrap';
+      input.parentNode.insertBefore(wrap, input);
+      wrap.appendChild(input);
+      input.classList.add('tgl-hijri');
+      const label = document.createElement('span');
+      label.className = 'tgl-hijri-label';
+      const cs = window.getComputedStyle(input);
+      label.style.paddingLeft = ((parseFloat(cs.paddingLeft) || 10) + (parseFloat(cs.borderLeftWidth) || 0)) + 'px';
+      label.style.fontSize = cs.fontSize;
+      label.style.fontFamily = cs.fontFamily;
+      wrap.appendChild(label);
+      input._tglLabel = label;
+      input.addEventListener('click', function(e) {
+        try { if (input.showPicker && e.offsetX < input.clientWidth - 36) input.showPicker(); } catch (err) { /* abaikan */ }
+      });
+      input.addEventListener('input', function() { perbarui(input); });
+      input.addEventListener('change', function() { perbarui(input); });
+    }
+    function pindai() {
+      document.querySelectorAll('input[type="date"]').forEach(function(input) { bungkus(input); perbarui(input); });
+    }
+    pindai();
+    setInterval(pindai, 400);   // menangkap nilai yang diisi lewat kode / form.reset()
+  })();
   sambungkanFormTambahan('formKalender', 'simpanKegiatanKalender');
 
   // Tombol "＋" membuka/menutup form tambah di masing-masing menu
@@ -8835,16 +9080,22 @@
     document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Aksi'], rows);
   }
 
+  function tombolCatatanRapat(rapat) {
+    const jumlah = (((dataAplikasiTersimpan || {}).catatan) || []).filter(function(c) { return Number(c.nomorRapat) === Number(rapat.nomorBaris); }).length;
+    return '<button class="button secondary small" data-rapat-action="catatan" data-row="' + rapat.nomorBaris + '">📝 Catatan (' + jumlah + ')</button>';
+  }
+
   function tampilkanDaftarRapat(daftar) {
+    perbaruiPanelCatatanRapat();
     const target = document.getElementById('daftarRapat');
     if (!daftar || daftar.length === 0) {
       target.innerHTML = '<div class="card empty">Belum ada rapat. Tekan “Tambah Rapat” untuk membuat rapat.</div>';
       return;
     }
     target.innerHTML = '<div class="table-wrap"><table>' +
-      '<thead><tr><th>No</th><th>Jenis</th><th>Nama Rapat</th><th>Tanggal</th><th>Aksi</th></tr></thead><tbody>' +
+      '<thead><tr><th>No</th><th>Jenis</th><th>Nama Rapat</th><th>Tanggal</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody>' +
       daftar.map(function(rapat, indeks) {
-        return '<tr><td>' + (indeks + 1) + '</td><td>' + aman(rapat.jenis) + '</td><td><strong>' + aman(rapat.nama) + '</strong></td><td>' + formatTanggal(rapat.tanggal) + '</td><td>' +
+        return '<tr><td>' + (indeks + 1) + '</td><td>' + aman(rapat.jenis) + '</td><td><strong>' + aman(rapat.nama) + '</strong></td><td>' + formatTanggal(rapat.tanggal) + '</td><td>' + tombolCatatanRapat(rapat) + '</td><td>' +
           '<button class="button small" data-rapat-action="absen" data-row="' + rapat.nomorBaris + '">Absen</button> ' +
           '<button class="button secondary small" data-rapat-action="peserta" data-row="' + rapat.nomorBaris + '">Peserta</button> ' +
           '<button class="button secondary small" data-rapat-action="rekap" data-row="' + rapat.nomorBaris + '">Rekap</button> ' +
@@ -9114,6 +9365,8 @@
         document.getElementById('rapatTanggal').value = rapat.tanggal;
         document.getElementById('formRapat').hidden = false;
         document.getElementById('formRapat').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (tombolAksi.dataset.rapatAction === 'catatan') {
+        bukaPanelCatatanRapat(rapat);
       } else {
         bukaPanelPesertaRapat(rapat, tombolAksi.dataset.rapatAction);
       }
@@ -10005,7 +10258,7 @@
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
       return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong><span class="list-index">' + (indeks + 1) + '</span>' + aman(item.nama) + '</strong>' +
-        '<small>' + aman(item.tingkat) + (item.madrasah ? ' · ' + aman(item.madrasah) : '') + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(item.waktu) + ' · ' + ukuran + '</small></div>' +
+        '<small>' + aman(item.tingkat) + (item.madrasah ? ' · ' + aman(item.madrasah) : '') + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(formatWaktuUnggahHijriyah(item.waktu)) + ' · ' + ukuran + '</small></div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button secondary setor-soal-action" type="button" data-edit-setor-soal="' + aman(item.id) + '">✎ Edit</button>' : '') +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
