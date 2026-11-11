@@ -3813,6 +3813,7 @@
                 <button class="nav-button" data-page="korektor2">Korektor 2<span class="nav-count" id="jumlahKorektor2Sidebar" aria-label="Jumlah antrean Korektor 2">0</span></button>
                 <button class="nav-button" data-page="korektor3">Korektor 3 (IMNI)<span class="nav-count" id="jumlahKorektor3Sidebar" aria-label="Jumlah antrean Korektor 3">0</span></button>
                 <button class="nav-button" data-page="koreksiBersama">Koreksi Bersama<span class="nav-count" id="jumlahKoreksiBersamaSidebar" aria-label="Jumlah antrean Koreksi Bersama">0</span></button>
+                <button class="nav-button" data-page="finishing">Finishing<span class="nav-count" id="jumlahFinishingSidebar" aria-label="Jumlah antrean Finishing">0</span></button>
               </div>
             </div>
 
@@ -4303,6 +4304,11 @@
                 <span><strong>Koreksi Bersama</strong><small>Pemeriksaan pleno</small></span>
                 <span class="hub-count" id="jumlahKoreksiBersamaHubTugas" aria-label="Jumlah antrean Koreksi Bersama">0</span>
               </button>
+              <button class="hub-button" data-goto="finishing">
+                <span class="hub-icon-box"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+                <span><strong>Finishing</strong><small>Tahap akhir &amp; berkas final</small></span>
+                <span class="hub-count" id="jumlahFinishingHubTugas" aria-label="Jumlah antrean Finishing">0</span>
+              </button>
             </div>
           </div>
 
@@ -4594,6 +4600,26 @@
               <small>Pemeriksaan pleno bersama tim</small>
             </div>
             <div class="koreksi-tingkat" id="tingkatKoreksiBersama">
+              <span>Memuat rincian…</span>
+            </div>
+          </button>
+
+          <!-- 5. Finishing -->
+          <button class="hub-button koreksi-kartu-gabung" data-goto="finishing" aria-label="Buka antrean Finishing">
+            <div class="koreksi-kartu-header">
+              <span class="hub-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </span>
+              <div class="koreksi-kartu-total">
+                <strong class="koreksi-ringkasan-total" id="jumlahFinishing">0</strong>
+                <span class="hub-count" id="jumlahFinishingHub" style="display:none;">0</span>
+              </div>
+            </div>
+            <div class="koreksi-kartu-body">
+              <strong>Finishing</strong>
+              <small>Tahap akhir setelah Koreksi Bersama</small>
+            </div>
+            <div class="koreksi-tingkat" id="tingkatFinishing">
               <span>Memuat rincian…</span>
             </div>
           </button>
@@ -5301,6 +5327,37 @@
         <div id="isiKoreksiBersama"></div>
       </section>
 
+      <!-- PAGE: FINISHING -->
+      <section class="page" id="page-finishing">
+        <h1 class="page-heading">Finishing</h1>
+        <p class="subheading">Tahap akhir: tugas yang sudah selesai Koreksi Bersama otomatis tersalin ke sini. Unggah berkas finishing di setiap tugas.</p>
+        <div class="search-filters">
+          <input type="search" id="filterFinQ" data-filter-group="fin" data-filter-key="q" placeholder="🔍 Cari kata kunci antrean…" aria-label="Cari di Finishing">
+          <select id="filterFinNama" data-filter-group="fin" data-filter-key="nama" aria-label="Filter Anggota">
+            <option value="">Semua anggota</option>
+          </select>
+          <select id="filterFinTingkat" data-filter-group="fin" data-filter-key="tingkat" aria-label="Filter Tingkat">
+            <option value="">Semua tingkat</option>
+          </select>
+          <select id="filterFinKelas" data-filter-group="fin" data-filter-key="kelas" aria-label="Filter Kelas">
+            <option value="">Semua kelas</option>
+          </select>
+          <select id="filterFinTahap" data-filter-group="fin" data-filter-key="tahapUjian" aria-label="Filter Tahap Ujian">
+            <option value="">Semua tahap</option>
+          </select>
+          <select id="filterFinMadrasah" data-filter-group="fin" data-filter-key="madrasah" aria-label="Filter Madrasah">
+            <option value="">Semua madrasah</option>
+          </select>
+          <select id="filterFinTugas" data-filter-group="fin" data-filter-key="tugas" aria-label="Filter Tugas">
+            <option value="">Semua tugas/soal</option>
+          </select>
+          <div style="display:flex; justify-content:flex-end;">
+            <button class="button secondary small" type="button" data-reset-filter="fin" title="Reset filter" style="width:100%; padding:8px 14px;">Reset Filter</button>
+          </div>
+        </div>
+        <div id="isiFinishing"></div>
+      </section>
+
       <!-- PAGE: TUGAS UJIAN -->
       <section class="page" id="page-tugasUjian">
         <h1 class="page-heading">Tugas Koreksi Hasil Ujian</h1>
@@ -5848,6 +5905,7 @@
   let dataK2Tersimpan = [];
   let dataK3Tersimpan = [];
   let dataKBTersimpan = [];
+  let dataFinishingTersimpan = [];
   let daftarRapatTersimpan = [];
   let daftarAnggotaRapatTersimpan = [];
   let rapatTerpilih = 0;
@@ -6414,6 +6472,7 @@
     korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
     korektor3:      { tab: 'koreksi', induk: 'hubKoreksi' },
     koreksiBersama: { tab: 'koreksi', induk: 'hubKoreksi' },
+    finishing:      { tab: 'koreksi', induk: 'hubKoreksi' },
 
     hubUjian:       { tab: 'tugas', induk: 'hubTugas' },
     tugasUjian:     { tab: 'tugas', induk: 'hubUjian' },
@@ -8298,6 +8357,8 @@
     gambarKalender(data);
     isiPilihanTugas(data.dataAnggota || [], data.materiPelajaran || []);
     tampilkanAntrianKoreksiBersama(data.antrianKoreksiBersama || []);
+    dataFinishingTersimpan = data.antrianFinishing || [];
+    tampilkanAntrianFinishing(dataFinishingTersimpan);
     dataUjianTersimpan = ujian;
     tampilkanDaftarTugasUjian(ujian);
     dataRekapUjianTersimpan = rekapUjian;
@@ -9018,7 +9079,8 @@
       { daftar: dataK1Tersimpan, jumlah: 'jumlahKorektor1', tingkat: 'tingkatKorektor1' },
       { daftar: dataK2Tersimpan, jumlah: 'jumlahKorektor2', tingkat: 'tingkatKorektor2' },
       { daftar: dataK3Tersimpan, jumlah: 'jumlahKorektor3', tingkat: 'tingkatKorektor3' },
-      { daftar: dataKBTersimpan, jumlah: 'jumlahKoreksiBersama', tingkat: 'tingkatKoreksiBersama' }
+      { daftar: dataKBTersimpan, jumlah: 'jumlahKoreksiBersama', tingkat: 'tingkatKoreksiBersama' },
+      { daftar: menungguFinishing(), jumlah: 'jumlahFinishing', tingkat: 'tingkatFinishing' }
     ].forEach(function(info) {
       const daftar = info.daftar || [];
       const jumlahNode = document.getElementById(info.jumlah);
@@ -9050,7 +9112,10 @@
       { id: 'jumlahKorektor1Sidebar', daftar: dataK1Tersimpan },
       { id: 'jumlahKorektor2Sidebar', daftar: dataK2Tersimpan },
       { id: 'jumlahKorektor3Sidebar', daftar: dataK3Tersimpan },
-      { id: 'jumlahKoreksiBersamaSidebar', daftar: dataKBTersimpan }
+      { id: 'jumlahKoreksiBersamaSidebar', daftar: dataKBTersimpan },
+      { id: 'jumlahFinishingHub', daftar: menungguFinishing() },
+      { id: 'jumlahFinishingHubTugas', daftar: menungguFinishing() },
+      { id: 'jumlahFinishingSidebar', daftar: menungguFinishing() }
     ].forEach(function(info) {
       const node = document.getElementById(info.id);
       if (node) node.textContent = (info.daftar || []).length.toLocaleString('id-ID');
@@ -9084,6 +9149,39 @@
     document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Berkas', 'Aksi'], rows);
   }
 
+  // ===== Finishing: tahap setelah Koreksi Bersama =====
+  function menungguFinishing() {
+    return (dataFinishingTersimpan || []).filter(function(x) {
+      return String(x.statusFinishing || '').toLowerCase() !== 'selesai';
+    });
+  }
+
+  function tampilkanAntrianFinishing(daftar) {
+    const wadah = document.getElementById('isiFinishing');
+    if (!wadah) return;
+    if (!berkasKBSudahDimuat) { berkasKBSudahDimuat = true; muatBerkasKB(); }
+    perbaruiDropdownFilterTugas('fin', dataFinishingTersimpan || daftar);
+    const dataFiltered = saringDaftarTugas(daftar, 'fin');
+    const rows = dataFiltered.map(function(item) {
+      const selesai = String(item.statusFinishing || '').toLowerCase() === 'selesai';
+      return `<tr>
+        <td>${aman(item.nama)}</td><td>${aman(item.tugas)}</td><td>${aman(item.kelas || '–')}</td>
+        <td>${aman(item.tahapUjian || '–')}</td><td>${aman(item.tingkat || '–')}</td><td>${aman(item.madrasah || '–')}</td>
+        <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td><td>${formatTanggal(item.tanggalKoreksiBersama)}</td>
+        <td><span class="badge ${selesai ? '' : 'waiting'}">${selesai ? 'Selesai' + (item.tanggalFinishing ? ' · ' + formatTanggal(item.tanggalFinishing) : '') : 'Menunggu Finishing'}</span></td>
+        <td>${htmlBerkasKB(item, 'KB', false)}</td>
+        <td>${htmlBerkasKB(item, 'FIN', true)}</td>
+        <td>${selesai
+          ? `<button class="button secondary" data-action="batalFinishing" data-row="${item.nomorBaris}">Batalkan Selesai</button>`
+          : `<button class="button" data-action="selesaiFinishing" data-row="${item.nomorBaris}">Tandai Selesai</button>
+             <button class="button secondary" data-action="kembaliKeKB" data-row="${item.nomorBaris}">Kembalikan ke Koreksi Bersama</button>`}</td>
+      </tr>`;
+    });
+    wadah.innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Koreksi Bersama', 'Status', 'Berkas Koreksi Bersama', 'Berkas Finishing', 'Aksi'], rows);
+    if (typeof tampilkanRingkasanKoreksi === 'function') tampilkanRingkasanKoreksi();
+    if (typeof perbaruiJumlahKartuAntrean === 'function') perbaruiJumlahKartuAntrean();
+  }
+
   // ===== Berkas Koreksi Bersama (unggah Word/Excel/PDF per baris tugas) =====
   let daftarBerkasKBTersimpan = [];
   let berkasKBSudahDimuat = false;
@@ -9092,25 +9190,29 @@
     return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
-  function htmlBerkasKB(item) {
+  function htmlBerkasKB(item, tahap, bolehUnggah) {
+    tahap = tahap || 'KB';
+    bolehUnggah = bolehUnggah !== false;
     const kunci = item.kunci || '';
-    const berkas = daftarBerkasKBTersimpan.filter(function(f) { return f.kunci === kunci; });
+    const berkas = daftarBerkasKBTersimpan.filter(function(f) { return f.kunci === kunci && (f.tahap || 'KB') === tahap; });
     const daftar = berkas.map(function(f) {
       return '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px;">' +
         '<span title="' + aman(f.pengunggah) + ' · ' + aman(f.waktu) + '">📄 ' + aman(f.nama) + ' <small>(' + ukuranBerkasKB(f.ukuran) + ')</small></span>' +
         '<button class="button secondary small" type="button" data-unduh-berkas-kb="' + aman(f.id) + '">Unduh</button>' +
-        '<button class="button secondary small" type="button" data-hapus-berkas-kb="' + aman(f.id) + '" data-nama-berkas-kb="' + aman(f.nama) + '">Hapus</button>' +
+        (bolehUnggah ? '<button class="button secondary small" type="button" data-hapus-berkas-kb="' + aman(f.id) + '" data-nama-berkas-kb="' + aman(f.nama) + '">Hapus</button>' : '') +
         '</div>';
     }).join('');
-    return daftar +
-      '<button class="button secondary small" type="button" data-unggah-berkas-kb="' + aman(kunci) + '">⬆ Unggah berkas</button>';
+    return (daftar || (bolehUnggah ? '' : '<small>–</small>')) + (bolehUnggah
+      ? '<button class="button secondary small" type="button" data-unggah-berkas-kb="' + aman(kunci) + '" data-tahap-berkas-kb="' + tahap + '">⬆ Unggah berkas</button>'
+      : '');
   }
 
   function muatBerkasKB() {
     google.script.run
       .withSuccessHandler(function(hasil) {
         daftarBerkasKBTersimpan = Array.isArray(hasil) ? hasil : [];
-        if (typeof dataKBTersimpan !== 'undefined') tampilkanAntrianKoreksiBersama(dataKBTersimpan || []);
+        tampilkanAntrianKoreksiBersama(dataKBTersimpan || []);
+        tampilkanAntrianFinishing(dataFinishingTersimpan || []);
       })
       .withFailureHandler(function() { berkasKBSudahDimuat = false; })
       .getBerkasKoreksiBersama();
@@ -9125,12 +9227,13 @@
     input.accept = '.doc,.docx,.odt,.rtf,.pdf,.xls,.xlsx';
     document.body.appendChild(input);
 
-    let kunciAktif = '', tombolAktif = null;
+    let kunciAktif = '', tombolAktif = null, tahapAktif = 'KB';
 
     document.addEventListener('click', function(event) {
       const unggah = event.target.closest('[data-unggah-berkas-kb]');
       if (unggah) {
         kunciAktif = unggah.dataset.unggahBerkasKb;
+        tahapAktif = unggah.dataset.tahapBerkasKb || 'KB';
         tombolAktif = unggah;
         input.value = '';
         input.click();
@@ -9178,7 +9281,7 @@
       if (!file || !kunciAktif) return;
       if (file.size > 7 * 1024 * 1024) { tampilkanNotifikasi('Ukuran file maksimal 7 MB.', 'error'); return; }
       if (!/\.(docx?|odt|rtf|pdf|xlsx?)$/i.test(file.name)) { tampilkanNotifikasi('Format file harus DOC, DOCX, ODT, RTF, PDF, XLS, atau XLSX.', 'error'); return; }
-      const tombol = tombolAktif, kunci = kunciAktif;
+      const tombol = tombolAktif, kunci = kunciAktif, tahap = tahapAktif;
       const reader = new FileReader();
       if (tombol) { tombol.disabled = true; tombol.textContent = 'Mengunggah…'; }
       reader.onload = function() {
@@ -9192,7 +9295,7 @@
             tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
             if (tombol) { tombol.disabled = false; tombol.textContent = '⬆ Unggah berkas'; }
           })
-          .unggahBerkasKoreksiBersama({ nama: file.name, mime: file.type, kunci: kunci, base64: base64 });
+          .unggahBerkasKoreksiBersama({ nama: file.name, mime: file.type, kunci: kunci, tahap: tahap, base64: base64 });
       };
       reader.onerror = function() {
         if (tombol) { tombol.disabled = false; tombol.textContent = '⬆ Unggah berkas'; }
@@ -9276,6 +9379,7 @@
         dataK2Tersimpan = data.antrianKorektor2 || [];
         dataK3Tersimpan = data.antrianKorektor3 || [];
         dataKBTersimpan = data.antrianKoreksiBersama || [];
+        dataFinishingTersimpan = data.antrianFinishing || [];
         perbaruiJumlahKartuAntrean();
         daftarRapatTersimpan = data.rapat || [];
         daftarAnggotaRapatTersimpan = data.anggotaRapat || data.daftarAnggotaRapat || data.dataAnggota || [];
@@ -9362,6 +9466,7 @@
       if (grup === 'k2') tampilkanAntrianK2(dataK2Tersimpan);
       if (grup === 'k3') tampilkanAntrianK3(dataK3Tersimpan);
       if (grup === 'kb') tampilkanAntrianKoreksiBersama(dataKBTersimpan);
+      if (grup === 'fin') tampilkanAntrianFinishing(dataFinishingTersimpan);
       if (grup === 'tugasMenu') tampilkanTugasDiMenuTambah((dataAplikasiTersimpan || {}).semuaTugas || []);
       if (grup === 'agendaMenu') tampilkanDaftarAgendaMenu((dataAplikasiTersimpan || {}).semuaAgenda || []);
       if (grup === 'ujian') tampilkanDaftarTugasUjian(dataUjianTersimpan);
@@ -9417,6 +9522,9 @@
       else if (method === 'kembalikanDariKorektor') runner.kembalikanDariKorektor(args[0], args[1], pin);
       else if (method === 'ubahStatusKoreksiBersama') runner.ubahStatusKoreksiBersama(args[0], args[1], pin);
       else if (method === 'tandaiKoreksiBersamaSelesai') runner.tandaiKoreksiBersamaSelesai(args[0], pin);
+      else if (method === 'tandaiFinishingSelesai') runner.tandaiFinishingSelesai(args[0], pin);
+      else if (method === 'batalkanFinishing') runner.batalkanFinishing(args[0], pin);
+      else if (method === 'kembalikanFinishingKeKoreksiBersama') runner.kembalikanFinishingKeKoreksiBersama(args[0], pin);
       else if (method === 'ubahStatusKoreksiUjian') runner.ubahStatusKoreksiUjian(args[0], args[1], pin);
       else if (method === 'tambahAgenda') runner.tambahAgenda(args[0], pin);
       else if (method === 'tambahTugas') runner.tambahTugas(args[0], pin);
@@ -9434,6 +9542,9 @@
     else if (aksi === 'k3') jalankanAksi('tandaiKorektor3Selesai', [baris]);
     else if (aksi === 'kembaliK1' || aksi === 'kembaliK2' || aksi === 'kembaliK3') jalankanAksi('kembalikanDariKorektor', [baris, aksi === 'kembaliK1' ? 1 : (aksi === 'kembaliK2' ? 2 : 3)]);
     else if (aksi === 'selesaiBersama') jalankanAksi('tandaiKoreksiBersamaSelesai', [baris]);
+    else if (aksi === 'selesaiFinishing') jalankanAksi('tandaiFinishingSelesai', [baris]);
+    else if (aksi === 'batalFinishing') jalankanAksi('batalkanFinishing', [baris]);
+    else if (aksi === 'kembaliKeKB') jalankanAksi('kembalikanFinishingKeKoreksiBersama', [baris]);
     else if (aksi === 'kembaliKB') jalankanAksi('kembalikanDariKorektor', [baris, 4]);
     else if (aksi === 'selesaiUjian') jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Selesai']);
   });
@@ -10260,6 +10371,7 @@
         korektor2:      { tab: 'koreksi', induk: 'hubKoreksi' },
         korektor3:      { tab: 'koreksi', induk: 'hubKoreksi' },
         koreksiBersama: { tab: 'koreksi', induk: 'hubKoreksi' },
+        finishing:      { tab: 'koreksi', induk: 'hubKoreksi' },
         pengumuman:     { tab: 'kegiatan' }
       });
     }
@@ -11031,6 +11143,7 @@
     if (String(x.statusK2 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 2', kelas: 'waiting' };
     if (/IMNI/i.test(x.tahapUjian || '') && String(x.statusK3 || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Korektor 3', kelas: 'waiting' };
     if (String(x.statusKoreksiBersama || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Koreksi Bersama', kelas: 'waiting' };
+    if (String(x.statusFinishing || '').toLowerCase() !== 'selesai') return { teks: 'Menunggu Finishing', kelas: 'waiting' };
     return { teks: 'Selesai semua tahap', kelas: '' };
   }
   function tahapUjian(x) {
