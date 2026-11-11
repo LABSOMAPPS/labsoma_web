@@ -4407,8 +4407,8 @@
               <select id="setorSoalTugas" required><option value="">Pilih tugas/soal</option></select>
             </div>
             <div class="field">
-              <label for="setorSoalFile">Dokumen soal (DOC, DOCX, ODT, RTF, atau PDF; maks. 7 MB)</label>
-              <input id="setorSoalFile" type="file" accept=".doc,.docx,.odt,.rtf,.pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,application/pdf" required>
+              <label for="setorSoalFile">Dokumen soal (DOC, DOCX, ODT, RTF, PDF, XLS, atau XLSX; maks. 7 MB)</label>
+              <input id="setorSoalFile" type="file" accept=".doc,.docx,.odt,.rtf,.pdf,.xls,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
             </div>
           </div>
           <div class="form-actions">
@@ -9058,6 +9058,7 @@
   }
 
   function tampilkanAntrianKoreksiBersama(daftar) {
+    if (!berkasKBSudahDimuat) { berkasKBSudahDimuat = true; muatBerkasKB(); }
     perbaruiDropdownFilterTugas('kb', dataKBTersimpan || daftar);
     const dataFiltered = saringDaftarTugas(daftar, 'kb');
     const rows = (dataFiltered || []).map(function(item) {
@@ -9072,6 +9073,7 @@
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${formatTanggal(/IMNI/i.test(item.tahapUjian || '') ? item.tanggalK3 : item.tanggalK2)}</td>
           <td><span class="badge waiting">Menunggu Koreksi Bersama</span></td>
+          <td>${htmlBerkasKB(item)}</td>
           <td>
             <button class="button" data-action="selesaiBersama" data-row="${item.nomorBaris}">Tandai Selesai</button>
             <button class="button secondary" data-action="kembaliKB" data-row="${item.nomorBaris}">Kembalikan</button>
@@ -9079,8 +9081,126 @@
         </tr>
       `;
     });
-    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Berkas', 'Aksi'], rows);
   }
+
+  // ===== Berkas Koreksi Bersama (unggah Word/Excel/PDF per baris tugas) =====
+  let daftarBerkasKBTersimpan = [];
+  let berkasKBSudahDimuat = false;
+
+  function ukuranBerkasKB(n) {
+    return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function htmlBerkasKB(item) {
+    const kunci = item.kunci || '';
+    const berkas = daftarBerkasKBTersimpan.filter(function(f) { return f.kunci === kunci; });
+    const daftar = berkas.map(function(f) {
+      return '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px;">' +
+        '<span title="' + aman(f.pengunggah) + ' · ' + aman(f.waktu) + '">📄 ' + aman(f.nama) + ' <small>(' + ukuranBerkasKB(f.ukuran) + ')</small></span>' +
+        '<button class="button secondary small" type="button" data-unduh-berkas-kb="' + aman(f.id) + '">Unduh</button>' +
+        '<button class="button secondary small" type="button" data-hapus-berkas-kb="' + aman(f.id) + '" data-nama-berkas-kb="' + aman(f.nama) + '">Hapus</button>' +
+        '</div>';
+    }).join('');
+    return daftar +
+      '<button class="button secondary small" type="button" data-unggah-berkas-kb="' + aman(kunci) + '">⬆ Unggah berkas</button>';
+  }
+
+  function muatBerkasKB() {
+    google.script.run
+      .withSuccessHandler(function(hasil) {
+        daftarBerkasKBTersimpan = Array.isArray(hasil) ? hasil : [];
+        if (typeof dataKBTersimpan !== 'undefined') tampilkanAntrianKoreksiBersama(dataKBTersimpan || []);
+      })
+      .withFailureHandler(function() { berkasKBSudahDimuat = false; })
+      .getBerkasKoreksiBersama();
+  }
+
+  // input file tersembunyi yang dipakai bersama oleh semua baris
+  (function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.id = 'inputBerkasKB';
+    input.hidden = true;
+    input.accept = '.doc,.docx,.odt,.rtf,.pdf,.xls,.xlsx';
+    document.body.appendChild(input);
+
+    let kunciAktif = '', tombolAktif = null;
+
+    document.addEventListener('click', function(event) {
+      const unggah = event.target.closest('[data-unggah-berkas-kb]');
+      if (unggah) {
+        kunciAktif = unggah.dataset.unggahBerkasKb;
+        tombolAktif = unggah;
+        input.value = '';
+        input.click();
+        return;
+      }
+      const unduh = event.target.closest('[data-unduh-berkas-kb]');
+      if (unduh) {
+        mintaPinUnduh().then(function(pin) {
+          if (!pin) return;
+          unduh.disabled = true; unduh.textContent = 'Menyiapkan…';
+          google.script.run
+            .withSuccessHandler(function(file) {
+              try {
+                const bagian = [];
+                for (let i = 0; i < file.base64.length; i += 32768) {
+                  const potong = atob(file.base64.slice(i, i + 32768)), bytes = new Uint8Array(potong.length);
+                  for (let j = 0; j < potong.length; j++) bytes[j] = potong.charCodeAt(j);
+                  bagian.push(bytes);
+                }
+                serahkanBerkas(new Blob(bagian, { type: file.mime || 'application/octet-stream' }), file.nama || 'berkas');
+              } catch (err) { tampilkanNotifikasi('Berkas gagal disiapkan untuk diunduh.', 'error'); }
+              unduh.disabled = false; unduh.textContent = 'Unduh';
+            })
+            .withFailureHandler(function(er) {
+              tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
+              unduh.disabled = false; unduh.textContent = 'Unduh';
+            })
+            .unduhBerkasKoreksiBersama(unduh.dataset.unduhBerkasKb, pin);
+        });
+        return;
+      }
+      const hapus = event.target.closest('[data-hapus-berkas-kb]');
+      if (hapus) {
+        if (!confirm('Hapus berkas "' + hapus.dataset.namaBerkasKb + '"?')) return;
+        hapus.disabled = true;
+        google.script.run
+          .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan || 'Berkas dihapus.', 'success'); muatBerkasKB(); })
+          .withFailureHandler(function(er) { hapus.disabled = false; tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
+          .hapusBerkasKoreksiBersama(hapus.dataset.hapusBerkasKb);
+      }
+    });
+
+    input.addEventListener('change', function() {
+      const file = input.files[0];
+      if (!file || !kunciAktif) return;
+      if (file.size > 7 * 1024 * 1024) { tampilkanNotifikasi('Ukuran file maksimal 7 MB.', 'error'); return; }
+      if (!/\.(docx?|odt|rtf|pdf|xlsx?)$/i.test(file.name)) { tampilkanNotifikasi('Format file harus DOC, DOCX, ODT, RTF, PDF, XLS, atau XLSX.', 'error'); return; }
+      const tombol = tombolAktif, kunci = kunciAktif;
+      const reader = new FileReader();
+      if (tombol) { tombol.disabled = true; tombol.textContent = 'Mengunggah…'; }
+      reader.onload = function() {
+        const base64 = String(reader.result || '').split(',')[1] || '';
+        google.script.run
+          .withSuccessHandler(function(pesan) {
+            tampilkanNotifikasi(pesan || 'Berkas berhasil diunggah.', 'success');
+            muatBerkasKB();
+          })
+          .withFailureHandler(function(er) {
+            tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
+            if (tombol) { tombol.disabled = false; tombol.textContent = '⬆ Unggah berkas'; }
+          })
+          .unggahBerkasKoreksiBersama({ nama: file.name, mime: file.type, kunci: kunci, base64: base64 });
+      };
+      reader.onerror = function() {
+        if (tombol) { tombol.disabled = false; tombol.textContent = '⬆ Unggah berkas'; }
+        tampilkanNotifikasi('File tidak dapat dibaca.', 'error');
+      };
+      reader.readAsDataURL(file);
+    });
+  })();
 
   function tombolCatatanRapat(rapat) {
     const jumlah = (((dataAplikasiTersimpan || {}).catatan) || []).filter(function(c) { return Number(c.nomorRapat) === Number(rapat.nomorBaris); }).length;
