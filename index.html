@@ -3870,7 +3870,15 @@
           </div>
         </div>
 
-        <!-- 9. Analisa (Menu Terakhir di Paling Bawah Setelah Input Nilai) -->
+        <!-- 9. Laporan Absensi (aplikasi absensi, masuk otomatis dengan akun Labsoma) -->
+        <button class="nav-button sonik-sidebar-item" data-page="laporanAbsensi" id="sidebarNavAbsensi">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          </span>
+          <span>Laporan Absensi</span>
+        </button>
+
+        <!-- 10. Analisa (Menu Terakhir di Paling Bawah) -->
         <button class="nav-button sonik-sidebar-item" data-page="analisa" id="sidebarNavAnalisa">
           <span class="nav-icon-inline">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
@@ -4209,6 +4217,34 @@
               <tbody id="pgMemberLeaderboardBody"></tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- PAGE: LAPORAN ABSENSI (Aplikasi Absensi Eksternal) -->
+      <section class="page" id="page-laporanAbsensi">
+        <div class="analisa-header-bar" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h1 class="page-heading" style="margin:0; font-size:22px; display:inline-flex; align-items:center; gap:8px;">
+              <span style="display:inline-flex; color:var(--aksen);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+              </span>
+              Laporan Absensi
+            </h1>
+            <p class="subheading" id="absensiStatus" style="margin:2px 0 0; font-size:13px; color:var(--redup);">Aplikasi absensi Labsoma PPS — masuk otomatis dengan akun Labsoma Anda.</p>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:8px;">
+            <button type="button" class="button secondary small" onclick="segarkanIframeAbsensi()" title="Muat ulang aplikasi absensi" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Segarkan
+            </button>
+            <a href="https://labsomapps.github.io/absensi/" target="_blank" rel="noopener noreferrer" class="button secondary small" title="Buka di tab baru" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Buka Tab Baru
+            </a>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; border-radius:var(--radius-lg); height:calc(100vh - 170px); min-height:560px; background:var(--panel);">
+          <iframe id="absensiFrame" src="about:blank" data-src="https://labsomapps.github.io/absensi/" title="Laporan Absensi" style="display:block; width:100%; height:100%; border:0; background:transparent;" allow="fullscreen; clipboard-write"></iframe>
         </div>
       </section>
 
@@ -5792,6 +5828,7 @@
                 if (err && err.message === 'SESI_HABIS') {
                   // hanya terjadi bila kata sandi diganti / akun dinonaktifkan / dihapus — bukan karena waktu
                   simpanToken('');
+                  hapusMasukAbsensi();
                   tampilkanLogin('Sesi berakhir karena kata sandi diubah atau akun dinonaktifkan. Silakan masuk lagi.');
                   return;
                 }
@@ -5880,6 +5917,7 @@
     google.script.run
       .withSuccessHandler(function (h) {
         simpanToken(h.token);
+        simpanMasukAbsensi(user, pass);   // untuk masuk otomatis ke Laporan Absensi (sementara, per tab)
         // minta browser menjaga penyimpanan ini agar tidak dihapus otomatis saat memori penuh
         try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
         document.getElementById('loginPass').value = '';
@@ -5913,7 +5951,7 @@
   });
   document.getElementById('dkKeluar').addEventListener('click', function () {
     this.disabled = true; this.textContent = 'Keluar…';
-    const selesai = function () { simpanToken(''); location.reload(); };
+    const selesai = function () { simpanToken(''); hapusMasukAbsensi(); location.reload(); };
     google.script.run.withSuccessHandler(selesai).withFailureHandler(selesai).logout();
   });
 
@@ -6568,6 +6606,7 @@
   /* ===== PETA NAVIGASI & HIERARKI HALAMAN ===== */
   const PETA_HALAMAN = {
     analisa:        { tab: 'analisa' },
+    laporanAbsensi: { tab: 'laporanAbsensi' },
     inputNilai:     { tab: 'inputNilai' },
 
     hubTugas:       { tab: 'tugas' },
@@ -6655,6 +6694,7 @@
       if (timerAgendaCarousel) { clearInterval(timerAgendaCarousel); timerAgendaCarousel = null; }
       if (timerAnggota) { clearInterval(timerAnggota); timerAnggota = null; }
     }
+    if (nama === 'laporanAbsensi') bukaAplikasiAbsensi();
     if (nama === 'analisa') {
       const f = document.getElementById('analisaFrame');
       if (f && (f.src === 'about:blank' || !f.src || f.src.indexOf('inputnilaipk-umum') === -1)) {
@@ -6867,6 +6907,108 @@
     state.unread = [];
     try { localStorage.setItem(key, JSON.stringify(state)); } catch (e) {}
     perbaruiNotifikasiPengumuman(semuaPengumumanTersimpan);
+  }
+
+  /* ===== LAPORAN ABSENSI: aplikasi absensi di dalam Labsoma, masuk otomatis =====
+     Aplikasi absensi berada di alamat yang sama (labsomapps.github.io), sehingga Labsoma bisa mengisi
+     formulir masuknya. Username & password Labsoma disimpan SEMENTARA di sessionStorage (hilang saat tab
+     ditutup / keluar), hanya sejak Anda masuk ke Labsoma. Bila tidak ada (Labsoma membuka sesi lama) atau
+     akun absensi berbeda, Anda masuk manual satu kali — aplikasi absensi akan mengingat sesinya sendiri. */
+  const KUNCI_MASUK_ABSENSI = 'labsomaMasukAbsensi';     // sessionStorage: {u, p}
+  const KUNCI_GAGAL_ABSENSI = 'labsomaAbsensiGagal';     // sessionStorage: username yang sudah gagal
+  const KUNCI_TOKEN_ABSENSI = 'labsoma_token';           // localStorage milik aplikasi absensi
+  let pantauAbsensi = null;
+
+  function simpanMasukAbsensi(u, p) {
+    try {
+      sessionStorage.setItem(KUNCI_MASUK_ABSENSI, JSON.stringify({ u: String(u || '').trim(), p: String(p || '') }));
+      sessionStorage.removeItem(KUNCI_GAGAL_ABSENSI);
+      localStorage.removeItem(KUNCI_TOKEN_ABSENSI);       // masuk Labsoma baru -> absensi ikut akun yang baru
+    } catch (e) {}
+  }
+  function hapusMasukAbsensi() {
+    try { sessionStorage.removeItem(KUNCI_MASUK_ABSENSI); sessionStorage.removeItem(KUNCI_GAGAL_ABSENSI); localStorage.removeItem(KUNCI_TOKEN_ABSENSI); } catch (e) {}
+  }
+  function statusAbsensi(teks, jenis) {
+    const el = document.getElementById('absensiStatus');
+    if (!el) return;
+    el.textContent = teks;
+    el.style.color = jenis === 'galat' ? 'var(--merah, #f87171)' : (jenis === 'ok' ? 'var(--aksen)' : 'var(--redup)');
+  }
+  function bukaAplikasiAbsensi() {
+    const f = document.getElementById('absensiFrame');
+    if (!f) return;
+    if (!f.src || f.src === 'about:blank') {
+      f.addEventListener('load', function () { if (f.src !== 'about:blank') mulaiMasukAbsensiOtomatis(f); });
+      f.src = f.dataset.src;
+      statusAbsensi('Membuka aplikasi absensi…');
+    }
+  }
+  function segarkanIframeAbsensi() {
+    const f = document.getElementById('absensiFrame');
+    if (!f) return;
+    f.src = 'about:blank';
+    setTimeout(function () { f.src = f.dataset.src; statusAbsensi('Memuat ulang…'); }, 60);
+  }
+  function mulaiMasukAbsensiOtomatis(frame) {
+    if (pantauAbsensi) clearInterval(pantauAbsensi);
+    let doc;
+    try { doc = frame.contentDocument; doc.getElementById('loginScreen'); }
+    catch (e) { statusAbsensi('Silakan masuk di aplikasi absensi.'); return; }   // beda alamat: tidak bisa diisi otomatis
+    let data = null;
+    try { data = JSON.parse(sessionStorage.getItem(KUNCI_MASUK_ABSENSI) || 'null'); } catch (e) {}
+    const sudahGagal = (function () { try { return sessionStorage.getItem(KUNCI_GAGAL_ABSENSI); } catch (e) { return null; } })();
+    const terlihat = function (el) { return !!el && !el.classList.contains('hidden'); };
+    let mulaiForm = 0, dicoba = false, putaran = 0;
+    pantauAbsensi = setInterval(function () {
+      if (++putaran > 150) { clearInterval(pantauAbsensi); return; }   // berhenti setelah ±60 detik
+      let layar, form, setup, galat, tombol;
+      try {
+        doc = frame.contentDocument;
+        layar = doc.getElementById('loginScreen'); form = doc.getElementById('loginForm');
+        setup = doc.getElementById('setupNamaWrap'); galat = doc.getElementById('loginError'); tombol = doc.getElementById('btnLogin');
+      } catch (e) { clearInterval(pantauAbsensi); return; }
+      if (!layar) return;
+      if (!terlihat(layar)) {                                  // sudah masuk (sesi lama atau otomatis)
+        statusAbsensi('Sudah masuk ke aplikasi absensi.', 'ok');
+        clearInterval(pantauAbsensi);
+        return;
+      }
+      if (!terlihat(form)) { mulaiForm = 0; return; }          // masih "Memeriksa sesi…"
+      if (terlihat(setup)) {                                   // aplikasi absensi belum punya akun admin
+        statusAbsensi('Aplikasi absensi belum disiapkan — buat akun admin pertamanya secara manual.', 'galat');
+        clearInterval(pantauAbsensi);
+        return;
+      }
+      if (dicoba) {
+        if (terlihat(galat) && tombol && !tombol.disabled) {
+          try { sessionStorage.setItem(KUNCI_GAGAL_ABSENSI, data.u); } catch (e) {}
+          statusAbsensi('Akun absensi Anda berbeda dengan akun Labsoma — silakan masuk manual (cukup sekali, sesinya akan diingat).', 'galat');
+          clearInterval(pantauAbsensi);
+        }
+        return;
+      }
+      if (!data || !data.u || !data.p || sudahGagal === data.u) {
+        statusAbsensi(data && sudahGagal === data.u
+          ? 'Akun absensi berbeda dengan akun Labsoma — silakan masuk manual.'
+          : 'Silakan masuk di aplikasi absensi (cukup sekali; masuk otomatis berlaku setelah Anda masuk ulang ke Labsoma).');
+        clearInterval(pantauAbsensi);
+        return;
+      }
+      if (!mulaiForm) { mulaiForm = Date.now(); return; }
+      if (Date.now() - mulaiForm < 1200 || (tombol && tombol.disabled)) return;   // beri waktu aplikasi menyiapkan formulir
+      if (terlihat(setup)) return;
+      const isi = function (id, v) {
+        const el = doc.getElementById(id); if (!el) return;
+        el.value = v;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      isi('loginUsername', data.u);
+      isi('loginPassword', data.p);
+      dicoba = true;
+      statusAbsensi('Masuk otomatis dengan akun ' + data.u + '…');
+      if (typeof form.requestSubmit === 'function') form.requestSubmit(); else if (tombol) tombol.click();
+    }, 400);
   }
 
   /* (Slide switcher aktif dipindahkan dan disempurnakan dengan 7 slide di bawah) */
@@ -10486,6 +10628,7 @@
       grup('dokumen'),
       grup('tugas'),
       grup('inputNilai'),
+      ambil('#sidebarNavAbsensi') || ambil(':scope > button[data-page="laporanAbsensi"]'),
       ambil('#sidebarNavAnalisa') || ambil(':scope > button[data-page="analisa"]')
     ].filter(Boolean);
     urutan.forEach(function(item) { daftar.appendChild(item); });
@@ -12402,6 +12545,7 @@ function simpanFile(f) {
     });
     if (HALAMAN_SONIK.indexOf('cetakTemplate') < 0) HALAMAN_SONIK.push('cetakTemplate');
   if (HALAMAN_SONIK.indexOf('analisa') < 0) HALAMAN_SONIK.push('analisa');
+  if (HALAMAN_SONIK.indexOf('laporanAbsensi') < 0) HALAMAN_SONIK.push('laporanAbsensi');
   } catch (e) { console.error('Template Soal: gagal mendaftarkan halaman', e); }
 
   const bukaSebelumnya = bukaHalaman;
