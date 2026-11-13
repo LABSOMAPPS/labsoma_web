@@ -1393,6 +1393,9 @@
     .dok-baris { display: grid; gap: 10px; }
     .dok-baris-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dok-baris-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .dok-baris-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .dok-draf { margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-md); background: rgba(250, 204, 21, 0.10); border: 1px solid rgba(250, 204, 21, 0.35); color: var(--kuning); font-size: 13px; line-height: 1.5; }
+    @media (max-width: 1100px) { .dok-baris-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     .dok-kartu { padding: 14px 10px; border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); color: var(--teks); font: inherit; font-size: 14px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; box-shadow: var(--bayangan-sm); transition: all 0.18s ease; -webkit-tap-highlight-color: transparent; }
     .dok-baris-2 .dok-kartu { padding: 20px 10px; font-size: 19px; }
     .dok-kartu:hover { border-color: var(--aksen-border); }
@@ -1400,6 +1403,7 @@
     .dok-kartu.aktif { background: var(--aksen); border-color: var(--aksen); color: var(--aksen-teks); box-shadow: var(--glow, none); }
     @media (max-width: 640px) {
       .dok-baris-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .dok-baris-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .dok-kartu { font-size: 13px; }
       .dok-baris-2 .dok-kartu { font-size: 17px; }
     }
@@ -5571,7 +5575,7 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Batas Pelajaran</h1>
-            <p class="subheading">Pilih lembaga (IMDA / IMNI) dan tingkat untuk melihat batas materi per kelas.</p>
+            <p class="subheading">Pilih lembaga (IMDA &amp; Semester / IMNI) dan tingkat untuk melihat batas materi per kelas.</p>
           </div>
           <div class="dok-aksi">
             <button class="button secondary hanya-admin" type="button" data-edit-dokumen="batas">✎ Edit</button>
@@ -5589,7 +5593,7 @@
         <div class="rapat-heading">
           <div>
             <h1 class="page-heading">Tipe Soal</h1>
-            <p class="subheading">Pilih lembaga (IMDA / IMNI) dan tingkat untuk melihat mekanisme pembuatan soal.</p>
+            <p class="subheading">Pilih lembaga (IMDA &amp; Semester / IMNI) dan tingkat untuk melihat mekanisme pembuatan soal.</p>
           </div>
           <div class="dok-aksi">
             <button class="button secondary hanya-admin" type="button" data-edit-dokumen="tipe">✎ Edit</button>
@@ -10539,7 +10543,9 @@
 
   // Filter kartu: baris atas = lembaga, baris bawah = tingkat. Pilihan dipakai bersama oleh Batas Pelajaran & Tipe Soal.
   const LEMBAGA_DOK = ['IMDA', 'IMNI'];
-  const TINGKAT_DOK = ['IDADIYAH', 'IBTIDAIYAH', 'TSANAWIYAH', 'ALIYAH'];
+  const TINGKAT_DOK = ['IDADIYAH', 'IBTIDAIYAH', 'TSANAWIYAH', 'ALIYAH', 'BANAT', 'TMTB'];
+  const LABEL_LEMBAGA_DOK = { IMDA: 'IMDA & SEMESTER', IMNI: 'IMNI' };
+  function labelDok(lembaga, tingkat) { return (LABEL_LEMBAGA_DOK[lembaga] || lembaga) + ' ' + tingkat; }
   let dokPilih = { lembaga: 'IMDA', tingkat: 'IDADIYAH' };
 
   const DOKUMEN = {
@@ -10551,13 +10557,13 @@
   function kartuFilterDokumen(grup, nilai) {
     const aktif = dokPilih[grup] === nilai;
     return '<button type="button" class="dok-kartu' + (aktif ? ' aktif' : '') + '" data-dok-pilih="' + grup +
-      '" data-nilai="' + nilai + '" aria-pressed="' + aktif + '">' + nilai + '</button>';
+      '" data-nilai="' + nilai + '" aria-pressed="' + aktif + '">' + aman(grup === 'lembaga' ? (LABEL_LEMBAGA_DOK[nilai] || nilai) : nilai) + '</button>';
   }
   function gambarFilterDokumen() {
     Object.keys(DOKUMEN).forEach(function (kode) {
       document.getElementById(DOKUMEN[kode].filter).innerHTML =
         '<div class="dok-baris dok-baris-2">' + LEMBAGA_DOK.map(function (n) { return kartuFilterDokumen('lembaga', n); }).join('') + '</div>' +
-        '<div class="dok-baris dok-baris-4">' + TINGKAT_DOK.map(function (n) { return kartuFilterDokumen('tingkat', n); }).join('') + '</div>';
+        '<div class="dok-baris dok-baris-6">' + TINGKAT_DOK.map(function (n) { return kartuFilterDokumen('tingkat', n); }).join('') + '</div>';
     });
   }
   gambarFilterDokumen();
@@ -10567,10 +10573,11 @@
     const kosong = !data || !data.nilai || !data.nilai.length ||
       data.nilai.every(function (baris) { return baris.every(function (v) { return teksSel(v) === ''; }); });
     if (kosong) {
-      wadah.innerHTML = '<div class="card empty">Dokumen ' + aman(dokPilih.lembaga + ' ' + dokPilih.tingkat) + ' masih kosong.</div>';
+      wadah.innerHTML = '<div class="card empty">Dokumen ' + aman(labelDok(dokPilih.lembaga, dokPilih.tingkat)) + ' masih kosong.</div>';
       return;
     }
-    wadah.innerHTML = (dokEdit[kode] ? '<div class="dok-info-edit">Mode edit: klik sel yang ingin diubah, lalu tekan “Simpan Perubahan”. Sel yang diubah ditandai kuning. Setelah disimpan, dokumen dimuat ulang dan terkunci lagi.</div>' : '') +
+    wadah.innerHTML = (data.drafDari ? '<div class="dok-draf">Tab <b>' + aman(data.judul) + '</b> baru dibuat otomatis di spreadsheet dengan kerangka salinan tab <b>' + aman(data.drafDari) + '</b>. Sesuaikan isinya untuk ' + aman(dokPilih.tingkat) + ' — tanda ini hilang setelah perubahan pertama disimpan.</div>' : '') +
+      (dokEdit[kode] ? '<div class="dok-info-edit">Mode edit: klik sel yang ingin diubah, lalu tekan “Simpan Perubahan”. Sel yang diubah ditandai kuning. Setelah disimpan, dokumen dimuat ulang dan terkunci lagi.</div>' : '') +
       susunDokumen(data.nilai, data.gabung, dokEdit[kode]);
     perbaruiTombolDokumen(kode);
   }
@@ -10659,7 +10666,7 @@
     const d = DOKUMEN[kode], wadah = document.getElementById(d.wadah);
     const kunci = kunciDokumen(), lembaga = dokPilih.lembaga, tingkat = dokPilih.tingkat;
     if (d.cache[kunci]) gambarDokumen(kode);
-    else wadah.innerHTML = '<div class="empty">Memuat dokumen ' + aman(lembaga + ' ' + tingkat) + '…</div>';
+    else wadah.innerHTML = '<div class="empty">Memuat dokumen ' + aman(labelDok(lembaga, tingkat)) + '…</div>';
 
     google.script.run
       .withSuccessHandler(function (hasil) {
