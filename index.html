@@ -10182,6 +10182,7 @@
           <td>${aman(item.tahapUjian || '–')}</td>
           <td>${aman(item.tingkat || '–')}</td>
           <td>${aman(item.madrasah || '–')}</td>
+          <td>${item.tugasKe ? '<span class="mt-ke">Tugas ' + aman(item.tugasKe) + '</span>' : '<span style="color:var(--redup)">–</span>'}</td>
           <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(item.status || 'Belum')}</td>
           <td>
@@ -10196,7 +10197,7 @@
         </tr>
       `;
     });
-    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
+    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'No. Tugas', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
   }
 
   function gambarBaganPersentase(idWadah, daftar) {
