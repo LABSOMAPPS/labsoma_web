@@ -1394,7 +1394,6 @@
     .dok-baris-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dok-baris-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .dok-baris-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-    .dok-draf { margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-md); background: rgba(250, 204, 21, 0.10); border: 1px solid rgba(250, 204, 21, 0.35); color: var(--kuning); font-size: 13px; line-height: 1.5; }
     @media (max-width: 1100px) { .dok-baris-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     .dok-kartu { padding: 14px 10px; border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); color: var(--teks); font: inherit; font-size: 14px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; box-shadow: var(--bayangan-sm); transition: all 0.18s ease; -webkit-tap-highlight-color: transparent; }
     .dok-baris-2 .dok-kartu { padding: 20px 10px; font-size: 19px; }
@@ -5581,11 +5580,14 @@
             <button class="button secondary hanya-admin" type="button" data-edit-dokumen="batas">✎ Edit</button>
             <button class="button hanya-admin" type="button" data-simpan-dokumen="batas" hidden>Simpan Perubahan</button>
             <button class="button secondary hanya-admin" type="button" data-batal-dokumen="batas" hidden>Batal</button>
+            <button class="button secondary" type="button" data-unduh-dokumen="batas" title="Unduh dokumen yang sedang dipilih sebagai file Excel">⬇ Unduh Excel</button>
+            <button class="button secondary hanya-admin" type="button" data-impor-dokumen="batas" title="Ganti isi dokumen yang sedang dipilih dengan isi file Excel">⬆ Impor Excel</button>
             <button class="button secondary" type="button" data-muat-dokumen="batas">⟳ Muat ulang</button>
           </div>
         </div>
         <div class="dok-filter" id="filterDokumenBatas"></div>
         <div id="isiDokumenBatas"><div class="empty">Memuat dokumen…</div></div>
+        <input type="file" id="fileImporDokumen" accept=".xlsx,.xls,.ods,.csv" hidden>
       </section>
 
       <!-- PAGE: TIPE SOAL -->
@@ -5599,6 +5601,8 @@
             <button class="button secondary hanya-admin" type="button" data-edit-dokumen="tipe">✎ Edit</button>
             <button class="button hanya-admin" type="button" data-simpan-dokumen="tipe" hidden>Simpan Perubahan</button>
             <button class="button secondary hanya-admin" type="button" data-batal-dokumen="tipe" hidden>Batal</button>
+            <button class="button secondary" type="button" data-unduh-dokumen="tipe" title="Unduh dokumen yang sedang dipilih sebagai file Excel">⬇ Unduh Excel</button>
+            <button class="button secondary hanya-admin" type="button" data-impor-dokumen="tipe" title="Ganti isi dokumen yang sedang dipilih dengan isi file Excel">⬆ Impor Excel</button>
             <button class="button secondary" type="button" data-muat-dokumen="tipe">⟳ Muat ulang</button>
           </div>
         </div>
@@ -10576,8 +10580,7 @@
       wadah.innerHTML = '<div class="card empty">Dokumen ' + aman(labelDok(dokPilih.lembaga, dokPilih.tingkat)) + ' masih kosong.</div>';
       return;
     }
-    wadah.innerHTML = (data.drafDari ? '<div class="dok-draf">Tab <b>' + aman(data.judul) + '</b> baru dibuat otomatis di spreadsheet dengan kerangka salinan tab <b>' + aman(data.drafDari) + '</b>. Sesuaikan isinya untuk ' + aman(dokPilih.tingkat) + ' — tanda ini hilang setelah perubahan pertama disimpan.</div>' : '') +
-      (dokEdit[kode] ? '<div class="dok-info-edit">Mode edit: klik sel yang ingin diubah, lalu tekan “Simpan Perubahan”. Sel yang diubah ditandai kuning. Setelah disimpan, dokumen dimuat ulang dan terkunci lagi.</div>' : '') +
+    wadah.innerHTML = (dokEdit[kode] ? '<div class="dok-info-edit">Mode edit: klik sel yang ingin diubah, lalu tekan “Simpan Perubahan”. Sel yang diubah ditandai kuning. Setelah disimpan, dokumen dimuat ulang dan terkunci lagi.</div>' : '') +
       susunDokumen(data.nilai, data.gabung, dokEdit[kode]);
     perbaruiTombolDokumen(kode);
   }
@@ -10660,6 +10663,84 @@
     event.preventDefault();
     const teks = ((event.clipboardData || window.clipboardData).getData('text') || '').replace(/[\r\n]+/g, ' ');
     document.execCommand('insertText', false, teks);
+  });
+
+  /* --- Unduh & Impor Excel (sesuai lembaga + tingkat yang dipilih) --- */
+  const JUDUL_DOK = { batas: 'Batas Pelajaran', tipe: 'Tipe Soal' };
+  function unduhDokumenExcel(kode) {
+    if (!pustakaExcelSiap()) return;
+    const data = DOKUMEN[kode].cache[kunciDokumen()];
+    if (!data || !data.nilai) { tampilkanNotifikasi('Dokumen belum termuat. Tunggu sebentar lalu coba lagi.', 'info'); return; }
+    const nilai = data.nilai.map(function (r) { return r.map(function (v) { return String(v == null ? '' : v); }); });
+    const ws = XLSX.utils.aoa_to_sheet(nilai);
+    ws['!merges'] = (data.gabung || []).map(function (m) { return { s: { r: m[0], c: m[1] }, e: { r: m[0] + m[2] - 1, c: m[1] + m[3] - 1 } }; });
+    const kolom = Math.max.apply(null, nilai.map(function (r) { return r.length; }).concat([1]));
+    ws['!cols'] = Array.from({ length: kolom }, function (_, c) {
+      const lebar = nilai.reduce(function (m, r) { return Math.max(m, String(r[c] || '').length); }, 6);
+      return { wch: Math.min(48, lebar + 2) };
+    });
+    const wb = XLSX.utils.book_new();
+    const arab = nilai.some(function (r) { return r.some(function (v) { return /[؀-ۿ]/.test(v); }); });
+    if (arab) wb.Workbook = { Views: [{ RTL: true }] };
+    XLSX.utils.book_append_sheet(wb, ws, String(dokPilih.lembaga + ' ' + dokPilih.tingkat).slice(0, 31));
+    XLSX.writeFile(wb, namaBerkasAman(JUDUL_DOK[kode] + ' ' + labelDok(dokPilih.lembaga, dokPilih.tingkat).replace('&', 'dan')) + '.xlsx');
+  }
+  let imporDokKode = 'batas';
+  function bacaFileImporDokumen(file) {
+    if (!file || !pustakaExcelSiap()) return;
+    const kode = imporDokKode, lembaga = dokPilih.lembaga, tingkat = dokPilih.tingkat, kunci = kunciDokumen();
+    const rd = new FileReader();
+    rd.onload = function (e) {
+      let wb;
+      try { wb = XLSX.read(e.target.result, { type: 'array' }); }
+      catch (er) { tampilkanNotifikasi('File tidak bisa dibaca sebagai Excel.', 'error'); return; }
+      // pakai sheet yang namanya cocok dengan pilihan (mis. "IMDA TMTB"), jika tidak ada pakai sheet pertama
+      const cocok = function (n) { return String(n).toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim(); };
+      const target = cocok(lembaga + ' ' + tingkat);
+      const namaSheet = wb.SheetNames.filter(function (n) { return cocok(n).indexOf(target) >= 0; })[0] || wb.SheetNames[0];
+      const ws = wb.Sheets[namaSheet];
+      let nilai = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '', blankrows: true })
+        .map(function (r) { return r.map(function (v) { return String(v == null ? '' : v).trim(); }); });
+      while (nilai.length && nilai[nilai.length - 1].every(function (v) { return v === ''; })) nilai.pop();
+      let kolom = 0;
+      nilai.forEach(function (r) { for (let c = r.length - 1; c >= 0; c--) if (r[c] !== '') { kolom = Math.max(kolom, c + 1); break; } });
+      const gabung = (ws['!merges'] || []).map(function (m) { return [m.s.r, m.s.c, m.e.r - m.s.r + 1, m.e.c - m.s.c + 1]; })
+        .filter(function (m) { return m[0] < nilai.length; });
+      gabung.forEach(function (m) { kolom = Math.max(kolom, m[1] + m[3]); });
+      nilai = nilai.map(function (r) { const b = r.slice(0, kolom); while (b.length < kolom) b.push(''); return b; });
+      if (!nilai.length || !kolom) { tampilkanNotifikasi('Sheet "' + namaSheet + '" kosong.', 'error'); return; }
+      konfirmasi({
+        jenis: 'peringatan', judul: 'Impor ke ' + JUDUL_DOK[kode] + ' ' + labelDok(lembaga, tingkat) + '?', ya: 'Ya, ganti isinya',
+        pesan: 'Isi dokumen ' + labelDok(lembaga, tingkat) + ' di spreadsheet akan DIGANTI dengan sheet "' + namaSheet + '" dari file ' + file.name +
+          ' (' + nilai.length + ' baris × ' + kolom + ' kolom' + (gabung.length ? ', ' + gabung.length + ' sel gabungan' : '') + '). Isi lama tidak bisa dikembalikan dari aplikasi — unduh dulu bila perlu cadangan.'
+      }).then(function (ok) {
+        if (!ok) return;
+        tampilkanNotifikasi('Mengimpor dokumen…', 'info');
+        google.script.run
+          .withSuccessHandler(function (pesan) {
+            tampilkanNotifikasi(pesan || 'Impor selesai.', 'success');
+            Object.keys(DOKUMEN).forEach(function (k) { delete DOKUMEN[k].cache[kunci]; });   // tab bisa dipakai bersama
+            if (kunci === kunciDokumen()) muatDokumen(kode);
+          })
+          .withFailureHandler(function (er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
+          .imporDokumen(kode, lembaga, tingkat, nilai, gabung);
+      });
+    };
+    rd.readAsArrayBuffer(file);
+  }
+  document.getElementById('fileImporDokumen').addEventListener('change', function () {
+    const f = this.files && this.files[0];
+    this.value = '';
+    bacaFileImporDokumen(f);
+  });
+  document.addEventListener('click', function (event) {
+    const u = event.target.closest('[data-unduh-dokumen]');
+    if (u) { unduhDokumenExcel(u.dataset.unduhDokumen); return; }
+    const i = event.target.closest('[data-impor-dokumen]');
+    if (i) {
+      imporDokKode = i.dataset.imporDokumen;
+      keluarEditDokumen(imporDokKode, true).then(function (ok) { if (ok) document.getElementById('fileImporDokumen').click(); });
+    }
   });
 
   function muatDokumen(kode) {
