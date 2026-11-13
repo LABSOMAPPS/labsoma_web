@@ -1479,6 +1479,35 @@
     .mt-tag { padding: 0 6px; border-radius: 4px; background: var(--panel3); }
     .mt-tag.ok { background: var(--hijau-soft); color: var(--hijau); }
     .mt-kosong { color: var(--redup); font-size: 12.5px; font-style: italic; }
+    .mt-ke { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 6px; background: var(--aksen-soft, rgba(50,184,196,.14)); color: var(--aksen); font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .mt-nama small.mt-terakhir { margin-top: 4px; color: var(--aksen); letter-spacing: 0; text-transform: none; font-weight: 700; }
+    .tt-info { grid-column: 1 / -1; margin-top: -2px; padding: 8px 10px; border-radius: var(--radius-sm); background: var(--panel2); color: var(--redup); font-size: 12.5px; line-height: 1.45; }
+    .tt-info b { color: var(--teks); }
+    .tt-info.awas { background: rgba(250, 204, 21, 0.10); color: var(--kuning); }
+    input.tt-terkunci { opacity: .8; cursor: not-allowed; background-image: none; }
+    .search-filters.tt-alat { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 6px 0 14px; }
+    .search-filters.tt-alat select { width: auto; min-width: 220px; }
+    .tt-tabel .button.bahaya:disabled { opacity: .45; cursor: not-allowed; }
+    .tt-grup { margin-bottom: 18px; border: 1px solid var(--garis); border-radius: var(--radius-lg); background: var(--panel); box-shadow: var(--bayangan); overflow: hidden; }
+    .tt-grup-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; background: var(--panel2); }
+    .tt-grup-head h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--aksen); letter-spacing: .02em; }
+    .tt-grup-head span { color: var(--redup); font-size: 12.5px; font-weight: 600; }
+    .tt-tabel { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tt-tabel th, .tt-tabel td { padding: 10px 14px; border-top: 1px solid var(--garis); text-align: left; vertical-align: middle; }
+    .tt-tabel th { color: var(--redup); font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .tt-tabel td.no { width: 92px; }
+    .tt-tabel td small { display: block; color: var(--redup); font-size: 11.5px; }
+    .tt-tabel td.aksi { text-align: right; white-space: nowrap; }
+    .tt-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 800; }
+    .tt-status.lewat { background: var(--panel3); color: var(--redup); }
+    .tt-status.jalan { background: var(--hijau-soft); color: var(--hijau); }
+    .tt-status.nanti { background: var(--biru-soft); color: var(--biru); }
+    @media (max-width: 760px) {
+      .tt-tabel thead { display: none; }
+      .tt-tabel tr { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; padding: 10px 14px; border-top: 1px solid var(--garis); }
+      .tt-tabel td { padding: 0; border: 0; }
+      .tt-tabel td.aksi { grid-column: 1 / -1; text-align: left; margin-top: 6px; }
+    }
     .mt-prog { text-align: center; }
     .mt-prog b { display: block; font-size: 16px; font-weight: 800; color: var(--hijau); }
     .mt-prog small { color: var(--redup); font-size: 11.5px; font-weight: 600; }
@@ -3744,6 +3773,7 @@
           <span>Manajemen Tugas</span>
         </button>
 
+
         <!-- 4. Pengguna (Khusus Admin/TU) -->
         <button class="nav-button hanya-admin" data-page="pengguna">
           <span class="nav-icon-inline">
@@ -3806,6 +3836,7 @@
               </button>
               <div class="nav-subgroup-menu" id="menu-pembuatanSoal">
                 <button class="nav-button" data-page="tugas">Tugas</button>
+                <button class="nav-button staf-only" data-page="tanggalTugas" id="sidebarNavTanggalTugas">Tanggal Tugas</button>
                 <button class="nav-button" data-page="setorSoal">Setor Soal</button>
                 <button class="nav-button" data-page="cetakTemplate">Cetak Template</button>
                 <button class="nav-button hanya-admin" data-page="mekanismeSoal">Mekanisme Soal</button>
@@ -5114,7 +5145,7 @@
             </div>
             <div class="field">
               <label for="editTugasTahap">Tahap Ujian</label>
-              <input id="editTugasTahap" name="tahapUjian" type="text" placeholder="Contoh: Ujian Tengah Semester">
+              <select id="editTugasTahap" name="tahapUjian"></select>
             </div>
             <div class="field full">
               <label for="editTugasMadrasah">Madrasah</label>
@@ -5124,6 +5155,11 @@
               <label for="editTugasNamaTugas">Fan / Nama Materi</label>
               <select id="editTugasNamaTugas" name="tugas" required></select>
             </div>
+            <div class="field full">
+              <label for="editTugasKe">Tugas ke-</label>
+              <select id="editTugasKe" name="tugasKe"></select>
+            </div>
+            <div class="tt-info" id="editTugasKeInfo"></div>
             <div class="field">
               <label for="editTugasMulai">Tanggal Mulai</label>
               <input id="editTugasMulai" name="mulai" type="date" required>
@@ -5188,6 +5224,10 @@
           <input id="editUjianRow" type="hidden">
           <div class="form-grid" style="gap: 10px; margin-top: 10px;">
             <div class="field full"><label for="editUjianNama">Nama anggota</label><input id="editUjianNama" name="nama" required></div>
+            <div class="field"><label for="editUjianTahap">Tahap Ujian</label><select id="editUjianTahap" name="tahapUjian"></select></div>
+            <div class="field"><label for="editUjianKe">Tugas ke-</label><select id="editUjianKe" name="tugasKe"></select></div>
+            <input id="editUjianMadrasah" name="madrasah" type="hidden">
+            <div class="tt-info" id="editUjianKeInfo"></div>
             <div class="field"><label for="editUjianMulai">Tanggal mulai</label><input id="editUjianMulai" name="mulai" type="date" required></div>
             <div class="field"><label for="editUjianSelesai">Tanggal selesai</label><input id="editUjianSelesai" name="selesai" type="date" required></div>
             <div class="field"><label for="editUjianKelas">Kelas</label><input id="editUjianKelas" name="kelas"></div>
@@ -5237,6 +5277,50 @@
           <div id="isiManajemenTugas"><div class="empty">Memuat daftar tugas…</div></div>
         </div>
       </section>
+      <!-- PAGE: TANGGAL TUGAS -->
+      <section class="page" id="page-tanggalTugas">
+        <h1 class="page-heading">Tanggal Tugas</h1>
+        <p class="subheading">Tanggal setiap tugas, dihitung per tahap ujian: <b>IMDA 1 › Tugas 1, Tugas 2, …</b> lalu <b>IMDA 2 › Tugas 1, …</b> dimulai lagi dari 1. Di Manajemen Tugas cukup pilih tahap ujian &amp; tugas ke-berapa, tanggalnya diambil dari sini. Mengubah tanggal di sini otomatis memperbarui semua tugas yang memakainya.</p>
+        <div class="tt-alat search-filters">
+          <select id="ttFilterTahap" aria-label="Filter tahap ujian"><option value="">Semua tahap ujian</option></select>
+          <button type="button" class="button hanya-admin" id="ttTambah">＋ Tambah Tanggal Tugas</button>
+        </div>
+        <div id="isiTanggalTugas"><div class="empty">Memuat tanggal tugas…</div></div>
+      </section>
+      <div class="modal-overlay" id="ttOverlay" hidden>
+        <form class="modal" id="formTanggalTugas" style="width: min(520px, 100%);">
+          <h2 id="ttJudul">Tambah Tanggal Tugas</h2>
+          <input type="hidden" id="ttTahapLama"><input type="hidden" id="ttKeLama">
+          <div class="form-grid" style="gap: 10px; margin-top: 10px;">
+            <div class="field">
+              <label for="ttTahap">Tahap Ujian</label>
+              <select id="ttTahap" required></select>
+            </div>
+            <div class="field">
+              <label for="ttKe">Tugas ke-</label>
+              <input id="ttKe" type="number" min="1" step="1" required>
+            </div>
+            <div class="field">
+              <label for="ttMulai">Tanggal mulai</label>
+              <input id="ttMulai" type="date" required>
+            </div>
+            <div class="field">
+              <label for="ttSelesai">Tanggal selesai</label>
+              <input id="ttSelesai" type="date" required>
+            </div>
+            <div class="field full">
+              <label for="ttKeterangan">Keterangan (opsional)</label>
+              <input id="ttKeterangan" type="text" placeholder="Contoh: Pembuatan soal gelombang 1">
+            </div>
+            <div class="tt-info" id="ttInfo"></div>
+          </div>
+          <div class="modal-error" id="ttError"></div>
+          <div class="modal-actions" style="margin-top:16px;">
+            <button class="button secondary" type="button" data-tutup-modal="ttOverlay">Batal</button>
+            <button class="button" type="submit" id="ttSimpan">Simpan</button>
+          </div>
+        </form>
+      </div>
       <!-- MODAL TAMBAH TUGAS (MANAJEMEN) -->
       <div class="modal-overlay" id="mtOverlay" hidden>
         <form class="modal" id="formMtTambah" style="width: min(550px, 100%);">
@@ -5256,7 +5340,7 @@
             </div>
             <div class="field">
               <label for="mtTahapUjian">Tahap Ujian</label>
-              <input id="mtTahapUjian" type="text" placeholder="Contoh: Ujian Tengah Semester">
+              <select id="mtTahapUjian"></select>
             </div>
             <div class="field">
               <label for="mtMadrasah">Madrasah</label>
@@ -5266,6 +5350,11 @@
               <label for="mtFan">Fan/Nama Materi</label>
               <select id="mtFan" required><option value="">Pilih Fan/Materi</option></select>
             </div>
+            <div class="field full">
+              <label for="mtTugasKe">Tugas ke-</label>
+              <select id="mtTugasKe"></select>
+            </div>
+            <div class="tt-info" id="mtTugasKeInfo"></div>
             <div class="field">
               <label for="mtMulai">Tanggal mulai</label>
               <input id="mtMulai" type="date" required>
@@ -6643,6 +6732,7 @@
     pengguna:       { tab: 'kegiatan', induk: 'hubKegiatan' },
     dataMateri:     { tab: 'dokumen' },
     manajemenTugas: { tab: 'dashboard', induk: 'dashboard' },
+    tanggalTugas:   { tab: 'tugas', induk: 'hubSoal' },
     tugasTerkait:   { tab: 'tugasTerkait' },
     hubDokumen:     { tab: 'dokumen' }
   };
@@ -9675,6 +9765,7 @@
         perbaruiNotifikasiPengumuman(semuaPengumumanTersimpan);
         tampilkanModulTambahan(data);
         renderManajemenTugas();
+        renderTanggalTugas();
         renderTugasTerkait();
       })
       .withFailureHandler(function(error) {
@@ -10185,9 +10276,11 @@
       document.getElementById('editTugasRow').dataset.kunci = item.kunci || '';
       document.getElementById('editTugasMulai').value = item.mulai || '';
       document.getElementById('editTugasSelesai').value = item.selesai || '';
-      document.getElementById('editTugasTahap').value = item.tahapUjian || '';
       document.getElementById('editTugasMadrasah').value = item.madrasah || '';
       isiPilihanTugasEdit((dataAplikasiTersimpan || {}).dataAnggota || [], materiTersimpan(), item);
+      isiOpsiTahapUjian(document.getElementById('editTugasTahap'), item.tahapUjian || '', 'Tanpa tahap');
+      pemilihEditTugas.perbarui(false, item.tugasKe || '');
+      if (!item.tugasKe) { document.getElementById('editTugasMulai').value = item.mulai || ''; document.getElementById('editTugasSelesai').value = item.selesai || ''; }
       document.getElementById('editTugasOverlay').hidden = false;
       return;
     }
@@ -10294,7 +10387,10 @@
       if (!x) return;
       isiNilai('editUjianRow', baris); document.getElementById('editUjianRow').dataset.kunci = x.kunci || ''; isiNilai('editUjianNama', x.nama); isiNilai('editUjianMulai', x.mulai);
       isiNilai('editUjianSelesai', x.selesai); isiNilai('editUjianKelas', x.kelas); isiNilai('editUjianTingkat', x.tingkat);
-      isiNilai('editUjianTugas', x.tugas);
+      isiNilai('editUjianTugas', x.tugas); isiNilai('editUjianMadrasah', x.madrasah || '');
+      isiOpsiTahapUjian(document.getElementById('editUjianTahap'), x.tahapUjian || '', 'Tanpa tahap');
+      pemilihEditUjian.perbarui(false, x.tugasKe || '');
+      if (!x.tugasKe) { isiNilai('editUjianMulai', x.mulai); isiNilai('editUjianSelesai', x.selesai); }
       document.getElementById('editUjianOverlay').hidden = false;
     } else if (aksi === 'belumUjian') {
       jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Belum'], tombol.dataset.kunci);
@@ -10660,6 +10756,7 @@
     document.getElementById('mtMode').textContent = tampilan === 'KOREKTOR' ? 'MODE KOREKTOR' : 'MODE ADMINISTRATOR';
     if (tampilan === 'SONIK' && HALAMAN_SONIK.indexOf(halamanAktif()) < 0) bukaHalaman('dashboard');
     renderManajemenTugas();
+    renderTanggalTugas();
     renderTugasTerkait();
   }
   function muatPengguna() {
@@ -11237,13 +11334,14 @@
       let g = peta[dasar];
       if (!g || g[jenis]) {
         g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tahapUjian: item.tahapUjian, tingkat: item.tingkat, madrasah: item.madrasah || '',
-              mulai: item.mulai, selesai: item.selesai, soal: null, ujian: null };
+              mulai: item.mulai, selesai: item.selesai, tugasKe: item.tugasKe || '', soal: null, ujian: null };
         peta[dasar] = g;
         hasil.push(g);
       }
       g[jenis] = item;
       if (!g.madrasah && item.madrasah) g.madrasah = item.madrasah;
       if (!g.tahapUjian && item.tahapUjian) g.tahapUjian = item.tahapUjian;
+      if (!g.tugasKe && item.tugasKe) g.tugasKe = item.tugasKe;
     }
     (data.semuaTugas || []).forEach(function(i) { masuk(i, 'soal'); });
     (data.tugasKoreksiUjian || []).forEach(function(i) { masuk(i, 'ujian'); });
@@ -11281,9 +11379,9 @@
     }
     const rincian = 'Pembuatan Soal: ' + (g.soal ? (selesaiItem(g.soal) ? 'Selesai' : 'Belum') : 'tidak ada') +
                     ' · Koreksi Ujian: ' + (g.ujian ? (selesaiItem(g.ujian) ? 'Selesai' : 'Belum') : 'tidak ada') +
-                    ' · ' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
+                    ' · ' + (g.tugasKe ? 'Tugas ' + g.tugasKe + ' ' + (g.tahapUjian || '') + ': ' : '') + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
     return '<div class="mt-chip" title="' + aman(rincian) + '">' +
-      '<div class="mt-chip-top"><span>' + aman(labelTugasChip(g)) + '</span>' +
+      '<div class="mt-chip-top">' + (g.tugasKe ? '<span class="mt-ke">Tugas ' + g.tugasKe + '</span>' : '') + '<span>' + aman(labelTugasChip(g)) + '</span>' +
       '<span class="mt-pct ' + kls + '">' + g.persen + '%</span>' +
       '<button type="button" class="mt-x" data-mt-hapus="' + indeks + '" title="Hapus tugas" aria-label="Hapus tugas">×</button></div>' +
       '<div class="mt-chip-sub"><span>' + aman(g.tahapUjian || '—') + '</span><span>' + aman(g.tingkat || '—') + '</span><span>' + aman(g.madrasah || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
@@ -11356,10 +11454,22 @@
       const tot = milik.reduce(function(a, g) { return a + g.total; }, 0);
       totalSelesai += sel; totalSemua += tot;
       mtAnggota.push(nama);
+      milik.sort(function(a, b) {
+        return urutTahap(normTahap(a.tahapUjian), normTahap(b.tahapUjian)) || (Number(a.tugasKe) || 999) - (Number(b.tugasKe) || 999);
+      });
       milik.forEach(function(g) { mtTampil.push({ nama: nama, g: g }); });
+      // tugas terakhir per tahap (dari semua tugas anggota, bukan hanya yang tampil)
+      const terakhir = {};
+      mtDaftar.forEach(function(g) {
+        if (norm(g.nama) !== norm(nama) || !g.tugasKe) return;
+        const t = normTahap(g.tahapUjian);
+        if (!terakhir[t] || Number(g.tugasKe) > terakhir[t]) terakhir[t] = Number(g.tugasKe);
+      });
+      const teksTerakhir = Object.keys(terakhir).sort(urutTahap).map(function(t) { return t + ': Tugas ' + terakhir[t]; }).join(' · ');
       baris.push(
         '<div class="mt-row">' +
-          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
+          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small>' +
+            (teksTerakhir ? '<small class="mt-terakhir" title="Nomor tugas terakhir per tahap ujian">Terakhir › ' + aman(teksTerakhir) + '</small>' : '') + '</div>' +
           '<div class="mt-chips">' + (milik.length
             ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
             : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
@@ -11389,6 +11499,259 @@
     document.getElementById('mtSinkronInput').hidden = !admin;
   }
 
+  /* ===================== TANGGAL TUGAS ===================== */
+  const TAHAP_UJIAN_BAKU = ['IMDA 1', 'IMDA 2', 'IMDA 3', 'SEMESTER GANJIL', 'SEMESTER GENAP', 'IMNI'];
+  function normTahap(v) {
+    const s = String(v == null ? '' : v).toUpperCase().replace(/[_\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!s) return '';
+    const m = s.match(/^IMDA\s*(\d|I{1,3})$/);
+    if (m) return 'IMDA ' + ({ I: '1', II: '2', III: '3' }[m[1]] || m[1]);
+    if (/^(SMT|SEMESTER|SEM)\s*(GANJIL|1)$/.test(s)) return 'SEMESTER GANJIL';
+    if (/^(SMT|SEMESTER|SEM)\s*(GENAP|2)$/.test(s)) return 'SEMESTER GENAP';
+    return s;
+  }
+  function urutTahap(a, b) {
+    const ia = TAHAP_UJIAN_BAKU.indexOf(a), ib = TAHAP_UJIAN_BAKU.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || String(a).localeCompare(String(b), 'id');
+  }
+  function daftarTanggalTugas() { return ((dataAplikasiTersimpan || {}).tanggalTugas || []); }
+  function cariTanggalTugas(tahap, ke) {
+    const t = normTahap(tahap), n = Number(ke);
+    return daftarTanggalTugas().filter(function(x) { return x.tahapUjian === t && Number(x.ke) === n; })[0] || null;
+  }
+  function rentangTanggalTugas(t) { return formatTanggal(t.mulai) + ' – ' + formatTanggal(t.selesai); }
+  function semuaTahapDikenal() {
+    const d = dataAplikasiTersimpan || {};
+    const lain = daftarTanggalTugas().map(function(x) { return x.tahapUjian; })
+      .concat((d.semuaTugas || []).map(function(x) { return normTahap(x.tahapUjian); }))
+      .concat((d.tugasKoreksiUjian || []).map(function(x) { return normTahap(x.tahapUjian); }));
+    return Array.from(new Set(TAHAP_UJIAN_BAKU.concat(lain).filter(Boolean))).sort(urutTahap);
+  }
+  function isiOpsiTahapUjian(sel, nilai, teksKosong) {
+    const v = normTahap(nilai);
+    const daftar = semuaTahapDikenal();
+    if (v && daftar.indexOf(v) < 0) daftar.push(v);
+    sel.innerHTML = '<option value="">' + aman(teksKosong || 'Pilih tahap ujian') + '</option>' +
+      daftar.map(function(t) { return '<option value="' + aman(t) + '">' + aman(t) + '</option>'; }).join('');
+    sel.value = v;
+  }
+  // nomor tugas terbesar milik anggota di tahap itu (kecuali penugasan yang sedang diedit)
+  function tugasTerakhirAnggota(nama, tahap, kecualiKunci) {
+    const d = dataAplikasiTersimpan || {}, t = normTahap(tahap);
+    let maks = 0;
+    (d.semuaTugas || []).concat(d.tugasKoreksiUjian || []).forEach(function(x) {
+      if (norm(x.nama) !== norm(nama) || normTahap(x.tahapUjian) !== t) return;
+      if (kecualiKunci && x.kunci === kecualiKunci) return;
+      const n = Number(x.tugasKe) || 0;
+      if (n > maks) maks = n;
+    });
+    return maks;
+  }
+
+  // tahap ujian dari tugas bernomor terbaru milik anggota (agar langsung menyarankan nomor berikutnya)
+  function tahapTerbaruAnggota(nama) {
+    const d = dataAplikasiTersimpan || {};
+    let pilih = null;
+    (d.semuaTugas || []).concat(d.tugasKoreksiUjian || []).forEach(function(x) {
+      if (norm(x.nama) !== norm(nama) || !x.tugasKe || !normTahap(x.tahapUjian)) return;
+      if (!pilih || String(x.mulai || '') > String(pilih.mulai || '')) pilih = x;
+    });
+    return pilih ? normTahap(pilih.tahapUjian) : '';
+  }
+
+  // Pasang pemilih "Tugas ke-" yang membaca tanggal dari menu Tanggal Tugas (tahap + nomor).
+  function pasangPemilihTugasKe(cfg) {
+    const elTahap = document.getElementById(cfg.tahap), elKe = document.getElementById(cfg.ke);
+    const elMulai = document.getElementById(cfg.mulai), elSelesai = document.getElementById(cfg.selesai), elInfo = document.getElementById(cfg.info);
+    function terapkan() {
+      const t = elKe.value ? cariTanggalTugas(elTahap.value, elKe.value) : null;
+      [elMulai, elSelesai].forEach(function(el) { el.readOnly = !!t; el.classList.toggle('tt-terkunci', !!t); });
+      if (t) { elMulai.value = t.mulai; elSelesai.value = t.selesai; }
+      tulisInfo(t);
+    }
+    function tulisInfo(t) {
+      const tahap = normTahap(elTahap.value), nama = cfg.nama ? cfg.nama() : '';
+      const daftar = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
+      let html = '', awas = false;
+      if (!tahap) { html = 'Pilih <b>tahap ujian</b> dulu — nomor tugas dihitung per tahap ujian.'; awas = true; }
+      else if (!daftar.length) { html = 'Belum ada Tanggal Tugas untuk <b>' + aman(tahap) + '</b>. Isi tanggal manual, atau tambahkan dulu di menu <b>Tanggal Tugas</b>.'; awas = true; }
+      else {
+        const akhir = nama ? tugasTerakhirAnggota(nama, tahap, cfg.kecuali ? cfg.kecuali() : '') : 0;
+        const saran = akhir + 1;
+        if (nama) html = akhir ? 'Tugas terakhir <b>' + aman(nama) + '</b> di ' + aman(tahap) + ': <b>Tugas ' + akhir + '</b> → berikutnya <b>Tugas ' + saran + '</b>.' : '<b>' + aman(nama) + '</b> belum punya tugas di ' + aman(tahap) + ' → mulai dari <b>Tugas 1</b>.';
+        if (nama && !cariTanggalTugas(tahap, saran)) { html += ' Tugas ' + saran + ' belum ada di menu Tanggal Tugas.'; awas = true; }
+        if (t) html += (html ? '<br>' : '') + 'Tanggal: <b>' + rentangTanggalTugas(t) + '</b>' + (t.keterangan ? ' · ' + aman(t.keterangan) : '');
+        else html += (html ? '<br>' : '') + 'Tanpa nomor tugas: tanggal diisi manual.';
+      }
+      elInfo.innerHTML = html;
+      elInfo.classList.toggle('awas', awas);
+    }
+    function perbarui(pilihSaran, nilaiKe) {
+      const tahap = normTahap(elTahap.value);
+      const daftar = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
+      const sebelum = nilaiKe !== undefined ? String(nilaiKe || '') : elKe.value;
+      elKe.innerHTML = '<option value="">— Tanggal manual —</option>' + daftar.map(function(x) {
+        return '<option value="' + x.ke + '">Tugas ' + x.ke + ' · ' + rentangTanggalTugas(x) + '</option>';
+      }).join('');
+      if (sebelum && cariTanggalTugas(tahap, sebelum)) elKe.value = sebelum;
+      else if (pilihSaran && cfg.nama) {
+        const saran = tugasTerakhirAnggota(cfg.nama(), tahap, cfg.kecuali ? cfg.kecuali() : '') + 1;
+        elKe.value = cariTanggalTugas(tahap, saran) ? String(saran) : '';
+      } else elKe.value = '';
+      terapkan();
+    }
+    elTahap.addEventListener('change', function() { perbarui(true); });
+    elKe.addEventListener('change', terapkan);
+    return { perbarui: perbarui };
+  }
+
+  const pemilihMt = pasangPemilihTugasKe({ tahap: 'mtTahapUjian', ke: 'mtTugasKe', mulai: 'mtMulai', selesai: 'mtSelesai', info: 'mtTugasKeInfo',
+    nama: function() { return document.getElementById('mtNama').value; } });
+  const pemilihEditTugas = pasangPemilihTugasKe({ tahap: 'editTugasTahap', ke: 'editTugasKe', mulai: 'editTugasMulai', selesai: 'editTugasSelesai', info: 'editTugasKeInfo',
+    nama: function() { return document.getElementById('editTugasNama').value; }, kecuali: function() { return document.getElementById('editTugasRow').dataset.kunci || ''; } });
+  const pemilihEditUjian = pasangPemilihTugasKe({ tahap: 'editUjianTahap', ke: 'editUjianKe', mulai: 'editUjianMulai', selesai: 'editUjianSelesai', info: 'editUjianKeInfo',
+    nama: function() { return document.getElementById('editUjianNama').value; }, kecuali: function() { return document.getElementById('editUjianRow').dataset.kunci || ''; } });
+  document.getElementById('editTugasNama').addEventListener('change', function() { pemilihEditTugas.perbarui(false); });
+  document.getElementById('editUjianNama').addEventListener('input', function() { pemilihEditUjian.perbarui(false); });
+
+  function statusTanggalTugas(t) {
+    const hari = tanggalHariIniLokal();
+    if (hari > t.selesai) return '<span class="tt-status lewat">Sudah lewat</span>';
+    if (hari >= t.mulai) return '<span class="tt-status jalan">Berjalan</span>';
+    return '<span class="tt-status nanti">Akan datang</span>';
+  }
+  function lamaHari(t) {
+    const a = new Date(t.mulai + 'T00:00:00Z'), b = new Date(t.selesai + 'T00:00:00Z');
+    return Math.round((b - a) / 86400000) + 1;
+  }
+  function renderTanggalTugas() {
+    const wadah = document.getElementById('isiTanggalTugas');
+    if (!wadah || !dataAplikasiTersimpan) return;
+    const admin = adminAktif();
+    const daftar = daftarTanggalTugas();
+    const sel = document.getElementById('ttFilterTahap');
+    const sebelum = sel.value;
+    const tahapAda = Array.from(new Set(daftar.map(function(x) { return x.tahapUjian; }))).sort(urutTahap);
+    sel.innerHTML = '<option value="">Semua tahap ujian</option>' + tahapAda.map(function(t) { return '<option value="' + aman(t) + '">' + aman(t) + '</option>'; }).join('');
+    sel.value = tahapAda.indexOf(sebelum) >= 0 ? sebelum : '';
+    // jumlah penugasan per (tahap, nomor)
+    const pakai = {};
+    kelompokPenugasan(dataAplikasiTersimpan).forEach(function(g) {
+      if (!g.tugasKe) return;
+      const k = normTahap(g.tahapUjian) + '#' + g.tugasKe;
+      pakai[k] = (pakai[k] || 0) + 1;
+    });
+    if (!daftar.length) {
+      wadah.innerHTML = '<div class="empty">Belum ada tanggal tugas.' + (admin ? ' Klik <b>＋ Tambah Tanggal Tugas</b>, mulai dari <b>Tugas 1</b> untuk tahap ujian yang sedang berjalan.' : '') + '</div>';
+      return;
+    }
+    wadah.innerHTML = tahapAda.filter(function(t) { return !sel.value || t === sel.value; }).map(function(tahap) {
+      const isi = daftar.filter(function(x) { return x.tahapUjian === tahap; });
+      return '<div class="tt-grup"><div class="tt-grup-head"><h3>' + aman(tahap) + '</h3><span>' + isi.length + ' tugas</span></div>' +
+        '<table class="tt-tabel"><thead><tr><th>Tugas</th><th>Mulai</th><th>Selesai</th><th>Lama</th><th>Status</th><th>Dipakai</th><th>Keterangan</th>' + (admin ? '<th></th>' : '') + '</tr></thead><tbody>' +
+        isi.map(function(x) {
+          const n = pakai[tahap + '#' + x.ke] || 0;
+          return '<tr><td class="no"><span class="mt-ke">Tugas ' + x.ke + '</span></td>' +
+            '<td>' + formatTanggal(x.mulai) + '<small>' + aman(x.mulai) + '</small></td>' +
+            '<td>' + formatTanggal(x.selesai) + '<small>' + aman(x.selesai) + '</small></td>' +
+            '<td>' + lamaHari(x) + ' hari</td><td>' + statusTanggalTugas(x) + '</td>' +
+            '<td>' + (n ? n + ' penugasan' : '<span style="color:var(--redup)">—</span>') + '</td>' +
+            '<td>' + aman(x.keterangan || '') + '</td>' +
+            (admin ? '<td class="aksi"><button type="button" class="button secondary small" data-tt-ubah="' + aman(tahap) + '|' + x.ke + '">Ubah</button> ' +
+              '<button type="button" class="button bahaya small" data-tt-hapus="' + aman(tahap) + '|' + x.ke + '"' + (n ? ' disabled title="Masih dipakai ' + n + ' penugasan"' : '') + '>Hapus</button></td>' : '') +
+            '</tr>';
+        }).join('') + '</tbody></table></div>';
+    }).join('');
+  }
+  function tambahHariIso(iso, n) {
+    const d = new Date(iso + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+  function infoModalTanggalTugas() {
+    const tahap = normTahap(document.getElementById('ttTahap').value), ke = Number(document.getElementById('ttKe').value);
+    const lamaTahap = document.getElementById('ttTahapLama').value, lamaKe = Number(document.getElementById('ttKeLama').value);
+    const el = document.getElementById('ttInfo');
+    const ada = tahap && ke ? cariTanggalTugas(tahap, ke) : null;
+    const n = kelompokPenugasan(dataAplikasiTersimpan || {}).filter(function(g) { return normTahap(g.tahapUjian) === (lamaTahap || tahap) && Number(g.tugasKe) === (lamaKe || ke); }).length;
+    if (ada && !(lamaTahap === tahap && lamaKe === ke)) { el.innerHTML = '<b>Tugas ' + ke + ' ' + aman(tahap) + '</b> sudah ada (' + rentangTanggalTugas(ada) + '). Pakai nomor lain atau ubah yang sudah ada.'; el.classList.add('awas'); return; }
+    el.classList.remove('awas');
+    el.innerHTML = lamaKe
+      ? (n ? 'Tanggal baru akan otomatis diterapkan ke <b>' + n + ' penugasan</b> yang memakai Tugas ' + lamaKe + ' ' + aman(lamaTahap) + '.' : 'Belum ada penugasan yang memakai tugas ini.')
+      : 'Nomor tugas dimulai dari 1 di setiap tahap ujian.';
+  }
+  function bukaModalTanggalTugas(item) {
+    const f = document.getElementById('formTanggalTugas');
+    f.reset();
+    document.getElementById('ttError').textContent = '';
+    const tahapFilter = document.getElementById('ttFilterTahap').value;
+    const tahap = item ? item.tahapUjian : (tahapFilter || (daftarTanggalTugas().slice(-1)[0] || {}).tahapUjian || '');
+    isiOpsiTahapUjian(document.getElementById('ttTahap'), tahap);
+    document.getElementById('ttTahapLama').value = item ? item.tahapUjian : '';
+    document.getElementById('ttKeLama').value = item ? item.ke : '';
+    document.getElementById('ttJudul').textContent = item ? 'Ubah Tugas ' + item.ke + ' · ' + item.tahapUjian : 'Tambah Tanggal Tugas';
+    if (item) {
+      document.getElementById('ttKe').value = item.ke;
+      document.getElementById('ttMulai').value = item.mulai;
+      document.getElementById('ttSelesai').value = item.selesai;
+      document.getElementById('ttKeterangan').value = item.keterangan || '';
+    } else isiSaranTanggalTugasBaru();
+    infoModalTanggalTugas();
+    document.getElementById('ttOverlay').hidden = false;
+  }
+  // nomor berikutnya di tahap itu + tanggal mulai sehari setelah tugas sebelumnya
+  function isiSaranTanggalTugasBaru() {
+    const tahap = normTahap(document.getElementById('ttTahap').value);
+    const isi = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
+    const akhir = isi.slice(-1)[0];
+    document.getElementById('ttKe').value = akhir ? Number(akhir.ke) + 1 : 1;
+    const mulai = akhir ? tambahHariIso(akhir.selesai, 1) : tanggalHariIniLokal();
+    document.getElementById('ttMulai').value = mulai;
+    document.getElementById('ttSelesai').value = akhir ? tambahHariIso(mulai, lamaHari(akhir) - 1) : mulai;
+  }
+  document.getElementById('ttFilterTahap').addEventListener('change', renderTanggalTugas);
+  document.getElementById('ttTambah').addEventListener('click', function() { bukaModalTanggalTugas(null); });
+  document.getElementById('ttTahap').addEventListener('change', function() {
+    if (!document.getElementById('ttKeLama').value) isiSaranTanggalTugasBaru();
+    infoModalTanggalTugas();
+  });
+  document.getElementById('ttKe').addEventListener('input', infoModalTanggalTugas);
+  document.getElementById('formTanggalTugas').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const pesan = document.getElementById('ttError'), tombol = document.getElementById('ttSimpan');
+    const data = {
+      tahapLama: document.getElementById('ttTahapLama').value, keLama: document.getElementById('ttKeLama').value,
+      tahapUjian: document.getElementById('ttTahap').value, ke: document.getElementById('ttKe').value,
+      mulai: document.getElementById('ttMulai').value, selesai: document.getElementById('ttSelesai').value,
+      keterangan: document.getElementById('ttKeterangan').value.trim()
+    };
+    if (data.selesai < data.mulai) { pesan.textContent = 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.'; return; }
+    pesan.textContent = ''; tombol.disabled = true;
+    google.script.run
+      .withSuccessHandler(function(h) {
+        tombol.disabled = false;
+        document.getElementById('ttOverlay').hidden = true;
+        tampilkanNotifikasi(h || 'Tanggal tugas disimpan.', 'success');
+        muatAplikasi();
+      })
+      .withFailureHandler(function(er) { tombol.disabled = false; pesan.textContent = er && er.message ? er.message : String(er); })
+      .simpanTanggalTugas(data);
+  });
+  document.addEventListener('click', function(event) {
+    const ubah = event.target.closest('[data-tt-ubah]'), hapus = event.target.closest('[data-tt-hapus]');
+    if (!ubah && !hapus) return;
+    const bagian = (ubah || hapus).getAttribute(ubah ? 'data-tt-ubah' : 'data-tt-hapus').split('|');
+    const item = cariTanggalTugas(bagian[0], bagian[1]);
+    if (!item) return;
+    if (ubah) { bukaModalTanggalTugas(item); return; }
+    konfirmasi({ jenis: 'bahaya', judul: 'Hapus Tugas ' + item.ke + ' ' + item.tahapUjian + '?', ya: 'Ya, hapus', pesan: 'Tanggal ' + rentangTanggalTugas(item) + ' akan dihapus dari daftar Tanggal Tugas.' }).then(function(ok) {
+      if (!ok) return;
+      google.script.run
+        .withSuccessHandler(function(h) { tampilkanNotifikasi(h || 'Dihapus.', 'success'); muatAplikasi(); })
+        .withFailureHandler(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
+        .hapusTanggalTugas(item.tahapUjian, item.ke);
+    });
+  });
+
   function bukaModalTambahTugas(nama) {
     document.getElementById('formMtTambah').reset();
     document.getElementById('mtNama').value = nama;
@@ -11399,6 +11762,10 @@
     document.getElementById('mtKeUjian').checked = true;
     document.getElementById('mtError').textContent = '';
     updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
+    // tahap ujian: pakai filter tahap yang aktif, atau tahap tanggal tugas terakhir
+    const tahapAwal = document.getElementById('mtFilterTahap').value || tahapTerbaruAnggota(nama) || (daftarTanggalTugas().slice(-1)[0] || {}).tahapUjian || '';
+    isiOpsiTahapUjian(document.getElementById('mtTahapUjian'), tahapAwal);
+    pemilihMt.perbarui(true, '');
     document.getElementById('mtOverlay').hidden = false;
   }
 
@@ -11416,6 +11783,7 @@
       tingkat: document.getElementById('mtTingkat').value,
       kelas: document.getElementById('mtKelas').value,
       tahapUjian: document.getElementById('mtTahapUjian').value.trim(),
+      tugasKe: document.getElementById('mtTugasKe').value,
       madrasah: document.getElementById('mtMadrasah').value.trim(),
       tugas: document.getElementById('mtFan').value,
       mulai: document.getElementById('mtMulai').value,
@@ -11469,7 +11837,7 @@
   document.getElementById('mtUnduhData').addEventListener('click', function() {
     if (!pustakaExcelSiap()) return;
     if (!mtTampil.length) { tampilkanNotifikasi('Tidak ada tugas yang cocok dengan filter untuk diunduh.', 'error'); return; }
-    const kepala = ['No', 'Nama Anggota', 'Tingkat', 'Kelas', 'Fan/Materi', 'Tahap Ujian', 'Madrasah', 'Tanggal Mulai', 'Tanggal Selesai',
+    const kepala = ['No', 'Nama Anggota', 'Tingkat', 'Kelas', 'Fan/Materi', 'Tahap Ujian', 'Tugas Ke', 'Madrasah', 'Tanggal Mulai', 'Tanggal Selesai',
       'Pembuatan Soal', 'Tahap Pembuatan Soal', 'Koreksi Hasil Ujian', 'Progres (%)', 'Keterangan'];
     const urut = mtTampil.slice().sort(function(a, b) {
       return a.nama.localeCompare(b.nama, 'id') || urutTingkat(norm(a.g.tingkat), norm(b.g.tingkat)) ||
@@ -11477,7 +11845,7 @@
     });
     const baris = urut.map(function(x, i) {
       const g = x.g, th = g.soal ? tahapSoal(g.soal) : null;
-      return [i + 1, x.nama, g.tingkat || '', g.kelas || '', g.tugas || '', g.tahapUjian || '', g.madrasah || '', g.mulai || '', g.selesai || '',
+      return [i + 1, x.nama, g.tingkat || '', g.kelas || '', g.tugas || '', g.tahapUjian || '', g.tugasKe || '', g.madrasah || '', g.mulai || '', g.selesai || '',
         statusBagian(g.soal), th ? th.teks : '—', statusBagian(g.ujian), g.persen, statusKelompok(g)];
     });
     const ringkas = {};
@@ -11495,8 +11863,8 @@
     };
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([kepala].concat(baris));
-    ws['!cols'] = [5, 24, 22, 10, 30, 14, 12, 13, 13, 14, 26, 18, 11, 12].map(function(w) { return { wch: w }; });
-    ws['!autofilter'] = { ref: 'A1:N' + (baris.length + 1) };
+    ws['!cols'] = [5, 24, 22, 10, 30, 14, 9, 12, 13, 13, 14, 26, 18, 11, 12].map(function(w) { return { wch: w }; });
+    ws['!autofilter'] = { ref: 'A1:O' + (baris.length + 1) };
     XLSX.utils.book_append_sheet(wb, ws, 'Daftar Tugas');
     const ws2 = XLSX.utils.aoa_to_sheet([['No', 'Nama Anggota', 'Jumlah Tugas', 'Bagian Selesai', 'Progres (%)', 'Tugas Telat']].concat(barisRingkas));
     ws2['!cols'] = [5, 26, 13, 15, 12, 12].map(function(w) { return { wch: w }; });
@@ -11518,7 +11886,7 @@
     tampilkanNotifikasi('Mengunduh ' + baris.length + ' tugas sesuai filter.', 'success');
   });
 
-  const KOLOM_IMPOR_MT = ['NAMA ANGGOTA', 'TINGKAT', 'KELAS', 'FAN/MATERI', 'TAHAP UJIAN', 'MADRASAH', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'PEMBUATAN SOAL', 'KOREKSI UJIAN'];
+  const KOLOM_IMPOR_MT = ['NAMA ANGGOTA', 'TINGKAT', 'KELAS', 'FAN/MATERI', 'TAHAP UJIAN', 'TUGAS KE', 'MADRASAH', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'PEMBUATAN SOAL', 'KOREKSI UJIAN'];
 
   document.getElementById('mtUnduhTemplate').addEventListener('click', function() {
     if (!pustakaExcelSiap()) return;
@@ -11527,10 +11895,13 @@
     const contohNama = anggota[0] || 'Nama Anggota';
     const hariIni = tanggalHariIniLokal();
     const wb = XLSX.utils.book_new();
+    const contohTT = daftarTanggalTugas()[0];
     const ws = XLSX.utils.aoa_to_sheet([KOLOM_IMPOR_MT,
-      [contohNama, 'TSANAWIYAH', '3', 'Fikih', 'IMDA 1', 'INDUK', hariIni, hariIni, 'YA', 'YA'],
-      [contohNama, 'IDADIYAH PROGRAM KHUSUS', 'HADITS', 'Mushthalah Hadits', 'IMNI', 'RANTING', hariIni, hariIni, 'YA', 'TIDAK']]);
-    ws['!cols'] = [26, 26, 12, 28, 14, 12, 15, 15, 15, 14].map(function(w) { return { wch: w }; });
+      contohTT
+        ? [contohNama, 'TSANAWIYAH', '3', 'Fikih', contohTT.tahapUjian, contohTT.ke, 'INDUK', '', '', 'YA', 'YA']
+        : [contohNama, 'TSANAWIYAH', '3', 'Fikih', 'IMDA 1', '', 'INDUK', hariIni, hariIni, 'YA', 'YA'],
+      [contohNama, 'IDADIYAH PROGRAM KHUSUS', 'HADITS', 'Mushthalah Hadits', 'IMNI', '', 'RANTING', hariIni, hariIni, 'YA', 'TIDAK']]);
+    ws['!cols'] = [26, 26, 12, 28, 14, 10, 12, 15, 15, 15, 14].map(function(w) { return { wch: w }; });
     XLSX.utils.book_append_sheet(wb, ws, 'Impor Tugas');
     // daftar pilihan resmi
     const pilihan = [['TINGKAT', 'KELAS']];
@@ -11547,13 +11918,18 @@
     for (let i = 0; i < panjang; i++) lain.push([anggota[i] || '', tahap[i] || '', ['INDUK', 'RANTING', 'LABSOMA'][i] || '']);
     const wsL = XLSX.utils.aoa_to_sheet(lain); wsL['!cols'] = [{ wch: 28 }, { wch: 30 }, { wch: 12 }];
     XLSX.utils.book_append_sheet(wb, wsL, 'Anggota & Lainnya');
+    const wsT = XLSX.utils.aoa_to_sheet([['TAHAP UJIAN', 'TUGAS KE', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'KETERANGAN']]
+      .concat(daftarTanggalTugas().map(function(x) { return [x.tahapUjian, x.ke, x.mulai, x.selesai, x.keterangan || '']; })));
+    wsT['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 34 }];
+    XLSX.utils.book_append_sheet(wb, wsT, 'Tanggal Tugas');
     const wsI = XLSX.utils.aoa_to_sheet([
       ['PETUNJUK IMPOR TUGAS'], [''],
       ['1. Isi data mulai baris ke-2 pada sheet "Impor Tugas". Baris contoh boleh dihapus/ditimpa.'],
       ['2. NAMA ANGGOTA harus sama dengan daftar anggota (lihat sheet "Anggota & Lainnya").'],
       ['3. TINGKAT dan KELAS harus salah satu pasangan di sheet "Tingkat & Kelas".'],
       ['4. FAN/MATERI sebaiknya sama dengan Data Materi agar Setor Soal bisa mencocokkan tugas.'],
-      ['5. Tanggal ditulis 2026-11-12 atau 12/11/2026, atau format tanggal Excel.'],
+      ['5. TUGAS KE (disarankan): isi nomor tugas sesuai TAHAP UJIAN (lihat sheet "Tanggal Tugas"); tanggal otomatis diambil dari sana, kolom TANGGAL boleh kosong.'],
+      ['   Bila TUGAS KE kosong, isi TANGGAL MULAI & SELESAI manual: 2026-11-12 atau 12/11/2026, atau format tanggal Excel.'],
       ['6. PEMBUATAN SOAL & KOREKSI UJIAN: YA / TIDAK (kosong = YA). Minimal salah satu YA.'],
       ['7. Tugas yang sama persis (nama, fan, kelas, tingkat, tahap, tanggal) yang sudah ada akan dilewati.']
     ]);
@@ -11602,10 +11978,10 @@
     }
     const k = {
       nama: kol('NAMA ANGGOTA', ['NAMA']), tingkat: kol('TINGKAT'), kelas: kol('KELAS'), fan: kol('FAN/MATERI', ['FAN', 'MATERI', 'TUGAS', 'FAN/NAMA MATERI']),
-      tahap: kol('TAHAP UJIAN', ['TAHAP']), madrasah: kol('MADRASAH'), mulai: kol('TANGGAL MULAI', ['MULAI']), selesai: kol('TANGGAL SELESAI', ['SELESAI']),
+      tahap: kol('TAHAP UJIAN', ['TAHAP']), ke: kol('TUGAS KE', ['TUGAS KE-', 'NOMOR TUGAS', 'NO TUGAS']), madrasah: kol('MADRASAH'), mulai: kol('TANGGAL MULAI', ['MULAI']), selesai: kol('TANGGAL SELESAI', ['SELESAI']),
       soal: kol('PEMBUATAN SOAL', ['SOAL']), ujian: kol('KOREKSI UJIAN', ['KOREKSI HASIL UJIAN', 'UJIAN'])
     };
-    const wajib = ['nama', 'tingkat', 'kelas', 'fan', 'mulai', 'selesai'].filter(function(x) { return k[x] < 0; });
+    const wajib = ['nama', 'tingkat', 'kelas', 'fan'].concat(k.ke >= 0 ? [] : ['mulai', 'selesai']).filter(function(x) { return k[x] < 0; });
     if (wajib.length) throw new Error('Kolom wajib tidak ditemukan: ' + wajib.join(', ').toUpperCase() + '. Gunakan Template Impor.');
 
     const data = dataAplikasiTersimpan || {};
@@ -11631,18 +12007,29 @@
       else if (!salah.length && !materi.some(function(x) { return norm(x.tingkat) === tingkat && normalisasiKelas(x.kelas) === kelas && norm(x.materi) === norm(fan); })) {
         awas.push('Fan belum ada di Data Materi ' + tingkat + ' kelas ' + kelas);
       }
-      const mulai = tanggalImpor(ambil(row, k.mulai)), selesai = tanggalImpor(ambil(row, k.selesai));
-      if (!mulai || mulai === 'TIDAK VALID') salah.push('Tanggal mulai tidak valid');
-      if (!selesai || selesai === 'TIDAK VALID') salah.push('Tanggal selesai tidak valid');
-      if (mulai && selesai && mulai !== 'TIDAK VALID' && selesai !== 'TIDAK VALID' && selesai < mulai) salah.push('Tanggal selesai lebih awal dari mulai');
+      const tahapUjian = normTahap(ambil(row, k.tahap));
+      const keMentah = String(ambil(row, k.ke)).trim();
+      const tugasKe = keMentah ? (parseInt(keMentah.replace(/[^0-9]/g, ''), 10) || 0) : 0;
+      let mulai = '', selesai = '';
+      if (keMentah) {
+        const tt = tugasKe && tahapUjian ? cariTanggalTugas(tahapUjian, tugasKe) : null;
+        if (!tugasKe) salah.push('TUGAS KE harus angka');
+        else if (!tahapUjian) salah.push('TUGAS KE diisi tetapi TAHAP UJIAN kosong');
+        else if (!tt) salah.push('Tugas ' + tugasKe + ' ' + tahapUjian + ' belum ada di menu Tanggal Tugas');
+        else { mulai = tt.mulai; selesai = tt.selesai; }
+      } else {
+        mulai = tanggalImpor(ambil(row, k.mulai)); selesai = tanggalImpor(ambil(row, k.selesai));
+        if (!mulai || mulai === 'TIDAK VALID') salah.push('Tanggal mulai tidak valid (atau isi TUGAS KE)');
+        if (!selesai || selesai === 'TIDAK VALID') salah.push('Tanggal selesai tidak valid (atau isi TUGAS KE)');
+        if (mulai && selesai && mulai !== 'TIDAK VALID' && selesai !== 'TIDAK VALID' && selesai < mulai) salah.push('Tanggal selesai lebih awal dari mulai');
+      }
       const keSoal = yaTidakImpor(ambil(row, k.soal)), keUjian = yaTidakImpor(ambil(row, k.ujian));
       if (keSoal === null) salah.push('PEMBUATAN SOAL harus YA/TIDAK');
       if (keUjian === null) salah.push('KOREKSI UJIAN harus YA/TIDAK');
       if (keSoal === false && keUjian === false) salah.push('Pembuatan Soal & Koreksi Ujian keduanya TIDAK');
-      const tahapUjian = norm(ambil(row, k.tahap));
       if (!tahapUjian) awas.push('Tahap ujian kosong');
       hasil.push({
-        baris: r + 1, nama: nama, tingkat: tingkat, kelas: kelas, tugas: fan, tahapUjian: tahapUjian, madrasah: norm(ambil(row, k.madrasah)),
+        baris: r + 1, nama: nama, tingkat: tingkat, kelas: kelas, tugas: fan, tahapUjian: tahapUjian, tugasKe: tugasKe || '', madrasah: norm(ambil(row, k.madrasah)),
         mulai: mulai, selesai: selesai, keSoal: keSoal !== false, keUjian: keUjian !== false, salah: salah, awas: awas
       });
     }
@@ -11659,11 +12046,11 @@
       '<span class="badge">✓ ' + valid.length + ' siap diimpor</span>' +
       (awas ? '<span class="badge waiting">⚠ ' + awas + ' dengan catatan</span>' : '') +
       (salah ? '<span class="badge telat">✗ ' + salah + ' tidak valid (dilewati)</span>' : '');
-    document.getElementById('mtImporTabel').innerHTML = '<table><thead><tr><th>Baris</th><th></th><th>Nama Anggota</th><th>Tingkat</th><th>Kelas</th><th>Fan/Materi</th><th>Tahap</th><th>Madrasah</th><th>Mulai</th><th>Selesai</th><th>Soal</th><th>Ujian</th><th>Keterangan</th></tr></thead><tbody>' +
+    document.getElementById('mtImporTabel').innerHTML = '<table><thead><tr><th>Baris</th><th></th><th>Nama Anggota</th><th>Tingkat</th><th>Kelas</th><th>Fan/Materi</th><th>Tahap</th><th>Tugas Ke</th><th>Madrasah</th><th>Mulai</th><th>Selesai</th><th>Soal</th><th>Ujian</th><th>Keterangan</th></tr></thead><tbody>' +
       mtImporBaris.map(function(x) {
         const kelas = x.salah.length ? 'salah' : (x.awas.length ? 'peringatan' : '');
         return '<tr class="' + kelas + '"><td>' + x.baris + '</td><td>' + (x.salah.length ? '✗' : (x.awas.length ? '⚠' : '✓')) + '</td><td>' + aman(x.nama) + '</td><td>' + aman(x.tingkat) + '</td><td>' + aman(x.kelas) +
-          '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.tahapUjian) + '</td><td>' + aman(x.madrasah) + '</td><td>' + aman(x.mulai) + '</td><td>' + aman(x.selesai) +
+          '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.tahapUjian) + '</td><td>' + aman(x.tugasKe) + '</td><td>' + aman(x.madrasah) + '</td><td>' + aman(x.mulai) + '</td><td>' + aman(x.selesai) +
           '</td><td>' + (x.keSoal ? 'YA' : 'TIDAK') + '</td><td>' + (x.keUjian ? 'YA' : 'TIDAK') + '</td><td class="ket">' + aman(x.salah.concat(x.awas).join('; ')) + '</td></tr>';
       }).join('') + '</tbody></table>';
     const kirim = document.getElementById('mtImporKirim');
@@ -11702,7 +12089,7 @@
   document.getElementById('mtImporKirim').addEventListener('click', function() {
     const tombol = this, pesan = document.getElementById('mtImporError');
     const kirim = mtImporBaris.filter(function(x) { return !x.salah.length; }).map(function(x) {
-      return { baris: x.baris, nama: x.nama, tingkat: x.tingkat, kelas: x.kelas, tugas: x.tugas, tahapUjian: x.tahapUjian,
+      return { baris: x.baris, nama: x.nama, tingkat: x.tingkat, kelas: x.kelas, tugas: x.tugas, tahapUjian: x.tahapUjian, tugasKe: x.tugasKe,
         madrasah: x.madrasah, mulai: x.mulai, selesai: x.selesai, keSoal: x.keSoal, keUjian: x.keUjian };
     });
     if (!kirim.length) return;
