@@ -1515,6 +1515,11 @@
     .slot-angka .s-telat { background: var(--merah-soft); color: var(--merah); border-color: rgba(248, 113, 113, .4); }
     .slot-angka .s-jalan { background: var(--kuning-soft); color: var(--kuning); border-color: rgba(250, 204, 21, .45); box-shadow: 0 0 0 2px rgba(250, 204, 21, .18); }
     .slot-angka .s-nanti { background: var(--biru-soft); color: var(--biru); border-color: rgba(56, 189, 248, .35); }
+    .slot-angka .s-bebas { background: transparent; color: var(--redup); border: 1px dashed var(--garis); text-decoration: line-through; opacity: .75; }
+    .slot-angka span[data-nomor-anggota] { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+    .slot-angka span[data-nomor-anggota]:hover { transform: translateY(-1px); box-shadow: 0 0 0 2px var(--aksen); }
+    .bebas-pilihan { display: grid; gap: 8px; margin-top: 12px; }
+    .bebas-pilihan .button { width: 100%; justify-content: center; }
     .slot-jalan { margin-top: auto; padding: 7px 9px; border-radius: var(--radius-sm); background: var(--kuning-soft); color: var(--teks); font-size: 12px; line-height: 1.4; }
     .slot-jalan b { color: var(--kuning); }
     .slot-jalan.kosong { background: var(--panel2); color: var(--redup); }
@@ -4141,7 +4146,7 @@
         <section class="dashboard-tasks">
           <div class="dashboard-task-heading">
             <h2>Tugas Anggota Labsoma</h2>
-            <span class="slot-legenda" id="legendaSlotDashboard" hidden><span><i style="background:var(--hijau)"></i>Selesai</span><span><i style="background:var(--kuning)"></i>Berjalan</span><span><i style="background:var(--merah)"></i>Belum/Telat</span><span><i style="background:var(--biru)"></i>Akan datang</span></span>
+            <span class="slot-legenda" id="legendaSlotDashboard" hidden><span><i style="background:var(--hijau)"></i>Selesai</span><span><i style="background:var(--kuning)"></i>Berjalan</span><span><i style="background:var(--merah)"></i>Belum/Telat</span><span><i style="background:var(--biru)"></i>Akan datang</span><span><i style="background:transparent;border:1px dashed var(--redup)"></i>Dibebaskan</span></span>
             <div class="pager" id="pagerDashboard"></div>
           </div>
           <div class="member-grid" id="anggotaDashboard"></div>
@@ -5364,6 +5369,22 @@
             <button class="button" type="submit" id="ttSimpan">Simpan</button>
           </div>
         </form>
+      </div>
+      <!-- MODAL BEBASKAN NOMOR TUGAS (ADMIN) -->
+      <div class="modal-overlay" id="bebasOverlay" hidden>
+        <div class="modal" style="width: min(480px, 100%);">
+          <h2 id="bebasJudul">Tugas</h2>
+          <div class="tt-info" id="bebasInfo" style="margin-top:8px"></div>
+          <div class="field" id="bebasKetWadah" style="margin-top:12px">
+            <label for="bebasKet">Keterangan (opsional)</label>
+            <input id="bebasKet" type="text" placeholder="Contoh: tugas baru ditambahkan setelah periode lewat">
+          </div>
+          <div class="bebas-pilihan" id="bebasPilihan"></div>
+          <div class="modal-error" id="bebasError"></div>
+          <div class="modal-actions" style="margin-top:14px;">
+            <button class="button secondary" type="button" data-tutup-modal="bebasOverlay">Tutup</button>
+          </div>
+        </div>
       </div>
       <!-- MODAL TAMBAH TUGAS (MANAJEMEN) -->
       <div class="modal-overlay" id="mtOverlay" hidden>
@@ -8469,7 +8490,7 @@
     const hasil = Object.keys(nama).map(function(k) {
       const p = progresNomor(nama[k], tahap);
       const n = function(st) { return p.nomor.filter(function(t) { return t.status === st; }).length; };
-      return { nama: nama[k], tahap: 'Tahap Tugas ' + tahap, daftarTugas: p.nomor, selesai: n('Selesai'), proses: n('Berjalan'), telat: n('Terlambat'), bernomor: true };
+      return { nama: nama[k], tahap: 'Tahap Tugas ' + tahap, tahapAngka: tahap, total: p.total, daftarTugas: p.nomor, selesai: n('Selesai'), proses: n('Berjalan'), telat: n('Terlambat'), bernomor: true };
     }).sort(function(a, b) { return String(a.nama).localeCompare(String(b.nama), 'id'); });
     return hasil.length ? hasil : null;
   }
@@ -8501,7 +8522,7 @@
     } else {
       wadah.innerHTML = terlihat.map(function(orang, indeks) {
         if (orang.bernomor) {
-          const angka = angkaNomorHtml(orang.daftarTugas);
+          const angka = angkaNomorHtml(orang.daftarTugas, { nama: orang.nama, tahap: orang.tahapAngka });
           const jalan = orang.daftarTugas.filter(function(t) { return t.status === 'Berjalan'; })[0];
           const telat = orang.daftarTugas.filter(function(t) { return t.status === 'Terlambat'; }).length;
           const info = jalan
@@ -8510,7 +8531,7 @@
           return `
           <article class="member-card slot-card ${telat > 0 ? 'ada-tugas-telat' : ''}">
             <div class="member-name"><span class="list-index">${awal + indeks + 1}</span>${aman(orang.nama)}</div>
-            <div class="task-label">${aman(orang.tahap)} · ${orang.daftarTugas.length} tugas</div>
+            <div class="task-label">${aman(orang.tahap)} · ${orang.total} tugas</div>
             ${angka}
             ${info}
           </article>`;
@@ -11172,7 +11193,7 @@
     el.classList.remove('awas');
     if (!tahap) { el.innerHTML = 'Pilih soal sesuai salah satu tugas ' + (pilih ? aman(pilih) : 'Anda') + '; tugas itu akan tercatat selesai.'; return; }
     const p = progresNomor(nama, tahap);
-    const berikut = p.nomor[p.selesai];
+    const berikut = nomorAktif(p.nomor)[p.selesai];
     el.innerHTML = 'Pilih soal sesuai <b>salah satu tugas</b> ' + (pilih ? 'milik <b>' + aman(pilih) + '</b>' : 'Anda') + ' (bebas yang mana). ' +
       (berikut ? 'Setoran ini akan dihitung sebagai <b>Tugas ' + berikut.ke + ' · ' + labelTahapTugas(tahap) + '</b>.'
                : (p.total ? 'Semua tugas ' + labelTahapTugas(tahap) + ' sudah selesai.' : ''));
@@ -11872,27 +11893,118 @@
 
   // Nomor tugas milik semua tugas. Banyaknya nomor = banyaknya tugas (Pembuatan Soal) anggota itu di tahap tugas;
   // N tugas selesai -> Tugas 1..N hijau; nomor berikutnya menurut tanggal nomor itu di menu Tanggal Tugas.
+  // Nomor yang dibebaskan admin untuk anggota ini (tugasnya baru ditambahkan setelah periode itu lewat, dsb.)
+  function nomorDibebaskan(nama, tahapTugas) {
+    const t = Number(tahapTugas), hasil = {};
+    ((dataAplikasiTersimpan || {}).tugasDibebaskan || []).forEach(function(x) {
+      if (Number(x.tahapTugas) === t && norm(x.nama) === norm(nama)) hasil[Number(x.ke)] = x.keterangan || true;
+    });
+    return hasil;
+  }
+  // Tugas anggota ke-1, ke-2, … diletakkan berurutan pada nomor (periode) yang tidak dibebaskan.
   function progresNomor(nama, tahapTugas) {
     const d = dataAplikasiTersimpan || {}, t = Number(tahapTugas), hari = tanggalHariIniLokal();
     const milik = (d.semuaTugas || []).filter(function(x) { return norm(x.nama) === norm(nama) && Number(x.tahapTugas) === t; });
     const selesai = milik.filter(selesaiItem).length;
-    const nomor = milik.map(function(_, i) {
-      const tg = cariTanggalTugas(t, i + 1);
+    const bebas = nomorDibebaskan(nama, t);
+    const nomor = [];
+    let i = 0, n = 0;
+    while (i < milik.length && n < 1000) {
+      n++;
+      const tg = cariTanggalTugas(t, n);
+      const dasar = { ke: n, mulai: tg ? tg.mulai : '', selesai: tg ? tg.selesai : '' };
+      if (bebas[n]) { nomor.push(Object.assign(dasar, { status: 'Dibebaskan', keterangan: bebas[n] === true ? '' : bebas[n] })); continue; }
       let status;
       if (i < selesai) status = 'Selesai';
       else if (!tg || hari < tg.mulai) status = 'Akan datang';
       else if (hari > tg.selesai) status = 'Terlambat';
       else status = 'Berjalan';
-      return { ke: i + 1, mulai: tg ? tg.mulai : '', selesai: tg ? tg.selesai : '', status: status };
-    });
-    return { tahap: t, punyaTugas: milik.length > 0, selesai: selesai, total: milik.length, nomor: nomor };
+      nomor.push(Object.assign(dasar, { status: status, urutan: i + 1 }));
+      i++;
+    }
+    return { tahap: t, punyaTugas: milik.length > 0, selesai: selesai, total: milik.length, nomor: nomor,
+      dibebaskan: nomor.filter(function(x) { return x.status === 'Dibebaskan'; }).length };
   }
-  const KELAS_NOMOR = { 'Selesai': 's-selesai', 'Berjalan': 's-jalan', 'Terlambat': 's-telat', 'Akan datang': 's-nanti' };
-  function angkaNomorHtml(daftar) {
+  function nomorAktif(daftar) { return daftar.filter(function(x) { return x.status !== 'Dibebaskan'; }); }
+  const KELAS_NOMOR = { 'Selesai': 's-selesai', 'Berjalan': 's-jalan', 'Terlambat': 's-telat', 'Akan datang': 's-nanti', 'Dibebaskan': 's-bebas' };
+  // pemilik (nama + tahap) diisi agar admin dapat mengeklik nomor untuk membebaskan / mengembalikannya
+  function angkaNomorHtml(daftar, pemilik) {
+    const bisaKlik = pemilik && document.body.dataset.peran === 'ADMIN';
     return '<div class="slot-angka">' + daftar.map(function(t) {
-      return '<span class="' + KELAS_NOMOR[t.status] + '" title="Tugas ' + t.ke + ' · ' + aman(t.status) + '">' + t.ke + '</span>';
+      const label = t.status === 'Terlambat' ? 'Belum/Telat' : t.status;
+      const data = bisaKlik ? ' role="button" tabindex="0" data-nomor-anggota="' + aman(pemilik.nama) + '" data-nomor-tahap="' + pemilik.tahap + '" data-nomor-ke="' + t.ke + '"' : '';
+      return '<span class="' + KELAS_NOMOR[t.status] + '"' + data + ' title="Tugas ' + t.ke + ' · ' + aman(label) +
+        (t.keterangan ? ' · ' + aman(t.keterangan) : '') + (bisaKlik ? ' — klik untuk mengatur' : '') + '">' + t.ke + '</span>';
     }).join('') + '</div>';
   }
+
+  // ===== Admin: bebaskan nomor tugas untuk satu anggota =====
+  let bebasKonteks = null;
+  function bukaModalBebas(nama, tahap, ke) {
+    const p = progresNomor(nama, tahap);
+    const t = p.nomor.filter(function(x) { return x.ke === ke; })[0];
+    if (!t) return;
+    bebasKonteks = { nama: nama, tahap: tahap, ke: ke };
+    const label = t.status === 'Terlambat' ? 'Belum/Telat' : t.status;
+    document.getElementById('bebasJudul').textContent = 'Tugas ' + ke + ' · ' + nama;
+    document.getElementById('bebasError').textContent = '';
+    document.getElementById('bebasKet').value = '';
+    const merah = p.nomor.filter(function(x) { return x.status === 'Terlambat'; }).map(function(x) { return x.ke; });
+    let info = labelTahapTugas(tahap) + ' · status <b>' + aman(label) + '</b>' +
+      (t.mulai ? ' · ' + aman(rentangTanggalRingkas(t.mulai, t.selesai)) : '');
+    const pilihan = document.getElementById('bebasPilihan');
+    const ket = document.getElementById('bebasKetWadah');
+    if (t.status === 'Dibebaskan') {
+      info += (t.keterangan ? '<br>Keterangan: ' + aman(t.keterangan) : '') +
+        '<br>Nomor ini tidak dihitung untuk anggota ini. Bila dibatalkan, tugasnya kembali menempati nomor ini.';
+      ket.hidden = true;
+      pilihan.innerHTML = '<button class="button" type="button" data-bebas-aksi="batal">Batalkan pembebasan Tugas ' + ke + '</button>';
+    } else if (t.status === 'Selesai') {
+      info += '<br>Nomor ini sudah terisi oleh setoran soal, jadi tidak perlu dibebaskan.';
+      ket.hidden = true;
+      pilihan.innerHTML = '';
+    } else {
+      info += '<br>Bila dibebaskan, nomor ini <b>tidak dihitung telat</b> dan tugas ' + aman(nama) +
+        ' <b>bergeser</b> ke nomor berikutnya (jumlah tugasnya tetap ' + p.total + ').';
+      ket.hidden = false;
+      pilihan.innerHTML = '<button class="button" type="button" data-bebas-aksi="satu">Bebaskan Tugas ' + ke + '</button>' +
+        (merah.length > 1 ? '<button class="button secondary" type="button" data-bebas-aksi="merah">Bebaskan semua yang merah (Tugas ' + merah.join(', ') + ')</button>' : '');
+    }
+    document.getElementById('bebasInfo').innerHTML = info;
+    document.getElementById('bebasOverlay').hidden = false;
+  }
+  function jalankanBebas(aksi) {
+    const k = bebasKonteks;
+    if (!k) return;
+    let daftar = [k.ke];
+    if (aksi === 'merah') daftar = progresNomor(k.nama, k.tahap).nomor.filter(function(x) { return x.status === 'Terlambat'; }).map(function(x) { return x.ke; });
+    const tombol = document.querySelectorAll('#bebasPilihan button');
+    tombol.forEach(function(b) { b.disabled = true; });
+    google.script.run
+      .withSuccessHandler(function(pesan) {
+        document.getElementById('bebasOverlay').hidden = true;
+        tampilkanNotifikasi(pesan || 'Tersimpan.', 'success');
+        muatAplikasi();
+      })
+      .withFailureHandler(function(err) {
+        tombol.forEach(function(b) { b.disabled = false; });
+        document.getElementById('bebasError').textContent = (err && err.message) || String(err);
+      })
+      .aturTugasDibebaskan(k.nama, k.tahap, daftar, aksi !== 'batal', document.getElementById('bebasKet').value);
+  }
+  document.getElementById('bebasPilihan').addEventListener('click', function(e) {
+    const b = e.target.closest('[data-bebas-aksi]');
+    if (b) jalankanBebas(b.dataset.bebasAksi);
+  });
+  function klikNomorAnggota(e) {
+    const el = e.target.closest('[data-nomor-anggota]');
+    if (!el || document.body.dataset.peran !== 'ADMIN') return;
+    if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    bukaModalBebas(el.dataset.nomorAnggota, Number(el.dataset.nomorTahap), Number(el.dataset.nomorKe));
+  }
+  document.addEventListener('click', klikNomorAnggota);
+  document.addEventListener('keydown', klikNomorAnggota);
 
   function statusTanggalTugas(t) {
     const hari = tanggalHariIniLokal();
@@ -11915,12 +12027,14 @@
     sel.innerHTML = '<option value="">Semua tahap tugas</option>' + tahapAda.map(function(t) { return '<option value="' + t + '">Tahap Tugas ' + t + '</option>'; }).join('');
     sel.value = tahapAda.indexOf(Number(sebelum)) >= 0 ? sebelum : '';
     // per tahap tugas: banyak tugas & tugas selesai tiap anggota
+    // per tahap tugas: status tiap nomor untuk tiap anggota (memperhitungkan nomor yang dibebaskan)
     const hitung = {};
     (dataAplikasiTersimpan.semuaTugas || []).forEach(function(x) {
       const t = Number(x.tahapTugas); if (!t) return;
       const o = (hitung[t] = hitung[t] || {}), k = norm(x.nama);
-      o[k] = o[k] || { total: 0, selesai: 0 };
-      o[k].total++; if (selesaiItem(x)) o[k].selesai++;
+      if (o[k]) return;
+      o[k] = {};
+      progresNomor(x.nama, t).nomor.forEach(function(n) { if (n.status !== 'Dibebaskan') o[k][n.ke] = n.status; });
     });
     if (!daftar.length) {
       wadah.innerHTML = '<div class="empty">Belum ada tanggal tugas.' + (admin ? ' Klik <b>＋ Tambah Tanggal Tugas</b>, mulai dari <b>Tugas 1</b> untuk tahap tugas yang sedang berjalan.' : '') + '</div>';
@@ -11932,8 +12046,8 @@
       return '<div class="tt-grup"><div class="tt-grup-head"><h3>Tahap Tugas ' + tahap + '</h3><span>' + isi.length + ' nomor tugas</span></div>' +
         '<table class="tt-tabel"><thead><tr><th>Tugas</th><th>Mulai</th><th>Selesai</th><th>Lama</th><th>Status</th><th>Anggota selesai</th><th>Keterangan</th>' + (admin ? '<th></th>' : '') + '</tr></thead><tbody>' +
         isi.map(function(x) {
-          const punya = Object.keys(anggota).filter(function(k) { return anggota[k].total >= x.ke; });
-          const sudah = punya.filter(function(k) { return anggota[k].selesai >= x.ke; }).length;
+          const punya = Object.keys(anggota).filter(function(k) { return anggota[k][x.ke]; });
+          const sudah = punya.filter(function(k) { return anggota[k][x.ke] === 'Selesai'; }).length;
           return '<tr><td class="no"><span class="mt-ke">Tugas ' + x.ke + '</span></td>' +
             '<td>' + formatTanggal(x.mulai) + '<small>' + aman(x.mulai) + '</small></td>' +
             '<td>' + formatTanggal(x.selesai) + '<small>' + aman(x.selesai) + '</small></td>' +
@@ -12522,7 +12636,7 @@
       const p = progresNomor(sesiAktif.nama, t);
       const telat = p.nomor.filter(function(x) { return x.status === 'Terlambat'; });
       const jalan = p.nomor.filter(function(x) { return x.status === 'Berjalan'; })[0];
-      const lewat = p.nomor.filter(function(x) { return x.status !== 'Akan datang'; }).length;
+      const lewat = p.nomor.filter(function(x) { return x.status !== 'Akan datang' && x.status !== 'Dibebaskan'; }).length;
       if (telat.length) {
         peringatan += '<div class="tt-peringatan">⚠ <b>' + labelTahapTugas(t) + ': ' + telat.length + ' dari ' + lewat + ' tugas belum selesai / terlambat</b> (' +
           telat.map(function(x) { return 'Tugas ' + x.ke; }).join(', ') + '). Selesaikan tugas mana saja lalu setor soalnya.</div>';
