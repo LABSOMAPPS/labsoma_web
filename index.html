@@ -5955,7 +5955,16 @@
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify({ action: nama, params: args, token: token })
             })
-            .then(function (r) { return r.json(); })
+            .then(function (r) {
+              return r.text().then(function (teks) {
+                try { return JSON.parse(teks); }
+                catch (e) {
+                  throw new Error('Server Apps Script tidak mengirim data (HTTP ' + r.status + '). Kemungkinan kode Apps Script error, ada nama fungsi/variabel ganda di file .gs lain, atau belum di-deploy sebagai versi baru.');
+                }
+              });
+            }, function () {
+              throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet, lalu coba lagi.');
+            })
             .then(function (h) {
               if (!h.success) throw new Error(h.error || 'Gagal memproses permintaan');
               return h.data;
@@ -9825,9 +9834,42 @@
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  // Pita status pemuatan: tampil saat data pertama belum datang, atau saat server gagal.
+  let dataPernahDimuat = false, waktuMulaiMuat = 0, sedangMenampilkan = false;
+  function statusMuat(jenis, pesan) {
+    let el = document.getElementById('pitaStatusMuat');
+    if (!jenis) { if (el) el.remove(); return; }
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'pitaStatusMuat';
+      el.setAttribute('role', 'status');
+      el.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;max-width:min(680px,92vw);' +
+        'padding:12px 16px;border-radius:14px;font:500 14px/1.45 Inter,system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:12px;align-items:center';
+      document.body.appendChild(el);
+    }
+    const gagal = jenis === 'gagal';
+    el.style.background = gagal ? '#7f1d1d' : '#0f3b47';
+    el.style.color = '#fff';
+    el.innerHTML = '<span style="flex:1">' + aman(pesan) + '</span>' +
+      (gagal ? '<button type="button" style="border:0;border-radius:10px;padding:7px 12px;font-weight:700;cursor:pointer;background:#fff;color:#7f1d1d">Coba lagi</button>' : '');
+    const tombol = el.querySelector('button');
+    if (tombol) tombol.onclick = function () { statusMuat('muat', 'Memuat ulang data…'); muatAplikasi(); };
+  }
+
   function muatAplikasi() {
+    waktuMulaiMuat = Date.now();
+    if (!dataPernahDimuat) {
+      statusMuat('muat', 'Memuat data dari server…');
+      setTimeout(function () {
+        if (!dataPernahDimuat && document.getElementById('pitaStatusMuat') && Date.now() - waktuMulaiMuat >= 14000)
+          statusMuat('muat', 'Server masih memproses… (pemuatan pertama setelah kode diperbarui bisa lebih lama)');
+      }, 15000);
+    }
     google.script.run
       .withSuccessHandler(function(data) {
+        dataPernahDimuat = true;
+        sedangMenampilkan = true;
+        statusMuat(null);
         halamanAnggota = 0;
         dataAplikasiTersimpan = data;
 
@@ -9869,9 +9911,17 @@
         renderManajemenTugas();
         renderTanggalTugas();
         renderTugasTerkait();
+        sedangMenampilkan = false;
       })
       .withFailureHandler(function(error) {
         console.error('Gagal memuat data:', error);
+        if (sedangMenampilkan) {   // data sudah datang tetapi tampilan error: tunjukkan agar bisa dilaporkan
+          sedangMenampilkan = false;
+          statusMuat('gagal', 'Data termuat, tetapi tampilan error: ' + ((error && error.message) || error));
+          return;
+        }
+        // pembaruan otomatis tiap menit yang gagal tidak perlu mengganggu bila data sudah tampil
+        if (!dataPernahDimuat) statusMuat('gagal', 'Gagal memuat data: ' + ((error && error.message) || error));
       })
       .getDataAplikasi();
   }
