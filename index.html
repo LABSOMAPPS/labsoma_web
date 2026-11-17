@@ -1399,6 +1399,7 @@
     .dok-baris-2 .dok-kartu { padding: 20px 10px; font-size: 19px; }
     .dok-kartu:hover { border-color: var(--aksen-border); }
     .dok-kartu:active { transform: scale(0.97); }
+    #filterTahapTugasMenu .dok-baris { grid-template-columns: repeat(var(--kolom-tt, 4), minmax(0, 1fr)); }
     .dok-kartu.aktif { background: var(--aksen); border-color: var(--aksen); color: var(--aksen-teks); box-shadow: var(--glow, none); }
     @media (max-width: 640px) {
       .dok-baris-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1501,6 +1502,39 @@
     .tt-tabel td.no { width: 92px; }
     .tt-tabel td small { display: block; color: var(--redup); font-size: 11.5px; }
     .tt-tabel td.aksi { text-align: right; white-space: nowrap; }
+    .tt-anggota { max-height: 220px; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 4px 12px; padding: 10px 12px; border: 1px solid var(--garis); border-radius: var(--radius-sm); background: var(--panel2); }
+    .tt-anggota label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--teks); text-transform: none; letter-spacing: 0; margin: 0; }
+    .tt-anggota label.sudah { color: var(--redup); }
+    .tt-anggota input { width: auto; margin: 0; }
+    .tt-anggota-alat { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12.5px; color: var(--redup); }
+    .setor-tercatat { display: inline-flex; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--aksen-soft, rgba(50,184,196,.14)); color: var(--aksen); font-size: 11.5px; font-weight: 800; }
+    .task-status.status-nanti { background: var(--biru-soft); color: var(--biru); }
+    .slot-angka { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 10px; }
+    .slot-angka span { min-width: 32px; height: 32px; padding: 0 6px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; font-family: var(--font-mono); font-size: 14px; font-weight: 800; border: 1px solid transparent; }
+    .slot-angka .s-selesai { background: var(--hijau-soft); color: var(--hijau); border-color: rgba(52, 211, 153, .35); }
+    .slot-angka .s-telat { background: var(--merah-soft); color: var(--merah); border-color: rgba(248, 113, 113, .4); }
+    .slot-angka .s-jalan { background: var(--kuning-soft); color: var(--kuning); border-color: rgba(250, 204, 21, .45); box-shadow: 0 0 0 2px rgba(250, 204, 21, .18); }
+    .slot-angka .s-nanti { background: var(--biru-soft); color: var(--biru); border-color: rgba(56, 189, 248, .35); }
+    .slot-jalan { margin-top: auto; padding: 7px 9px; border-radius: var(--radius-sm); background: var(--kuning-soft); color: var(--teks); font-size: 12px; line-height: 1.4; }
+    .slot-jalan b { color: var(--kuning); }
+    .slot-jalan.kosong { background: var(--panel2); color: var(--redup); }
+    .slot-legenda { display: inline-flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 12px; color: var(--redup); font-weight: 600; }
+    .slot-legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    .member-card.slot-card { min-height: 0; }
+    .tt-peringatan { margin: 0 0 14px; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid rgba(248, 113, 113, .4); background: var(--merah-soft); color: var(--teks); font-size: 14px; line-height: 1.5; }
+    .tt-peringatan b { color: var(--merah); }
+    .tt-nomor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin: 0 0 14px; }
+    .tt-nomor { padding: 12px 14px; border: 1px solid var(--garis); border-radius: var(--radius-md); background: var(--panel); box-shadow: var(--bayangan-sm); }
+    .tt-nomor-judul { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+    .tt-nomor-judul b { color: var(--aksen); letter-spacing: .03em; }
+    .tt-nomor-judul span { color: var(--redup); font-weight: 600; }
+    .tt-nomor .slot-jalan { margin-top: 0; }
+    .tt-no { display: inline-flex; margin-right: 8px; padding: 1px 8px; border-radius: 7px; background: var(--aksen-soft, rgba(50,184,196,.14)); color: var(--aksen); font-size: 12px; font-weight: 800; vertical-align: 2px; }
+    .task-list.slot-list { padding-left: 0; list-style: none; max-height: 190px; }
+    .task-list li.slot { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "ke status" "periode periode"; align-items: center; gap: 2px 8px; padding: 6px 8px; margin-bottom: 6px; border-radius: var(--radius-sm); background: var(--panel2); }
+    .task-list li.slot .mt-ke { grid-area: ke; justify-self: start; }
+    .task-list li.slot .task-status { grid-area: status; justify-self: end; margin-top: 0; }
+    .task-list li.slot .task-period { grid-area: periode; margin-top: 0; }
     .tt-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 800; }
     .tt-status.lewat { background: var(--panel3); color: var(--redup); }
     .tt-status.jalan { background: var(--hijau-soft); color: var(--hijau); }
@@ -4107,6 +4141,7 @@
         <section class="dashboard-tasks">
           <div class="dashboard-task-heading">
             <h2>Tugas Anggota Labsoma</h2>
+            <span class="slot-legenda" id="legendaSlotDashboard" hidden><span><i style="background:var(--hijau)"></i>Selesai</span><span><i style="background:var(--kuning)"></i>Berjalan</span><span><i style="background:var(--merah)"></i>Belum/Telat</span><span><i style="background:var(--biru)"></i>Akan datang</span></span>
             <div class="pager" id="pagerDashboard"></div>
           </div>
           <div class="member-grid" id="anggotaDashboard"></div>
@@ -4494,6 +4529,11 @@
               <label for="setorSoalTugas">Tugas / Soal</label>
               <select id="setorSoalTugas" required><option value="">Pilih tugas/soal</option></select>
             </div>
+            <div class="field staf-only">
+              <label for="setorSoalUntuk">Dicatat untuk anggota</label>
+              <select id="setorSoalUntuk"><option value="">Diri sendiri</option></select>
+            </div>
+            <div class="tt-info" id="setorSoalInfo"></div>
             <div class="field">
               <label for="setorSoalFile">Dokumen soal (DOC, DOCX, ODT, RTF, PDF, XLS, atau XLSX; maks. 7 MB)</label>
               <input id="setorSoalFile" type="file" accept=".doc,.docx,.odt,.rtf,.pdf,.xls,.xlsx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.oasis.opendocument.text,application/rtf,application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
@@ -5074,6 +5114,7 @@
           <button class="button" type="button" data-goto="manajemenTugas">Buka Manajemen Tugas</button>
         </div>
         <h2 class="section-title" style="margin-top: 28px;">Daftar Semua Tugas</h2>
+        <div class="dok-filter" id="filterTahapTugasMenu" style="margin-bottom:16px;"></div>
         <div id="baganTugasMenu"></div>
 
         <div class="search-filters">
@@ -5150,6 +5191,10 @@
               <label for="editTugasTahap">Tahap Ujian</label>
               <select id="editTugasTahap" name="tahapUjian"></select>
             </div>
+            <div class="field">
+              <label for="editTugasTahapTugas">Tahap Tugas</label>
+              <select id="editTugasTahapTugas" name="tahapTugas"></select>
+            </div>
             <div class="field full">
               <label for="editTugasMadrasah">Madrasah</label>
               <input id="editTugasMadrasah" name="madrasah" type="text" placeholder="Nama madrasah">
@@ -5157,10 +5202,6 @@
             <div class="field full">
               <label for="editTugasNamaTugas">Fan / Nama Materi</label>
               <select id="editTugasNamaTugas" name="tugas" required></select>
-            </div>
-            <div class="field full">
-              <label for="editTugasKe">Tugas ke-</label>
-              <select id="editTugasKe" name="tugasKe"></select>
             </div>
             <div class="tt-info" id="editTugasKeInfo"></div>
             <div class="field">
@@ -5228,7 +5269,7 @@
           <div class="form-grid" style="gap: 10px; margin-top: 10px;">
             <div class="field full"><label for="editUjianNama">Nama anggota</label><input id="editUjianNama" name="nama" required></div>
             <div class="field"><label for="editUjianTahap">Tahap Ujian</label><select id="editUjianTahap" name="tahapUjian"></select></div>
-            <div class="field"><label for="editUjianKe">Tugas ke-</label><select id="editUjianKe" name="tugasKe"></select></div>
+            <div class="field"><label for="editUjianTahapTugas">Tahap Tugas</label><select id="editUjianTahapTugas" name="tahapTugas"></select></div>
             <input id="editUjianMadrasah" name="madrasah" type="hidden">
             <div class="tt-info" id="editUjianKeInfo"></div>
             <div class="field"><label for="editUjianMulai">Tanggal mulai</label><input id="editUjianMulai" name="mulai" type="date" required></div>
@@ -5283,9 +5324,9 @@
       <!-- PAGE: TANGGAL TUGAS -->
       <section class="page" id="page-tanggalTugas">
         <h1 class="page-heading">Tanggal Tugas</h1>
-        <p class="subheading">Tanggal setiap tugas, dihitung per tahap ujian: <b>IMDA 1 › Tugas 1, Tugas 2, …</b> lalu <b>IMDA 2 › Tugas 1, …</b> dimulai lagi dari 1. Di Manajemen Tugas cukup pilih tahap ujian &amp; tugas ke-berapa, tanggalnya diambil dari sini. Mengubah tanggal di sini otomatis memperbarui semua tugas yang memakainya.</p>
+        <p class="subheading">Nomor tugas berlaku sama untuk <b>semua anggota dan semua tugas</b>, dihitung per <b>tahap tugas</b> (tahap penugasan): <b>Tahap Tugas 3 › Tugas 1, Tugas 2, …</b>; tahap tugas berikutnya dimulai lagi dari 1. Admin memberi tugas tanpa nomor &amp; tanggal; setiap tugas yang diselesaikan anggota (yang mana saja) mengisi nomor berikutnya.</p>
         <div class="tt-alat search-filters">
-          <select id="ttFilterTahap" aria-label="Filter tahap ujian"><option value="">Semua tahap ujian</option></select>
+          <select id="ttFilterTahap" aria-label="Filter tahap ujian"><option value="">Semua tahap tugas</option></select>
           <button type="button" class="button hanya-admin" id="ttTambah">＋ Tambah Tanggal Tugas</button>
         </div>
         <div id="isiTanggalTugas"><div class="empty">Memuat tanggal tugas…</div></div>
@@ -5296,7 +5337,7 @@
           <input type="hidden" id="ttTahapLama"><input type="hidden" id="ttKeLama">
           <div class="form-grid" style="gap: 10px; margin-top: 10px;">
             <div class="field">
-              <label for="ttTahap">Tahap Ujian</label>
+              <label for="ttTahap">Tahap Tugas</label>
               <select id="ttTahap" required></select>
             </div>
             <div class="field">
@@ -5346,16 +5387,16 @@
               <select id="mtTahapUjian"></select>
             </div>
             <div class="field">
+              <label for="mtTahapTugas">Tahap Tugas</label>
+              <select id="mtTahapTugas"></select>
+            </div>
+            <div class="field">
               <label for="mtMadrasah">Madrasah</label>
               <input id="mtMadrasah" type="text" placeholder="Nama madrasah">
             </div>
             <div class="field full">
               <label for="mtFan">Fan/Nama Materi</label>
               <select id="mtFan" required><option value="">Pilih Fan/Materi</option></select>
-            </div>
-            <div class="field full">
-              <label for="mtTugasKe">Tugas ke-</label>
-              <select id="mtTugasKe"></select>
             </div>
             <div class="tt-info" id="mtTugasKeInfo"></div>
             <div class="field">
@@ -8389,10 +8430,48 @@
   }
 
   // TUGAS ANGGOTA LABSOMA TETAP MUNCUL TERUS DI BAWAH & BERGANTI TIAP 5 DETIK
+  // Tahap TUGAS yang sedang berjalan: tanggal tugas yang mencakup hari ini, atau yang terdekat berikutnya, atau yang terakhir.
+  function tahapTugasBerjalan() {
+    const daftar = (typeof daftarTanggalTugas === 'function') ? daftarTanggalTugas() : [];
+    if (!daftar.length) return 0;
+    const hari = tanggalHariIniLokal();
+    const kini = daftar.filter(function(x) { return x.mulai <= hari && hari <= x.selesai; })[0];
+    if (kini) return Number(kini.tahapTugas);
+    const nanti = daftar.filter(function(x) { return x.mulai > hari; }).sort(function(a, b) { return a.mulai.localeCompare(b.mulai); })[0];
+    if (nanti) return Number(nanti.tahapTugas);
+    return Number(daftar.slice().sort(function(a, b) { return b.selesai.localeCompare(a.selesai); })[0].tahapTugas);
+  }
+  // "23 Jumadil Awal 1448 H – 27 Jumadil Awal 1448 H" -> "23–27 Jumadil Awal 1448 H"
+  function rentangTanggalRingkas(mulai, selesai) {
+    const a = String(formatTanggal(mulai)).split(' '), b = String(formatTanggal(selesai)).split(' ');
+    if (a.length < 3 || b.length < 3 || a.length !== b.length) return formatTanggal(mulai) + ' – ' + formatTanggal(selesai);
+    let sama = 0;
+    while (sama < a.length && a[a.length - 1 - sama] === b[b.length - 1 - sama]) sama++;
+    if (sama >= a.length) return b.join(' ');                           // tanggal sama
+    return a.slice(0, a.length - sama).join(' ') + '–' + b.join(' ');
+  }
+  // Kartu anggota: nomor tugas tahap berjalan (milik semua tugas) berwarna menurut banyaknya tugas selesai.
+  function anggotaDashboardBernomor() {
+    const d = dataAplikasiTersimpan || {};
+    const tahap = tahapTugasBerjalan();
+    if (!tahap) return null;
+    const nama = {};
+    (d.semuaTugas || []).forEach(function(x) { if (Number(x.tahapTugas) === tahap) nama[norm(x.nama)] = x.nama; });
+    const hasil = Object.keys(nama).map(function(k) {
+      const p = progresNomor(nama[k], tahap);
+      const n = function(st) { return p.nomor.filter(function(t) { return t.status === st; }).length; };
+      return { nama: nama[k], tahap: 'Tahap Tugas ' + tahap, daftarTugas: p.nomor, selesai: n('Selesai'), proses: n('Berjalan'), telat: n('Terlambat'), bernomor: true };
+    }).sort(function(a, b) { return String(a.nama).localeCompare(String(b.nama), 'id'); });
+    return hasil.length ? hasil : null;
+  }
+
   function tampilkanHalamanAnggotaDashboard(data) {
     const dataAktif = data || dataDashboardTersimpan;
     if (!dataAktif) return;
-    const anggota = dataAktif.anggota || [];
+    const bernomor = anggotaDashboardBernomor();
+    const anggota = bernomor || dataAktif.anggota || [];
+    const legenda = document.getElementById('legendaSlotDashboard');
+    if (legenda) legenda.hidden = !bernomor;
     const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
     if (halamanAnggota >= totalHalaman) halamanAnggota = 0;
 
@@ -8412,6 +8491,21 @@
       wadah.innerHTML = '<div class="empty">Tidak ada tugas anggota yang aktif hari ini.</div>';
     } else {
       wadah.innerHTML = terlihat.map(function(orang, indeks) {
+        if (orang.bernomor) {
+          const angka = angkaNomorHtml(orang.daftarTugas);
+          const jalan = orang.daftarTugas.filter(function(t) { return t.status === 'Berjalan'; })[0];
+          const telat = orang.daftarTugas.filter(function(t) { return t.status === 'Terlambat'; }).length;
+          const info = jalan
+            ? '<div class="slot-jalan">Berjalan: <b>Tugas ' + jalan.ke + '</b> · ' + rentangTanggalRingkas(jalan.mulai, jalan.selesai) + '</div>'
+            : '<div class="slot-jalan kosong">Tidak ada tugas yang sedang berjalan</div>';
+          return `
+          <article class="member-card slot-card ${telat > 0 ? 'ada-tugas-telat' : ''}">
+            <div class="member-name"><span class="list-index">${awal + indeks + 1}</span>${aman(orang.nama)}</div>
+            <div class="task-label">${aman(orang.tahap)} · ${orang.daftarTugas.length} tugas</div>
+            ${angka}
+            ${info}
+          </article>`;
+        }
         const daftar = (orang.daftarTugas || []).map(function(item) {
           const kelasStatus = item.status === 'Selesai' ? 'status-selesai' : item.status === 'Proses' ? 'status-proses' : 'status-telat';
           return '<li>' + aman(item.tugas) + rincianKelasTingkat(item, orang.nama) +
@@ -8439,7 +8533,7 @@
     if (timerAnggota) { clearInterval(timerAnggota); timerAnggota = null; }
     const dataAktif = data || dataDashboardTersimpan;
     if (!dataAktif) return;
-    const anggota = dataAktif.anggota || [];
+    const anggota = anggotaDashboardBernomor() || dataAktif.anggota || [];
     const totalHalaman = Math.max(1, Math.ceil(anggota.length / JUMLAH_ANGGOTA_PER_HALAMAN));
 
     if (totalHalaman > 1) {
@@ -10175,9 +10269,44 @@
     document.body.classList.toggle('dashboard-fullscreen', penuh);
   }
 
+  // Filter kartu Tahap Tugas (gaya kartu seperti Batas Pelajaran). null = belum dipilih -> tahap tugas berjalan.
+  let filterTahapTugasMenu = null;
+  function gambarFilterTahapTugasMenu(semuaTugas) {
+    const wadah = document.getElementById('filterTahapTugasMenu');
+    if (!wadah) return;
+    const ada = (semuaTugas || []).map(function(x) { return Number(x.tahapTugas) || 0; });
+    const maks = Math.max.apply(null, [3].concat(ada));
+    if (filterTahapTugasMenu === null) {
+      const jalan = (typeof tahapTugasBerjalan === 'function') ? Number(tahapTugasBerjalan()) || 0 : 0;
+      filterTahapTugasMenu = jalan && ada.indexOf(jalan) >= 0 ? jalan : 0;
+    }
+    const pilihan = [0].concat(Array.from({ length: maks }, function(_, i) { return i + 1; }));
+    wadah.innerHTML = '<div class="dok-baris" style="--kolom-tt:' + pilihan.length + '">' + pilihan.map(function(t) {
+      const aktif = filterTahapTugasMenu === t;
+      const jumlah = t ? ada.filter(function(v) { return v === t; }).length : ada.length;
+      return '<button type="button" class="dok-kartu' + (aktif ? ' aktif' : '') + '" data-tahap-tugas-menu="' + t + '" aria-pressed="' + aktif + '">' +
+        (t ? 'TAHAP TUGAS ' + t : 'SEMUA TAHAP TUGAS') + '<small style="display:block; margin-top:3px; font-size:11px; font-weight:600; opacity:.8; letter-spacing:0;">' + jumlah + ' tugas</small></button>';
+    }).join('') + '</div>';
+  }
+  document.addEventListener('click', function(event) {
+    const kartu = event.target.closest('[data-tahap-tugas-menu]');
+    if (kartu) {
+      filterTahapTugasMenu = Number(kartu.dataset.tahapTugasMenu) || 0;
+      tampilkanTugasDiMenuTambah((dataAplikasiTersimpan || {}).semuaTugas || []);
+      return;
+    }
+    if (event.target.closest('[data-reset-filter="tugasMenu"]')) {
+      filterTahapTugasMenu = 0;
+      setTimeout(function() { tampilkanTugasDiMenuTambah((dataAplikasiTersimpan || {}).semuaTugas || []); }, 0);
+    }
+  });
+
   function tampilkanTugasDiMenuTambah(semuaTugas) {
     perbaruiDropdownFilterTugas('tugasMenu', semuaTugas);
-    const dataFiltered = saringDaftarTugas(semuaTugas, 'tugasMenu');
+    gambarFilterTahapTugasMenu(semuaTugas);
+    const dataFiltered = saringDaftarTugas(semuaTugas, 'tugasMenu').filter(function(item) {
+      return !filterTahapTugasMenu || Number(item.tahapTugas) === filterTahapTugasMenu;
+    });
     gambarBaganPersentase('baganTugasMenu', dataFiltered);
 
     const rows = dataFiltered.map(function(item, i) {
@@ -10185,13 +10314,12 @@
         <tr>
           <td>${i + 1}</td>
           <td>${aman(item.nama)}</td>
-          <td>${aman(item.tugas)}</td>
+          <td>${(!item.tugas || item.tugas === '—') ? '<span style="color:var(--redup)">Menunggu setoran</span>' : aman(item.tugas)}</td>
           <td>${aman(item.kelas || '–')}</td>
           <td>${aman(item.tahapUjian || '–')}</td>
+          <td>${item.tahapTugas ? aman(item.tahapTugas) : '–'}</td>
           <td>${aman(item.tingkat || '–')}</td>
           <td>${aman(item.madrasah || '–')}</td>
-          <td>${item.tugasKe ? '<span class="mt-ke">Tugas ' + aman(item.tugasKe) + '</span>' : '<span style="color:var(--redup)">–</span>'}</td>
-          <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
           <td>${aman(item.status || 'Belum')}</td>
           <td>
             <button class="button secondary small" data-action="editTugas" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">✎ Edit</button>
@@ -10205,7 +10333,7 @@
         </tr>
       `;
     });
-    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'No. Tugas', 'Tanggal Tugas', 'Status', 'Aksi'], rows);
+    document.getElementById('daftarTugasDalamMenu').innerHTML = renderTabel(['No', 'Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tahap Tugas', 'Tingkat', 'Madrasah', 'Status', 'Aksi'], rows);
   }
 
   function gambarBaganPersentase(idWadah, daftar) {
@@ -10288,8 +10416,9 @@
       document.getElementById('editTugasMadrasah').value = item.madrasah || '';
       isiPilihanTugasEdit((dataAplikasiTersimpan || {}).dataAnggota || [], materiTersimpan(), item);
       isiOpsiTahapUjian(document.getElementById('editTugasTahap'), item.tahapUjian || '', 'Tanpa tahap');
-      pemilihEditTugas.perbarui(false, item.tugasKe || '');
-      if (!item.tugasKe) { document.getElementById('editTugasMulai').value = item.mulai || ''; document.getElementById('editTugasSelesai').value = item.selesai || ''; }
+      isiOpsiTahapTugas(document.getElementById('editTugasTahapTugas'), item.tahapTugas || '', 'Tanpa tahap tugas');
+      document.getElementById('editTugasMulai').value = item.mulai || ''; document.getElementById('editTugasSelesai').value = item.selesai || '';
+      tanggalEditTugas.perbarui();
       document.getElementById('editTugasOverlay').hidden = false;
       return;
     }
@@ -10398,8 +10527,9 @@
       isiNilai('editUjianSelesai', x.selesai); isiNilai('editUjianKelas', x.kelas); isiNilai('editUjianTingkat', x.tingkat);
       isiNilai('editUjianTugas', x.tugas); isiNilai('editUjianMadrasah', x.madrasah || '');
       isiOpsiTahapUjian(document.getElementById('editUjianTahap'), x.tahapUjian || '', 'Tanpa tahap');
-      pemilihEditUjian.perbarui(false, x.tugasKe || '');
-      if (!x.tugasKe) { isiNilai('editUjianMulai', x.mulai); isiNilai('editUjianSelesai', x.selesai); }
+      isiOpsiTahapTugas(document.getElementById('editUjianTahapTugas'), x.tahapTugas || '', 'Tanpa tahap tugas');
+      isiNilai('editUjianMulai', x.mulai); isiNilai('editUjianSelesai', x.selesai);
+      tanggalEditUjian.perbarui();
       document.getElementById('editUjianOverlay').hidden = false;
     } else if (aksi === 'belumUjian') {
       jalankanAksi('ubahStatusKoreksiUjian', [baris, 'Belum'], tombol.dataset.kunci);
@@ -10955,7 +11085,8 @@
       const bolehHapus = ['ADMIN', 'ADMIN/TU', 'KOREKTOR'].indexOf(role) >= 0 ||
         (role === 'SONIK' && String(item.username || '').toLowerCase() === String((sesiAktif || {}).username || '').toLowerCase());
       return '<article class="setor-soal-item"><div class="setor-soal-meta"><strong><span class="list-index">' + (indeks + 1) + '</span>' + aman(item.nama) + '</strong>' +
-        '<small>' + aman(item.tingkat) + (item.madrasah ? ' · ' + aman(item.madrasah) : '') + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(formatWaktuUnggahHijriyah(item.waktu)) + ' · ' + ukuran + '</small></div>' +
+        '<small>' + aman(item.tingkat) + (item.madrasah ? ' · ' + aman(item.madrasah) : '') + ' · ' + aman(item.kelas ? kelasRingkasSetorSoal(item.kelas) : 'Kelas tidak tercatat') + ' · ' + aman(item.tugas || 'Tugas tidak tercatat') + ' · ' + aman(item.pengunggah) + ' · ' + aman(formatWaktuUnggahHijriyah(item.waktu)) + ' · ' + ukuran + '</small>' +
+        '</div>' +
         '<div class="setor-soal-actions"><button class="button secondary setor-soal-action" type="button" data-unduh-setor-soal="' + aman(item.id) + '">Unduh file asli</button>' +
         (bolehHapus ? '<button class="button secondary setor-soal-action" type="button" data-edit-setor-soal="' + aman(item.id) + '">✎ Edit</button>' : '') +
         (bolehHapus ? '<button class="button bahaya setor-soal-action" type="button" data-hapus-setor-soal="' + aman(item.id) + '" data-nama-setor-soal="' + aman(item.nama) + '">Hapus</button>' : '') + '</div></article>';
@@ -10977,6 +11108,35 @@
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', renderDaftarSetorSoal);
   });
+  // slot tugas berikutnya yang akan terisi oleh setoran (nomor terkecil yang belum selesai)
+  function namaSesiSaya() {
+    const sesi = (typeof bacaSesiLokal === 'function') ? bacaSesiLokal() : null;
+    return sesi ? (sesi.nama || sesi.username || '') : '';
+  }
+  function perbaruiInfoSetorSoal() {
+    const el = document.getElementById('setorSoalInfo');
+    if (!el) return;
+    const pilih = (document.getElementById('setorSoalUntuk') || {}).value || '';
+    const nama = pilih || namaSesiSaya();
+    const tahap = tahapTugasBerjalan();
+    el.classList.remove('awas');
+    if (!tahap) { el.innerHTML = 'Pilih soal sesuai salah satu tugas ' + (pilih ? aman(pilih) : 'Anda') + '; tugas itu akan tercatat selesai.'; return; }
+    const p = progresNomor(nama, tahap);
+    const berikut = p.nomor[p.selesai];
+    el.innerHTML = 'Pilih soal sesuai <b>salah satu tugas</b> ' + (pilih ? 'milik <b>' + aman(pilih) + '</b>' : 'Anda') + ' (bebas yang mana). ' +
+      (berikut ? 'Setoran ini akan dihitung sebagai <b>Tugas ' + berikut.ke + ' · ' + labelTahapTugas(tahap) + '</b>.'
+               : (p.total ? 'Semua tugas ' + labelTahapTugas(tahap) + ' sudah selesai.' : ''));
+  }
+  function isiPilihanSetorUntuk() {
+    const sel = document.getElementById('setorSoalUntuk');
+    if (!sel) return;
+    const sebelum = sel.value;
+    const nama = ((dataAplikasiTersimpan || {}).dataAnggota || []);
+    sel.innerHTML = '<option value="">Diri sendiri</option>' + nama.map(function(n) { return '<option value="' + aman(n) + '">' + aman(n) + '</option>'; }).join('');
+    sel.value = nama.indexOf(sebelum) >= 0 ? sebelum : '';
+  }
+  document.getElementById('setorSoalUntuk').addEventListener('change', perbaruiInfoSetorSoal);
+  document.getElementById('tombolBukaSetorSoal').addEventListener('click', function() { isiPilihanSetorUntuk(); perbaruiInfoSetorSoal(); });
   document.getElementById('setorSoalTingkat').addEventListener('change', updateSetorSoalDropdown);
   const setorMadrasahEl = document.getElementById('setorSoalMadrasah');
   if (setorMadrasahEl) setorMadrasahEl.addEventListener('change', updateSetorSoalDropdown);
@@ -11009,7 +11169,8 @@
           tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error');
           tombol.disabled = false; tombol.textContent = 'Unggah Dokumen';
         })
-        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, madrasah: madrasah, kelas: kelas, tugas: tugas, base64: base64 });
+        .unggahSetorSoal({ nama: file.name, mime: file.type, tingkat: tingkat, madrasah: madrasah, kelas: kelas, tugas: tugas, base64: base64,
+          untukNama: (document.getElementById('setorSoalUntuk') || {}).value || '' });
     };
     reader.onerror = function() { tombol.disabled = false; tombol.textContent = 'Unggah Dokumen'; tampilkanNotifikasi('File tidak dapat dibaca.', 'error'); };
     reader.readAsDataURL(file);
@@ -11423,7 +11584,7 @@
       let g = peta[dasar];
       if (!g || g[jenis]) {
         g = { kunci: item.kunci || '', nama: item.nama, tugas: item.tugas, kelas: item.kelas, tahapUjian: item.tahapUjian, tingkat: item.tingkat, madrasah: item.madrasah || '',
-              mulai: item.mulai, selesai: item.selesai, tugasKe: item.tugasKe || '', soal: null, ujian: null };
+              mulai: item.mulai, selesai: item.selesai, tugasKe: item.tugasKe || '', tahapTugas: item.tahapTugas || '', soal: null, ujian: null };
         peta[dasar] = g;
         hasil.push(g);
       }
@@ -11431,6 +11592,7 @@
       if (!g.madrasah && item.madrasah) g.madrasah = item.madrasah;
       if (!g.tahapUjian && item.tahapUjian) g.tahapUjian = item.tahapUjian;
       if (!g.tugasKe && item.tugasKe) g.tugasKe = item.tugasKe;
+      if (!g.tahapTugas && item.tahapTugas) g.tahapTugas = item.tahapTugas;
     }
     (data.semuaTugas || []).forEach(function(i) { masuk(i, 'soal'); });
     (data.tugasKoreksiUjian || []).forEach(function(i) { masuk(i, 'ujian'); });
@@ -11446,7 +11608,10 @@
     if (g.total && g.selesaiN === g.total) return 'Selesai';
     return tanggalHariIniLokal() > g.selesai ? 'Telat' : 'Proses';
   }
-  function labelTugasChip(g) { return g.tugas + (g.kelas ? ' (' + g.kelas + ')' : ''); }
+  function labelTugasChip(g) {
+    if (!g.tugas || g.tugas === '—') return 'Menunggu setoran';
+    return g.tugas + (g.kelas ? ' (' + g.kelas + ')' : '');
+  }
 
   function daftarAnggotaManajemen(data, grup) {
     const ada = {}, hasil = [];
@@ -11468,9 +11633,9 @@
     }
     const rincian = 'Pembuatan Soal: ' + (g.soal ? (selesaiItem(g.soal) ? 'Selesai' : 'Belum') : 'tidak ada') +
                     ' · Koreksi Ujian: ' + (g.ujian ? (selesaiItem(g.ujian) ? 'Selesai' : 'Belum') : 'tidak ada') +
-                    ' · ' + (g.tugasKe ? 'Tugas ' + g.tugasKe + ' ' + (g.tahapUjian || '') + ': ' : '') + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
+                    ' · ' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
     return '<div class="mt-chip" title="' + aman(rincian) + '">' +
-      '<div class="mt-chip-top">' + (g.tugasKe ? '<span class="mt-ke">Tugas ' + g.tugasKe + '</span>' : '') + '<span>' + aman(labelTugasChip(g)) + '</span>' +
+      '<div class="mt-chip-top"><span>' + aman(labelTugasChip(g)) + '</span>' +
       '<span class="mt-pct ' + kls + '">' + g.persen + '%</span>' +
       '<button type="button" class="mt-x" data-mt-hapus="' + indeks + '" title="Hapus tugas" aria-label="Hapus tugas">×</button></div>' +
       '<div class="mt-chip-sub"><span>' + aman(g.tahapUjian || '—') + '</span><span>' + aman(g.tingkat || '—') + '</span><span>' + aman(g.madrasah || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
@@ -11543,22 +11708,11 @@
       const tot = milik.reduce(function(a, g) { return a + g.total; }, 0);
       totalSelesai += sel; totalSemua += tot;
       mtAnggota.push(nama);
-      milik.sort(function(a, b) {
-        return urutTahap(normTahap(a.tahapUjian), normTahap(b.tahapUjian)) || (Number(a.tugasKe) || 999) - (Number(b.tugasKe) || 999);
-      });
+      milik.sort(function(a, b) { return urutTahap(normTahap(a.tahapUjian), normTahap(b.tahapUjian)); });
       milik.forEach(function(g) { mtTampil.push({ nama: nama, g: g }); });
-      // tugas terakhir per tahap (dari semua tugas anggota, bukan hanya yang tampil)
-      const terakhir = {};
-      mtDaftar.forEach(function(g) {
-        if (norm(g.nama) !== norm(nama) || !g.tugasKe) return;
-        const t = normTahap(g.tahapUjian);
-        if (!terakhir[t] || Number(g.tugasKe) > terakhir[t]) terakhir[t] = Number(g.tugasKe);
-      });
-      const teksTerakhir = Object.keys(terakhir).sort(urutTahap).map(function(t) { return t + ': Tugas ' + terakhir[t]; }).join(' · ');
       baris.push(
         '<div class="mt-row">' +
-          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small>' +
-            (teksTerakhir ? '<small class="mt-terakhir" title="Nomor tugas terakhir per tahap ujian">Terakhir › ' + aman(teksTerakhir) + '</small>' : '') + '</div>' +
+          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
           '<div class="mt-chips">' + (milik.length
             ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
             : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
@@ -11604,9 +11758,23 @@
     return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || String(a).localeCompare(String(b), 'id');
   }
   function daftarTanggalTugas() { return ((dataAplikasiTersimpan || {}).tanggalTugas || []); }
-  function cariTanggalTugas(tahap, ke) {
-    const t = normTahap(tahap), n = Number(ke);
-    return daftarTanggalTugas().filter(function(x) { return x.tahapUjian === t && Number(x.ke) === n; })[0] || null;
+  function cariTanggalTugas(tahapTugas, ke) {
+    const t = Number(tahapTugas), n = Number(ke);
+    return daftarTanggalTugas().filter(function(x) { return Number(x.tahapTugas) === t && Number(x.ke) === n; })[0] || null;
+  }
+  function labelTahapTugas(t) { return t ? 'Tahap Tugas ' + t : 'Tanpa tahap tugas'; }
+  function semuaTahapTugas() {
+    const d = dataAplikasiTersimpan || {};
+    const ada = daftarTanggalTugas().map(function(x) { return Number(x.tahapTugas); })
+      .concat((d.semuaTugas || []).concat(d.tugasKoreksiUjian || []).map(function(x) { return Number(x.tahapTugas) || 0; }));
+    const maks = Math.max.apply(null, [3].concat(ada));
+    return Array.from({ length: maks }, function(_, i) { return i + 1; });
+  }
+  function isiOpsiTahapTugas(sel, nilai, teksKosong) {
+    const v = Number(nilai) || '';
+    sel.innerHTML = '<option value="">' + aman(teksKosong || 'Pilih tahap tugas') + '</option>' +
+      semuaTahapTugas().map(function(t) { return '<option value="' + t + '">Tahap Tugas ' + t + '</option>'; }).join('');
+    sel.value = String(v);
   }
   function rentangTanggalTugas(t) { return formatTanggal(t.mulai) + ' – ' + formatTanggal(t.selesai); }
   function semuaTahapDikenal() {
@@ -11624,84 +11792,57 @@
       daftar.map(function(t) { return '<option value="' + aman(t) + '">' + aman(t) + '</option>'; }).join('');
     sel.value = v;
   }
-  // nomor tugas terbesar milik anggota di tahap itu (kecuali penugasan yang sedang diedit)
-  function tugasTerakhirAnggota(nama, tahap, kecualiKunci) {
-    const d = dataAplikasiTersimpan || {}, t = normTahap(tahap);
-    let maks = 0;
-    (d.semuaTugas || []).concat(d.tugasKoreksiUjian || []).forEach(function(x) {
-      if (norm(x.nama) !== norm(nama) || normTahap(x.tahapUjian) !== t) return;
-      if (kecualiKunci && x.kunci === kecualiKunci) return;
-      const n = Number(x.tugasKe) || 0;
-      if (n > maks) maks = n;
-    });
-    return maks;
+  // Rentang tahap: mulai Tugas pertama s/d selesai Tugas terakhir (menu Tanggal Tugas)
+  function rentangTahap(tahapTugas) {
+    const isi = daftarTanggalTugas().filter(function(x) { return Number(x.tahapTugas) === Number(tahapTugas); });
+    if (!isi.length) return null;
+    return { mulai: isi.map(function(x) { return x.mulai; }).sort()[0], selesai: isi.map(function(x) { return x.selesai; }).sort().slice(-1)[0], jumlah: isi.length };
   }
-
-  // tahap ujian dari tugas bernomor terbaru milik anggota (agar langsung menyarankan nomor berikutnya)
-  function tahapTerbaruAnggota(nama) {
-    const d = dataAplikasiTersimpan || {};
-    let pilih = null;
-    (d.semuaTugas || []).concat(d.tugasKoreksiUjian || []).forEach(function(x) {
-      if (norm(x.nama) !== norm(nama) || !x.tugasKe || !normTahap(x.tahapUjian)) return;
-      if (!pilih || String(x.mulai || '') > String(pilih.mulai || '')) pilih = x;
-    });
-    return pilih ? normTahap(pilih.tahapUjian) : '';
-  }
-
-  // Pasang pemilih "Tugas ke-" yang membaca tanggal dari menu Tanggal Tugas (tahap + nomor).
-  function pasangPemilihTugasKe(cfg) {
-    const elTahap = document.getElementById(cfg.tahap), elKe = document.getElementById(cfg.ke);
-    const elMulai = document.getElementById(cfg.mulai), elSelesai = document.getElementById(cfg.selesai), elInfo = document.getElementById(cfg.info);
-    function terapkan() {
-      const t = elKe.value ? cariTanggalTugas(elTahap.value, elKe.value) : null;
-      [elMulai, elSelesai].forEach(function(el) { el.readOnly = !!t; el.classList.toggle('tt-terkunci', !!t); });
-      if (t) { elMulai.value = t.mulai; elSelesai.value = t.selesai; }
-      tulisInfo(t);
+  // Tanggal penugasan tidak diisi Admin: mengikuti tahap ujian. Tahap tanpa Tanggal Tugas -> isi manual.
+  function pasangTanggalTahap(cfg) {
+    const elTahap = document.getElementById(cfg.tahap), elInfo = document.getElementById(cfg.info);
+    const elMulai = document.getElementById(cfg.mulai), elSelesai = document.getElementById(cfg.selesai);
+    const kolom = [elMulai, elSelesai].map(function(el) { return el.closest('.field') || el; });
+    function perbarui() {
+      const tahap = Number(elTahap.value) || 0, r = tahap ? rentangTahap(tahap) : null;
+      kolom.forEach(function(k) { k.hidden = !!r; });
+      if (r) { elMulai.value = r.mulai; elSelesai.value = r.selesai; }
+      elInfo.classList.toggle('awas', !r);
+      elInfo.innerHTML = r
+        ? 'Tanggal tidak perlu diisi — mengikuti <b>' + labelTahapTugas(tahap) + '</b> (' + r.jumlah + ' nomor tugas: ' + rentangTanggalRingkas(r.mulai, r.selesai) + '). Nomor tugas dihitung dari banyaknya tugas yang selesai.'
+        : (tahap ? 'Belum ada Tanggal Tugas untuk <b>' + labelTahapTugas(tahap) + '</b> — isi tanggal manual, atau tambahkan dulu di menu <b>Tanggal Tugas</b>.'
+                 : 'Pilih <b>tahap tugas</b>; tanggal tugas akan mengikuti tahap tugas itu.');
     }
-    function tulisInfo(t) {
-      const tahap = normTahap(elTahap.value), nama = cfg.nama ? cfg.nama() : '';
-      const daftar = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
-      let html = '', awas = false;
-      if (!tahap) { html = 'Pilih <b>tahap ujian</b> dulu — nomor tugas dihitung per tahap ujian.'; awas = true; }
-      else if (!daftar.length) { html = 'Belum ada Tanggal Tugas untuk <b>' + aman(tahap) + '</b>. Isi tanggal manual, atau tambahkan dulu di menu <b>Tanggal Tugas</b>.'; awas = true; }
-      else {
-        const akhir = nama ? tugasTerakhirAnggota(nama, tahap, cfg.kecuali ? cfg.kecuali() : '') : 0;
-        const saran = akhir + 1;
-        if (nama) html = akhir ? 'Tugas terakhir <b>' + aman(nama) + '</b> di ' + aman(tahap) + ': <b>Tugas ' + akhir + '</b> → berikutnya <b>Tugas ' + saran + '</b>.' : '<b>' + aman(nama) + '</b> belum punya tugas di ' + aman(tahap) + ' → mulai dari <b>Tugas 1</b>.';
-        if (nama && !cariTanggalTugas(tahap, saran)) { html += ' Tugas ' + saran + ' belum ada di menu Tanggal Tugas.'; awas = true; }
-        if (t) html += (html ? '<br>' : '') + 'Tanggal: <b>' + rentangTanggalTugas(t) + '</b>' + (t.keterangan ? ' · ' + aman(t.keterangan) : '');
-        else html += (html ? '<br>' : '') + 'Tanpa nomor tugas: tanggal diisi manual.';
-      }
-      elInfo.innerHTML = html;
-      elInfo.classList.toggle('awas', awas);
-    }
-    function perbarui(pilihSaran, nilaiKe) {
-      const tahap = normTahap(elTahap.value);
-      const daftar = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
-      const sebelum = nilaiKe !== undefined ? String(nilaiKe || '') : elKe.value;
-      elKe.innerHTML = '<option value="">— Tanggal manual —</option>' + daftar.map(function(x) {
-        return '<option value="' + x.ke + '">Tugas ' + x.ke + ' · ' + rentangTanggalTugas(x) + '</option>';
-      }).join('');
-      if (sebelum && cariTanggalTugas(tahap, sebelum)) elKe.value = sebelum;
-      else if (pilihSaran && cfg.nama) {
-        const saran = tugasTerakhirAnggota(cfg.nama(), tahap, cfg.kecuali ? cfg.kecuali() : '') + 1;
-        elKe.value = cariTanggalTugas(tahap, saran) ? String(saran) : '';
-      } else elKe.value = '';
-      terapkan();
-    }
-    elTahap.addEventListener('change', function() { perbarui(true); });
-    elKe.addEventListener('change', terapkan);
+    elTahap.addEventListener('change', perbarui);
     return { perbarui: perbarui };
   }
+  const tanggalMt = pasangTanggalTahap({ tahap: 'mtTahapTugas', mulai: 'mtMulai', selesai: 'mtSelesai', info: 'mtTugasKeInfo' });
+  const tanggalEditTugas = pasangTanggalTahap({ tahap: 'editTugasTahapTugas', mulai: 'editTugasMulai', selesai: 'editTugasSelesai', info: 'editTugasKeInfo' });
+  const tanggalEditUjian = pasangTanggalTahap({ tahap: 'editUjianTahapTugas', mulai: 'editUjianMulai', selesai: 'editUjianSelesai', info: 'editUjianKeInfo' });
 
-  const pemilihMt = pasangPemilihTugasKe({ tahap: 'mtTahapUjian', ke: 'mtTugasKe', mulai: 'mtMulai', selesai: 'mtSelesai', info: 'mtTugasKeInfo',
-    nama: function() { return document.getElementById('mtNama').value; } });
-  const pemilihEditTugas = pasangPemilihTugasKe({ tahap: 'editTugasTahap', ke: 'editTugasKe', mulai: 'editTugasMulai', selesai: 'editTugasSelesai', info: 'editTugasKeInfo',
-    nama: function() { return document.getElementById('editTugasNama').value; }, kecuali: function() { return document.getElementById('editTugasRow').dataset.kunci || ''; } });
-  const pemilihEditUjian = pasangPemilihTugasKe({ tahap: 'editUjianTahap', ke: 'editUjianKe', mulai: 'editUjianMulai', selesai: 'editUjianSelesai', info: 'editUjianKeInfo',
-    nama: function() { return document.getElementById('editUjianNama').value; }, kecuali: function() { return document.getElementById('editUjianRow').dataset.kunci || ''; } });
-  document.getElementById('editTugasNama').addEventListener('change', function() { pemilihEditTugas.perbarui(false); });
-  document.getElementById('editUjianNama').addEventListener('input', function() { pemilihEditUjian.perbarui(false); });
+  // Nomor tugas milik semua tugas. Banyaknya nomor = banyaknya tugas (Pembuatan Soal) anggota itu di tahap tugas;
+  // N tugas selesai -> Tugas 1..N hijau; nomor berikutnya menurut tanggal nomor itu di menu Tanggal Tugas.
+  function progresNomor(nama, tahapTugas) {
+    const d = dataAplikasiTersimpan || {}, t = Number(tahapTugas), hari = tanggalHariIniLokal();
+    const milik = (d.semuaTugas || []).filter(function(x) { return norm(x.nama) === norm(nama) && Number(x.tahapTugas) === t; });
+    const selesai = milik.filter(selesaiItem).length;
+    const nomor = milik.map(function(_, i) {
+      const tg = cariTanggalTugas(t, i + 1);
+      let status;
+      if (i < selesai) status = 'Selesai';
+      else if (!tg || hari < tg.mulai) status = 'Akan datang';
+      else if (hari > tg.selesai) status = 'Terlambat';
+      else status = 'Berjalan';
+      return { ke: i + 1, mulai: tg ? tg.mulai : '', selesai: tg ? tg.selesai : '', status: status };
+    });
+    return { tahap: t, punyaTugas: milik.length > 0, selesai: selesai, total: milik.length, nomor: nomor };
+  }
+  const KELAS_NOMOR = { 'Selesai': 's-selesai', 'Berjalan': 's-jalan', 'Terlambat': 's-telat', 'Akan datang': 's-nanti' };
+  function angkaNomorHtml(daftar) {
+    return '<div class="slot-angka">' + daftar.map(function(t) {
+      return '<span class="' + KELAS_NOMOR[t.status] + '" title="Tugas ' + t.ke + ' · ' + aman(t.status) + '">' + t.ke + '</span>';
+    }).join('') + '</div>';
+  }
 
   function statusTanggalTugas(t) {
     const hari = tanggalHariIniLokal();
@@ -11720,34 +11861,37 @@
     const daftar = daftarTanggalTugas();
     const sel = document.getElementById('ttFilterTahap');
     const sebelum = sel.value;
-    const tahapAda = Array.from(new Set(daftar.map(function(x) { return x.tahapUjian; }))).sort(urutTahap);
-    sel.innerHTML = '<option value="">Semua tahap ujian</option>' + tahapAda.map(function(t) { return '<option value="' + aman(t) + '">' + aman(t) + '</option>'; }).join('');
-    sel.value = tahapAda.indexOf(sebelum) >= 0 ? sebelum : '';
-    // jumlah penugasan per (tahap, nomor)
-    const pakai = {};
-    kelompokPenugasan(dataAplikasiTersimpan).forEach(function(g) {
-      if (!g.tugasKe) return;
-      const k = normTahap(g.tahapUjian) + '#' + g.tugasKe;
-      pakai[k] = (pakai[k] || 0) + 1;
+    const tahapAda = Array.from(new Set(daftar.map(function(x) { return Number(x.tahapTugas); }))).sort(function(a, b) { return a - b; });
+    sel.innerHTML = '<option value="">Semua tahap tugas</option>' + tahapAda.map(function(t) { return '<option value="' + t + '">Tahap Tugas ' + t + '</option>'; }).join('');
+    sel.value = tahapAda.indexOf(Number(sebelum)) >= 0 ? sebelum : '';
+    // per tahap tugas: banyak tugas & tugas selesai tiap anggota
+    const hitung = {};
+    (dataAplikasiTersimpan.semuaTugas || []).forEach(function(x) {
+      const t = Number(x.tahapTugas); if (!t) return;
+      const o = (hitung[t] = hitung[t] || {}), k = norm(x.nama);
+      o[k] = o[k] || { total: 0, selesai: 0 };
+      o[k].total++; if (selesaiItem(x)) o[k].selesai++;
     });
     if (!daftar.length) {
-      wadah.innerHTML = '<div class="empty">Belum ada tanggal tugas.' + (admin ? ' Klik <b>＋ Tambah Tanggal Tugas</b>, mulai dari <b>Tugas 1</b> untuk tahap ujian yang sedang berjalan.' : '') + '</div>';
+      wadah.innerHTML = '<div class="empty">Belum ada tanggal tugas.' + (admin ? ' Klik <b>＋ Tambah Tanggal Tugas</b>, mulai dari <b>Tugas 1</b> untuk tahap tugas yang sedang berjalan.' : '') + '</div>';
       return;
     }
-    wadah.innerHTML = tahapAda.filter(function(t) { return !sel.value || t === sel.value; }).map(function(tahap) {
-      const isi = daftar.filter(function(x) { return x.tahapUjian === tahap; });
-      return '<div class="tt-grup"><div class="tt-grup-head"><h3>' + aman(tahap) + '</h3><span>' + isi.length + ' tugas</span></div>' +
-        '<table class="tt-tabel"><thead><tr><th>Tugas</th><th>Mulai</th><th>Selesai</th><th>Lama</th><th>Status</th><th>Dipakai</th><th>Keterangan</th>' + (admin ? '<th></th>' : '') + '</tr></thead><tbody>' +
+    wadah.innerHTML = tahapAda.filter(function(t) { return !sel.value || t === Number(sel.value); }).map(function(tahap) {
+      const isi = daftar.filter(function(x) { return Number(x.tahapTugas) === tahap; });
+      const anggota = hitung[tahap] || {};
+      return '<div class="tt-grup"><div class="tt-grup-head"><h3>Tahap Tugas ' + tahap + '</h3><span>' + isi.length + ' nomor tugas</span></div>' +
+        '<table class="tt-tabel"><thead><tr><th>Tugas</th><th>Mulai</th><th>Selesai</th><th>Lama</th><th>Status</th><th>Anggota selesai</th><th>Keterangan</th>' + (admin ? '<th></th>' : '') + '</tr></thead><tbody>' +
         isi.map(function(x) {
-          const n = pakai[tahap + '#' + x.ke] || 0;
+          const punya = Object.keys(anggota).filter(function(k) { return anggota[k].total >= x.ke; });
+          const sudah = punya.filter(function(k) { return anggota[k].selesai >= x.ke; }).length;
           return '<tr><td class="no"><span class="mt-ke">Tugas ' + x.ke + '</span></td>' +
             '<td>' + formatTanggal(x.mulai) + '<small>' + aman(x.mulai) + '</small></td>' +
             '<td>' + formatTanggal(x.selesai) + '<small>' + aman(x.selesai) + '</small></td>' +
             '<td>' + lamaHari(x) + ' hari</td><td>' + statusTanggalTugas(x) + '</td>' +
-            '<td>' + (n ? n + ' penugasan' : '<span style="color:var(--redup)">—</span>') + '</td>' +
+            '<td>' + (punya.length ? sudah + ' / ' + punya.length + ' anggota' : '<span style="color:var(--redup)">—</span>') + '</td>' +
             '<td>' + aman(x.keterangan || '') + '</td>' +
-            (admin ? '<td class="aksi"><button type="button" class="button secondary small" data-tt-ubah="' + aman(tahap) + '|' + x.ke + '">Ubah</button> ' +
-              '<button type="button" class="button bahaya small" data-tt-hapus="' + aman(tahap) + '|' + x.ke + '"' + (n ? ' disabled title="Masih dipakai ' + n + ' penugasan"' : '') + '>Hapus</button></td>' : '') +
+            (admin ? '<td class="aksi"><button type="button" class="button secondary small" data-tt-ubah="' + tahap + '|' + x.ke + '">Ubah</button> ' +
+              '<button type="button" class="button bahaya small" data-tt-hapus="' + tahap + '|' + x.ke + '">Hapus</button></td>' : '') +
             '</tr>';
         }).join('') + '</tbody></table></div>';
     }).join('');
@@ -11757,27 +11901,24 @@
     return d.toISOString().slice(0, 10);
   }
   function infoModalTanggalTugas() {
-    const tahap = normTahap(document.getElementById('ttTahap').value), ke = Number(document.getElementById('ttKe').value);
-    const lamaTahap = document.getElementById('ttTahapLama').value, lamaKe = Number(document.getElementById('ttKeLama').value);
+    const tahap = Number(document.getElementById('ttTahap').value), ke = Number(document.getElementById('ttKe').value);
+    const lamaTahap = Number(document.getElementById('ttTahapLama').value), lamaKe = Number(document.getElementById('ttKeLama').value);
     const el = document.getElementById('ttInfo');
     const ada = tahap && ke ? cariTanggalTugas(tahap, ke) : null;
-    const n = kelompokPenugasan(dataAplikasiTersimpan || {}).filter(function(g) { return normTahap(g.tahapUjian) === (lamaTahap || tahap) && Number(g.tugasKe) === (lamaKe || ke); }).length;
-    if (ada && !(lamaTahap === tahap && lamaKe === ke)) { el.innerHTML = '<b>Tugas ' + ke + ' ' + aman(tahap) + '</b> sudah ada (' + rentangTanggalTugas(ada) + '). Pakai nomor lain atau ubah yang sudah ada.'; el.classList.add('awas'); return; }
+    if (ada && !(lamaTahap === tahap && lamaKe === ke)) { el.innerHTML = '<b>Tugas ' + ke + ' ' + labelTahapTugas(tahap) + '</b> sudah ada (' + rentangTanggalTugas(ada) + '). Pakai nomor lain atau ubah yang sudah ada.'; el.classList.add('awas'); return; }
     el.classList.remove('awas');
-    el.innerHTML = lamaKe
-      ? (n ? 'Tanggal baru akan otomatis diterapkan ke <b>' + n + ' penugasan</b> yang memakai Tugas ' + lamaKe + ' ' + aman(lamaTahap) + '.' : 'Belum ada penugasan yang memakai tugas ini.')
-      : 'Nomor tugas dimulai dari 1 di setiap tahap ujian.';
+    el.innerHTML = 'Nomor tugas dimulai dari 1 di setiap tahap tugas. Tanggal semua tugas di tahap tugas ini mengikuti rentang Tugas pertama s/d terakhir.';
   }
   function bukaModalTanggalTugas(item) {
     const f = document.getElementById('formTanggalTugas');
     f.reset();
     document.getElementById('ttError').textContent = '';
     const tahapFilter = document.getElementById('ttFilterTahap').value;
-    const tahap = item ? item.tahapUjian : (tahapFilter || (daftarTanggalTugas().slice(-1)[0] || {}).tahapUjian || '');
-    isiOpsiTahapUjian(document.getElementById('ttTahap'), tahap);
-    document.getElementById('ttTahapLama').value = item ? item.tahapUjian : '';
+    const tahap = item ? item.tahapTugas : (tahapFilter || tahapTugasBerjalan() || 1);
+    isiOpsiTahapTugas(document.getElementById('ttTahap'), tahap);
+    document.getElementById('ttTahapLama').value = item ? item.tahapTugas : '';
     document.getElementById('ttKeLama').value = item ? item.ke : '';
-    document.getElementById('ttJudul').textContent = item ? 'Ubah Tugas ' + item.ke + ' · ' + item.tahapUjian : 'Tambah Tanggal Tugas';
+    document.getElementById('ttJudul').textContent = item ? 'Ubah Tugas ' + item.ke + ' · ' + labelTahapTugas(item.tahapTugas) : 'Tambah Tanggal Tugas';
     if (item) {
       document.getElementById('ttKe').value = item.ke;
       document.getElementById('ttMulai').value = item.mulai;
@@ -11787,10 +11928,10 @@
     infoModalTanggalTugas();
     document.getElementById('ttOverlay').hidden = false;
   }
-  // nomor berikutnya di tahap itu + tanggal mulai sehari setelah tugas sebelumnya
+  // nomor berikutnya di tahap tugas itu + tanggal mulai sehari setelah tugas sebelumnya
   function isiSaranTanggalTugasBaru() {
-    const tahap = normTahap(document.getElementById('ttTahap').value);
-    const isi = daftarTanggalTugas().filter(function(x) { return x.tahapUjian === tahap; });
+    const tahap = Number(document.getElementById('ttTahap').value);
+    const isi = daftarTanggalTugas().filter(function(x) { return Number(x.tahapTugas) === tahap; });
     const akhir = isi.slice(-1)[0];
     document.getElementById('ttKe').value = akhir ? Number(akhir.ke) + 1 : 1;
     const mulai = akhir ? tambahHariIso(akhir.selesai, 1) : tanggalHariIniLokal();
@@ -11809,7 +11950,7 @@
     const pesan = document.getElementById('ttError'), tombol = document.getElementById('ttSimpan');
     const data = {
       tahapLama: document.getElementById('ttTahapLama').value, keLama: document.getElementById('ttKeLama').value,
-      tahapUjian: document.getElementById('ttTahap').value, ke: document.getElementById('ttKe').value,
+      tahapTugas: document.getElementById('ttTahap').value, ke: document.getElementById('ttKe').value,
       mulai: document.getElementById('ttMulai').value, selesai: document.getElementById('ttSelesai').value,
       keterangan: document.getElementById('ttKeterangan').value.trim()
     };
@@ -11832,12 +11973,12 @@
     const item = cariTanggalTugas(bagian[0], bagian[1]);
     if (!item) return;
     if (ubah) { bukaModalTanggalTugas(item); return; }
-    konfirmasi({ jenis: 'bahaya', judul: 'Hapus Tugas ' + item.ke + ' ' + item.tahapUjian + '?', ya: 'Ya, hapus', pesan: 'Tanggal ' + rentangTanggalTugas(item) + ' akan dihapus dari daftar Tanggal Tugas.' }).then(function(ok) {
+    konfirmasi({ jenis: 'bahaya', judul: 'Hapus Tugas ' + item.ke + ' ' + labelTahapTugas(item.tahapTugas) + '?', ya: 'Ya, hapus', pesan: 'Tanggal ' + rentangTanggalTugas(item) + ' akan dihapus dari daftar Tanggal Tugas.' }).then(function(ok) {
       if (!ok) return;
       google.script.run
         .withSuccessHandler(function(h) { tampilkanNotifikasi(h || 'Dihapus.', 'success'); muatAplikasi(); })
         .withFailureHandler(function(er) { tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); })
-        .hapusTanggalTugas(item.tahapUjian, item.ke);
+        .hapusTanggalTugas(item.tahapTugas, item.ke);
     });
   });
 
@@ -11852,9 +11993,9 @@
     document.getElementById('mtError').textContent = '';
     updateMateriDropdown('mtTingkat', 'mtKelas', 'mtFan', materiTersimpan());
     // tahap ujian: pakai filter tahap yang aktif, atau tahap tanggal tugas terakhir
-    const tahapAwal = document.getElementById('mtFilterTahap').value || tahapTerbaruAnggota(nama) || (daftarTanggalTugas().slice(-1)[0] || {}).tahapUjian || '';
-    isiOpsiTahapUjian(document.getElementById('mtTahapUjian'), tahapAwal);
-    pemilihMt.perbarui(true, '');
+    isiOpsiTahapUjian(document.getElementById('mtTahapUjian'), document.getElementById('mtFilterTahap').value || '');
+    isiOpsiTahapTugas(document.getElementById('mtTahapTugas'), tahapTugasBerjalan() || '');
+    tanggalMt.perbarui();
     document.getElementById('mtOverlay').hidden = false;
   }
 
@@ -11872,7 +12013,7 @@
       tingkat: document.getElementById('mtTingkat').value,
       kelas: document.getElementById('mtKelas').value,
       tahapUjian: document.getElementById('mtTahapUjian').value.trim(),
-      tugasKe: document.getElementById('mtTugasKe').value,
+      tahapTugas: document.getElementById('mtTahapTugas').value,
       madrasah: document.getElementById('mtMadrasah').value.trim(),
       tugas: document.getElementById('mtFan').value,
       mulai: document.getElementById('mtMulai').value,
@@ -11926,7 +12067,7 @@
   document.getElementById('mtUnduhData').addEventListener('click', function() {
     if (!pustakaExcelSiap()) return;
     if (!mtTampil.length) { tampilkanNotifikasi('Tidak ada tugas yang cocok dengan filter untuk diunduh.', 'error'); return; }
-    const kepala = ['No', 'Nama Anggota', 'Tingkat', 'Kelas', 'Fan/Materi', 'Tahap Ujian', 'Tugas Ke', 'Madrasah', 'Tanggal Mulai', 'Tanggal Selesai',
+    const kepala = ['No', 'Nama Anggota', 'Tingkat', 'Kelas', 'Fan/Materi', 'Tahap Ujian', 'Tahap Tugas', 'Madrasah', 'Tanggal Mulai', 'Tanggal Selesai',
       'Pembuatan Soal', 'Tahap Pembuatan Soal', 'Koreksi Hasil Ujian', 'Progres (%)', 'Keterangan'];
     const urut = mtTampil.slice().sort(function(a, b) {
       return a.nama.localeCompare(b.nama, 'id') || urutTingkat(norm(a.g.tingkat), norm(b.g.tingkat)) ||
@@ -11934,7 +12075,7 @@
     });
     const baris = urut.map(function(x, i) {
       const g = x.g, th = g.soal ? tahapSoal(g.soal) : null;
-      return [i + 1, x.nama, g.tingkat || '', g.kelas || '', g.tugas || '', g.tahapUjian || '', g.tugasKe || '', g.madrasah || '', g.mulai || '', g.selesai || '',
+      return [i + 1, x.nama, g.tingkat || '', g.kelas || '', g.tugas || '', g.tahapUjian || '', g.tahapTugas || '', g.madrasah || '', g.mulai || '', g.selesai || '',
         statusBagian(g.soal), th ? th.teks : '—', statusBagian(g.ujian), g.persen, statusKelompok(g)];
     });
     const ringkas = {};
@@ -11952,7 +12093,7 @@
     };
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([kepala].concat(baris));
-    ws['!cols'] = [5, 24, 22, 10, 30, 14, 9, 12, 13, 13, 14, 26, 18, 11, 12].map(function(w) { return { wch: w }; });
+    ws['!cols'] = [5, 24, 22, 10, 30, 14, 11, 12, 13, 13, 14, 26, 18, 11, 12].map(function(w) { return { wch: w }; });
     ws['!autofilter'] = { ref: 'A1:O' + (baris.length + 1) };
     XLSX.utils.book_append_sheet(wb, ws, 'Daftar Tugas');
     const ws2 = XLSX.utils.aoa_to_sheet([['No', 'Nama Anggota', 'Jumlah Tugas', 'Bagian Selesai', 'Progres (%)', 'Tugas Telat']].concat(barisRingkas));
@@ -11975,7 +12116,7 @@
     tampilkanNotifikasi('Mengunduh ' + baris.length + ' tugas sesuai filter.', 'success');
   });
 
-  const KOLOM_IMPOR_MT = ['NAMA ANGGOTA', 'TINGKAT', 'KELAS', 'FAN/MATERI', 'TAHAP UJIAN', 'TUGAS KE', 'MADRASAH', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'PEMBUATAN SOAL', 'KOREKSI UJIAN'];
+  const KOLOM_IMPOR_MT = ['NAMA ANGGOTA', 'TINGKAT', 'KELAS', 'FAN/MATERI', 'TAHAP UJIAN', 'TAHAP TUGAS', 'MADRASAH', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'PEMBUATAN SOAL', 'KOREKSI UJIAN'];
 
   document.getElementById('mtUnduhTemplate').addEventListener('click', function() {
     if (!pustakaExcelSiap()) return;
@@ -11987,10 +12128,10 @@
     const contohTT = daftarTanggalTugas()[0];
     const ws = XLSX.utils.aoa_to_sheet([KOLOM_IMPOR_MT,
       contohTT
-        ? [contohNama, 'TSANAWIYAH', '3', 'Fikih', contohTT.tahapUjian, contohTT.ke, 'INDUK', '', '', 'YA', 'YA']
+        ? [contohNama, 'TSANAWIYAH', '3', 'Fikih', 'IMDA 1', contohTT.tahapTugas, 'INDUK', '', '', 'YA', 'YA']
         : [contohNama, 'TSANAWIYAH', '3', 'Fikih', 'IMDA 1', '', 'INDUK', hariIni, hariIni, 'YA', 'YA'],
       [contohNama, 'IDADIYAH PROGRAM KHUSUS', 'HADITS', 'Mushthalah Hadits', 'IMNI', '', 'RANTING', hariIni, hariIni, 'YA', 'TIDAK']]);
-    ws['!cols'] = [26, 26, 12, 28, 14, 10, 12, 15, 15, 15, 14].map(function(w) { return { wch: w }; });
+    ws['!cols'] = [26, 26, 12, 28, 14, 12, 12, 15, 15, 15, 14].map(function(w) { return { wch: w }; });
     XLSX.utils.book_append_sheet(wb, ws, 'Impor Tugas');
     // daftar pilihan resmi
     const pilihan = [['TINGKAT', 'KELAS']];
@@ -12007,8 +12148,8 @@
     for (let i = 0; i < panjang; i++) lain.push([anggota[i] || '', tahap[i] || '', ['INDUK', 'RANTING', 'LABSOMA'][i] || '']);
     const wsL = XLSX.utils.aoa_to_sheet(lain); wsL['!cols'] = [{ wch: 28 }, { wch: 30 }, { wch: 12 }];
     XLSX.utils.book_append_sheet(wb, wsL, 'Anggota & Lainnya');
-    const wsT = XLSX.utils.aoa_to_sheet([['TAHAP UJIAN', 'TUGAS KE', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'KETERANGAN']]
-      .concat(daftarTanggalTugas().map(function(x) { return [x.tahapUjian, x.ke, x.mulai, x.selesai, x.keterangan || '']; })));
+    const wsT = XLSX.utils.aoa_to_sheet([['TAHAP TUGAS', 'TUGAS KE', 'TANGGAL MULAI', 'TANGGAL SELESAI', 'KETERANGAN']]
+      .concat(daftarTanggalTugas().map(function(x) { return [x.tahapTugas, x.ke, x.mulai, x.selesai, x.keterangan || '']; })));
     wsT['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 34 }];
     XLSX.utils.book_append_sheet(wb, wsT, 'Tanggal Tugas');
     const wsI = XLSX.utils.aoa_to_sheet([
@@ -12017,8 +12158,8 @@
       ['2. NAMA ANGGOTA harus sama dengan daftar anggota (lihat sheet "Anggota & Lainnya").'],
       ['3. TINGKAT dan KELAS harus salah satu pasangan di sheet "Tingkat & Kelas".'],
       ['4. FAN/MATERI sebaiknya sama dengan Data Materi agar Setor Soal bisa mencocokkan tugas.'],
-      ['5. TUGAS KE (disarankan): isi nomor tugas sesuai TAHAP UJIAN (lihat sheet "Tanggal Tugas"); tanggal otomatis diambil dari sana, kolom TANGGAL boleh kosong.'],
-      ['   Bila TUGAS KE kosong, isi TANGGAL MULAI & SELESAI manual: 2026-11-12 atau 12/11/2026, atau format tanggal Excel.'],
+      ['5. TAHAP TUGAS = tahap penugasan (1, 2, 3). Bila tahap tugas sudah punya Tanggal Tugas (lihat sheet "Tanggal Tugas"), TANGGAL boleh kosong: tanggal mengikuti tahap tugas.'],
+      ['   Tanpa tahap tugas / tahap tugas tanpa Tanggal Tugas: isi TANGGAL MULAI & SELESAI manual (2026-11-12 atau 12/11/2026, atau format tanggal Excel).'],
       ['6. PEMBUATAN SOAL & KOREKSI UJIAN: YA / TIDAK (kosong = YA). Minimal salah satu YA.'],
       ['7. Tugas yang sama persis (nama, fan, kelas, tingkat, tahap, tanggal) yang sudah ada akan dilewati.']
     ]);
@@ -12067,10 +12208,10 @@
     }
     const k = {
       nama: kol('NAMA ANGGOTA', ['NAMA']), tingkat: kol('TINGKAT'), kelas: kol('KELAS'), fan: kol('FAN/MATERI', ['FAN', 'MATERI', 'TUGAS', 'FAN/NAMA MATERI']),
-      tahap: kol('TAHAP UJIAN', ['TAHAP']), ke: kol('TUGAS KE', ['TUGAS KE-', 'NOMOR TUGAS', 'NO TUGAS']), madrasah: kol('MADRASAH'), mulai: kol('TANGGAL MULAI', ['MULAI']), selesai: kol('TANGGAL SELESAI', ['SELESAI']),
+      tahap: kol('TAHAP UJIAN', ['TAHAP']), tahapTugas: kol('TAHAP TUGAS', ['TAHAP PENUGASAN']), madrasah: kol('MADRASAH'), mulai: kol('TANGGAL MULAI', ['MULAI']), selesai: kol('TANGGAL SELESAI', ['SELESAI']),
       soal: kol('PEMBUATAN SOAL', ['SOAL']), ujian: kol('KOREKSI UJIAN', ['KOREKSI HASIL UJIAN', 'UJIAN'])
     };
-    const wajib = ['nama', 'tingkat', 'kelas', 'fan'].concat(k.ke >= 0 ? [] : ['mulai', 'selesai']).filter(function(x) { return k[x] < 0; });
+    const wajib = ['nama', 'tingkat', 'kelas', 'fan'].filter(function(x) { return k[x] < 0; });
     if (wajib.length) throw new Error('Kolom wajib tidak ditemukan: ' + wajib.join(', ').toUpperCase() + '. Gunakan Template Impor.');
 
     const data = dataAplikasiTersimpan || {};
@@ -12097,19 +12238,15 @@
         awas.push('Fan belum ada di Data Materi ' + tingkat + ' kelas ' + kelas);
       }
       const tahapUjian = normTahap(ambil(row, k.tahap));
-      const keMentah = String(ambil(row, k.ke)).trim();
-      const tugasKe = keMentah ? (parseInt(keMentah.replace(/[^0-9]/g, ''), 10) || 0) : 0;
+      const tugasKe = 0;
       let mulai = '', selesai = '';
-      if (keMentah) {
-        const tt = tugasKe && tahapUjian ? cariTanggalTugas(tahapUjian, tugasKe) : null;
-        if (!tugasKe) salah.push('TUGAS KE harus angka');
-        else if (!tahapUjian) salah.push('TUGAS KE diisi tetapi TAHAP UJIAN kosong');
-        else if (!tt) salah.push('Tugas ' + tugasKe + ' ' + tahapUjian + ' belum ada di menu Tanggal Tugas');
-        else { mulai = tt.mulai; selesai = tt.selesai; }
-      } else {
+      const tahapTugas = parseInt(String(ambil(row, k.tahapTugas)).replace(/[^0-9]/g, ''), 10) || '';
+      const rentang = tahapTugas ? rentangTahap(tahapTugas) : null;
+      if (rentang) { mulai = rentang.mulai; selesai = rentang.selesai; }     // tanggal mengikuti tahap
+      else {
         mulai = tanggalImpor(ambil(row, k.mulai)); selesai = tanggalImpor(ambil(row, k.selesai));
-        if (!mulai || mulai === 'TIDAK VALID') salah.push('Tanggal mulai tidak valid (atau isi TUGAS KE)');
-        if (!selesai || selesai === 'TIDAK VALID') salah.push('Tanggal selesai tidak valid (atau isi TUGAS KE)');
+        if (!mulai || mulai === 'TIDAK VALID') salah.push('Tanggal mulai tidak valid (isi tanggal, atau TAHAP TUGAS yang sudah punya Tanggal Tugas)');
+        if (!selesai || selesai === 'TIDAK VALID') salah.push('Tanggal selesai tidak valid (isi tanggal, atau TAHAP TUGAS yang sudah punya Tanggal Tugas)');
         if (mulai && selesai && mulai !== 'TIDAK VALID' && selesai !== 'TIDAK VALID' && selesai < mulai) salah.push('Tanggal selesai lebih awal dari mulai');
       }
       const keSoal = yaTidakImpor(ambil(row, k.soal)), keUjian = yaTidakImpor(ambil(row, k.ujian));
@@ -12118,7 +12255,7 @@
       if (keSoal === false && keUjian === false) salah.push('Pembuatan Soal & Koreksi Ujian keduanya TIDAK');
       if (!tahapUjian) awas.push('Tahap ujian kosong');
       hasil.push({
-        baris: r + 1, nama: nama, tingkat: tingkat, kelas: kelas, tugas: fan, tahapUjian: tahapUjian, tugasKe: tugasKe || '', madrasah: norm(ambil(row, k.madrasah)),
+        baris: r + 1, nama: nama, tingkat: tingkat, kelas: kelas, tugas: fan, tahapUjian: tahapUjian, tahapTugas: tahapTugas, tugasKe: tugasKe || '', madrasah: norm(ambil(row, k.madrasah)),
         mulai: mulai, selesai: selesai, keSoal: keSoal !== false, keUjian: keUjian !== false, salah: salah, awas: awas
       });
     }
@@ -12135,11 +12272,11 @@
       '<span class="badge">✓ ' + valid.length + ' siap diimpor</span>' +
       (awas ? '<span class="badge waiting">⚠ ' + awas + ' dengan catatan</span>' : '') +
       (salah ? '<span class="badge telat">✗ ' + salah + ' tidak valid (dilewati)</span>' : '');
-    document.getElementById('mtImporTabel').innerHTML = '<table><thead><tr><th>Baris</th><th></th><th>Nama Anggota</th><th>Tingkat</th><th>Kelas</th><th>Fan/Materi</th><th>Tahap</th><th>Tugas Ke</th><th>Madrasah</th><th>Mulai</th><th>Selesai</th><th>Soal</th><th>Ujian</th><th>Keterangan</th></tr></thead><tbody>' +
+    document.getElementById('mtImporTabel').innerHTML = '<table><thead><tr><th>Baris</th><th></th><th>Nama Anggota</th><th>Tingkat</th><th>Kelas</th><th>Fan/Materi</th><th>Tahap</th><th>Tahap Tugas</th><th>Madrasah</th><th>Mulai</th><th>Selesai</th><th>Soal</th><th>Ujian</th><th>Keterangan</th></tr></thead><tbody>' +
       mtImporBaris.map(function(x) {
         const kelas = x.salah.length ? 'salah' : (x.awas.length ? 'peringatan' : '');
         return '<tr class="' + kelas + '"><td>' + x.baris + '</td><td>' + (x.salah.length ? '✗' : (x.awas.length ? '⚠' : '✓')) + '</td><td>' + aman(x.nama) + '</td><td>' + aman(x.tingkat) + '</td><td>' + aman(x.kelas) +
-          '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.tahapUjian) + '</td><td>' + aman(x.tugasKe) + '</td><td>' + aman(x.madrasah) + '</td><td>' + aman(x.mulai) + '</td><td>' + aman(x.selesai) +
+          '</td><td>' + aman(x.tugas) + '</td><td>' + aman(x.tahapUjian) + '</td><td>' + aman(x.tahapTugas) + '</td><td>' + aman(x.madrasah) + '</td><td>' + aman(x.mulai) + '</td><td>' + aman(x.selesai) +
           '</td><td>' + (x.keSoal ? 'YA' : 'TIDAK') + '</td><td>' + (x.keUjian ? 'YA' : 'TIDAK') + '</td><td class="ket">' + aman(x.salah.concat(x.awas).join('; ')) + '</td></tr>';
       }).join('') + '</tbody></table>';
     const kirim = document.getElementById('mtImporKirim');
@@ -12178,7 +12315,7 @@
   document.getElementById('mtImporKirim').addEventListener('click', function() {
     const tombol = this, pesan = document.getElementById('mtImporError');
     const kirim = mtImporBaris.filter(function(x) { return !x.salah.length; }).map(function(x) {
-      return { baris: x.baris, nama: x.nama, tingkat: x.tingkat, kelas: x.kelas, tugas: x.tugas, tahapUjian: x.tahapUjian, tugasKe: x.tugasKe,
+      return { baris: x.baris, nama: x.nama, tingkat: x.tingkat, kelas: x.kelas, tugas: x.tugas, tahapUjian: x.tahapUjian, tahapTugas: x.tahapTugas, tugasKe: x.tugasKe,
         madrasah: x.madrasah, mulai: x.mulai, selesai: x.selesai, keSoal: x.keSoal, keUjian: x.keUjian };
     });
     if (!kirim.length) return;
@@ -12297,7 +12434,7 @@
     milik.forEach(function(g) { hitung[statusKelompok(g)] += 1; });
     milik.sort(function(a, b) {
       const sa = statusKelompok(a) === 'Selesai' ? 1 : 0, sb = statusKelompok(b) === 'Selesai' ? 1 : 0;
-      return (sa - sb) || String(a.selesai || '').localeCompare(String(b.selesai || ''));
+      return (sa - sb) || String(a.selesai || '').localeCompare(String(b.selesai || '')) || (Number(a.tugasKe) || 0) - (Number(b.tugasKe) || 0);
     });
     const ringkasan = '<div class="tt-ringkasan"><div class="summary-grid">' +
       '<div class="summary-card"><strong>' + milik.length + '</strong><span>Total tugas</span></div>' +
@@ -12317,16 +12454,35 @@
     }
     const rekapHtml = '<div class="tt-jenis-grid">' + rekapJenis('SOAL', 'soal') + rekapJenis('KOREKSI', 'ujian') + '</div>';
 
+    // tanggal milik nomor tugas (sama untuk semua anggota) -> kartu cukup nomor, isi tugas & status
     const kartu = milik.map(function(g) {
       const st = statusKelompok(g);
+      const judul = (!g.tugas || g.tugas === '—') ? 'Menunggu setoran soal' : g.tugas;
       return '<article class="tt-card ' + (st === 'Selesai' ? 'selesai' : st === 'Telat' ? 'telat' : '') + '">' +
-        '<div class="tt-judul">' + aman(g.tugas) + '</div>' +
-        '<div class="tt-meta">' + [g.kelas, g.tingkat, g.tahapUjian ? String(g.tahapUjian).trim().toUpperCase() : '', g.madrasah ? String(g.madrasah).trim().toUpperCase() : ''].filter(Boolean).map(aman).join(' · ') + '</div>' +
-        '<div class="tt-periode">' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai) + '</div>' +
+        '<div class="tt-judul">' + aman(judul) + '</div>' +
+        '<div class="tt-meta">' + [g.kelas ? 'Kelas ' + g.kelas : '', g.tingkat, g.tahapUjian ? String(g.tahapUjian).trim().toUpperCase() : '', g.madrasah ? String(g.madrasah).trim().toUpperCase() : ''].filter(Boolean).map(aman).join(' · ') + '</div>' +
         '<div class="tt-tahap">' + barisTahap('Pembuatan Soal', tahapSoal(g.soal)) + barisTahap('Koreksi Hasil Ujian', tahapUjian(g.ujian)) + '</div>' +
         '</article>';
     }).join('');
-    wadah.innerHTML = ringkasan + rekapHtml + '<div class="tt-grid">' + kartu + '</div>';
+    // Nomor tugas per tahap (sama untuk semua anggota) + peringatan nomor yang terlewat
+    const tahapSaya = Array.from(new Set(milik.map(function(g) { return Number(g.tahapTugas) || 0; })))
+      .filter(function(t) { return t && daftarTanggalTugas().some(function(x) { return Number(x.tahapTugas) === t; }); }).sort(function(a, b) { return a - b; });
+    let peringatan = '', nomorHtml = '';
+    tahapSaya.forEach(function(t) {
+      const p = progresNomor(sesiAktif.nama, t);
+      const telat = p.nomor.filter(function(x) { return x.status === 'Terlambat'; });
+      const jalan = p.nomor.filter(function(x) { return x.status === 'Berjalan'; })[0];
+      const lewat = p.nomor.filter(function(x) { return x.status !== 'Akan datang'; }).length;
+      if (telat.length) {
+        peringatan += '<div class="tt-peringatan">⚠ <b>' + labelTahapTugas(t) + ': ' + telat.length + ' dari ' + lewat + ' tugas belum selesai / terlambat</b> (' +
+          telat.map(function(x) { return 'Tugas ' + x.ke; }).join(', ') + '). Selesaikan tugas mana saja lalu setor soalnya.</div>';
+      }
+      nomorHtml += '<div class="tt-nomor"><div class="tt-nomor-judul"><b>Nomor tugas · ' + labelTahapTugas(t) + '</b><span>' + p.selesai + ' dari ' + p.total + ' tugas selesai</span></div>' +
+        angkaNomorHtml(p.nomor) +
+        (jalan ? '<div class="slot-jalan">Berjalan: <b>Tugas ' + jalan.ke + '</b> · ' + rentangTanggalRingkas(jalan.mulai, jalan.selesai) + '</div>' : '') + '</div>';
+    });
+    if (nomorHtml) nomorHtml = '<div class="tt-nomor-grid">' + nomorHtml + '</div>';
+    wadah.innerHTML = ringkasan + peringatan + nomorHtml + rekapHtml + '<div class="tt-grid">' + kartu + '</div>';
   }
 
   document.querySelectorAll('#sonikNav button[data-page]').forEach(function(b) {
