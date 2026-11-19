@@ -3090,6 +3090,7 @@ userRole = "GURU";
       try {
         const teachers = await panggilAPI("getTeachersManagementData", { sheetName: activeTingkatan });
         cachedTeachersData = teachers;
+        guruTerakhirDimuat = teachers || [];
         renderTeacherTables(teachers); // Layar tiba-tiba terupdate tanpa loading berkedip
         return true;
       } catch (e) {
@@ -3110,6 +3111,19 @@ userRole = "GURU";
     }
     function closeScheduleModal() { document.getElementById("scheduleModal").classList.add("hidden"); }
 
+    // Pengaman: setiap perubahan data guru ikut mengirim username guru yang sedang dilihat,
+    // supaya server tidak salah baris bila daftar di spreadsheet sudah bergeser.
+    let guruTerakhirDimuat = [];
+    function usernameGuruBaris(rowNum) {
+      const t = (guruTerakhirDimuat || []).find(x => String(x.rowNum) === String(rowNum));
+      return t ? t.username : "";
+    }
+    // Pengaman yang sama untuk data siswa: ID PPS + nama + tahap siswa yang sedang dilihat.
+    function kunciSiswaBaris(rowNum) {
+      const s = (masterStudentsData || []).find(x => String(x.rowNum) === String(rowNum));
+      return s ? { id_pps: s.id_pps, nama: s.nama, tahap: s.tahap } : null;
+    }
+
     function submitSchedule() {
       const rowNum = parseInt(document.getElementById("modalScheduleRowNum").value, 10); 
       const tMulai = document.getElementById("modalTglMulai").value;
@@ -3117,7 +3131,7 @@ userRole = "GURU";
       if (!rowNum || isNaN(rowNum)) return;
       
       // 1. Eksekusi API Latar Belakang (Tanpa Await)
-      panggilAPI("updateTeacherSchedule", { rowNum: rowNum, tglMulai: tMulai, tglSelesai: tSelesai })
+      panggilAPI("updateTeacherSchedule", { rowNum: rowNum, tglMulai: tMulai, tglSelesai: tSelesai, username: usernameGuruBaris(rowNum) })
         .then(() => {
           showToast("Jadwal Akses Berhasil Diperbarui!", "success");
           loadTeachersManagementData(true); // Silent refresh tabel
@@ -3150,7 +3164,7 @@ userRole = "GURU";
       if (button && button.disabled) return;
       if (button) { button.disabled = true; button.textContent = "Menyimpan…"; }
       try {
-        await panggilAPI("addTeacherDuty", { rowNum: rowNum, newSubject: sub, newClass: cls, newTingkatan: tkt });
+        await panggilAPI("addTeacherDuty", { rowNum: rowNum, newSubject: sub, newClass: cls, newTingkatan: tkt, username: usernameGuruBaris(rowNum) });
         cachedTeachersData = null;
         closeDutyModal();
         showToast("Tugas berhasil disimpan. Memuat ulang daftar…", "success");
@@ -3162,7 +3176,9 @@ userRole = "GURU";
       }
     }
 
+    let tugasAkanDihapus = { subject: "", className: "" };
     function removeDuty(rowNum, index, teacherName, subject, className) {
+      tugasAkanDihapus = { subject: subject, className: className };
       document.getElementById("delRowNum").value = rowNum;
       document.getElementById("delDutyIndex").value = index;
       document.getElementById("deleteConfirmText").innerHTML = `Menghapus Fan <b>${subject} (Kelas ${className})</b> dari daftar tugas Ust/Ustdz <b>${teacherName}</b>.`;
@@ -3174,7 +3190,7 @@ userRole = "GURU";
       const rowNum = document.getElementById("delRowNum").value;
       const index = document.getElementById("delDutyIndex").value;
       
-      panggilAPI("deleteTeacherDuty", { rowNum: rowNum, indexToDelete: index })
+      panggilAPI("deleteTeacherDuty", { rowNum: rowNum, indexToDelete: index, username: usernameGuruBaris(rowNum), subject: tugasAkanDihapus.subject, className: tugasAkanDihapus.className })
         .then(() => {
           showToast("Tugas berhasil dihapus!", "success");
           loadTeachersManagementData(true);
@@ -3235,7 +3251,7 @@ userRole = "GURU";
         panggilAPI("addTeacherData", { data: payload }).then(() => { showToast("Data Guru disimpan!", "success"); loadTeachersManagementData(true); }).catch(e => showToast("Gagal: " + e.message, "error"));
       } else { 
         const rowNum = document.getElementById("guruFormRowNum").value; 
-        panggilAPI("updateTeacherData", { rowNum: rowNum, data: payload }).then(() => { showToast("Data Guru diperbarui!", "success"); loadTeachersManagementData(true); }).catch(e => showToast("Gagal: " + e.message, "error"));
+        panggilAPI("updateTeacherData", { rowNum: rowNum, data: payload, usernameLama: usernameGuruBaris(rowNum) }).then(() => { showToast("Data Guru diperbarui!", "success"); loadTeachersManagementData(true); }).catch(e => showToast("Gagal: " + e.message, "error"));
       }
       
       closeFormGuruModal();
@@ -3251,7 +3267,7 @@ userRole = "GURU";
 
     function executeDeleteGuru() {
       const rowNum = document.getElementById("delGuruRowNum").value;
-      panggilAPI("deleteTeacherData", { rowNum: rowNum }).then(() => { showToast("Guru dihapus!", "success"); loadTeachersManagementData(true); }).catch(e => showToast("Gagal: " + e.message, "error"));
+      panggilAPI("deleteTeacherData", { rowNum: rowNum, username: usernameGuruBaris(rowNum) }).then(() => { showToast("Guru dihapus!", "success"); loadTeachersManagementData(true); }).catch(e => showToast("Gagal: " + e.message, "error"));
       closeDeleteGuruModal();
       showToast("Menghapus di latar belakang...", "success");
     }
@@ -3271,10 +3287,12 @@ userRole = "GURU";
       if(!payload.no || !payload.nama || !payload.kelas) { showToast("No, Nama, dan Kelas wajib diisi!", "error"); return; }
       
       if (mode === 'tambah') {
-        panggilAPI("addStudentData", { data: payload, sheetName: activeTingkatan }).then(() => silentRefreshMasterData());
+        panggilAPI("addStudentData", { data: payload, sheetName: activeTingkatan }).then(() => silentRefreshMasterData())
+          .catch(e => showToast("Gagal menambah siswa: " + e.message, "error"));
       } else {
         const rowNum = document.getElementById("siswaFormRowNum").value;
-        panggilAPI("updateStudentData", { rowNum: rowNum, data: payload, sheetName: activeTingkatan }).then(() => silentRefreshMasterData());
+        panggilAPI("updateStudentData", { rowNum: rowNum, data: payload, sheetName: activeTingkatan, kunci: kunciSiswaBaris(rowNum) }).then(() => silentRefreshMasterData())
+          .catch(e => { showToast("Gagal menyimpan: " + e.message, "error"); silentRefreshMasterData(); });
       }
       
       closeFormSiswaModal(); 
@@ -3283,7 +3301,8 @@ userRole = "GURU";
 
     function executeDeleteSiswa() {
       const rowNum = document.getElementById("delSiswaRowNum").value;
-      panggilAPI("deleteStudentData", { rowNum: rowNum, sheetName: activeTingkatan }).then(() => silentRefreshMasterData());
+      panggilAPI("deleteStudentData", { rowNum: rowNum, sheetName: activeTingkatan, kunci: kunciSiswaBaris(rowNum) }).then(() => silentRefreshMasterData())
+        .catch(e => { showToast("Gagal menghapus: " + e.message, "error"); silentRefreshMasterData(); });
       closeDeleteSiswaModal(); 
       showToast("Dihapus di latar belakang...", "success"); 
     }
