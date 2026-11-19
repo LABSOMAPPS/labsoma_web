@@ -5474,6 +5474,23 @@
           </div>
         </form>
       </div>
+      <!-- MODAL PINDAHKAN BERKAS KOREKSI BERSAMA / FINISHING -->
+      <div class="modal-overlay" id="pindahKBOverlay" hidden>
+        <div class="modal" style="width: min(480px, 100%);">
+          <h2>Pindahkan berkas</h2>
+          <div class="tt-info" id="pindahKBInfo" style="margin-top:8px"></div>
+          <div class="field" style="margin-top:12px">
+            <label for="pindahKBTujuan">Pindahkan ke madrasah</label>
+            <select id="pindahKBTujuan"></select>
+          </div>
+          <p class="km-catatan">Hanya soal yang sama (anggota, tugas, kelas, tingkat) yang bisa dipilih. Pengunggah dan waktu unggah asli tetap tersimpan.</p>
+          <div class="modal-error" id="pindahKBError"></div>
+          <div class="modal-actions" style="margin-top:14px;">
+            <button class="button secondary" type="button" data-tutup-modal="pindahKBOverlay">Batal</button>
+            <button class="button" type="button" id="pindahKBSimpan">Pindahkan</button>
+          </div>
+        </div>
+      </div>
       <!-- MODAL BEBASKAN NOMOR TUGAS (ADMIN) -->
       <div class="modal-overlay" id="bebasOverlay" hidden>
         <div class="modal" style="width: min(480px, 100%);">
@@ -9875,13 +9892,51 @@
         '<span title="' + aman(f.pengunggah) + ' · ' + aman(f.waktu) + '">📄 ' + aman(f.nama) + ' <small>(' + ukuranBerkasKB(f.ukuran) + ')</small></span>' +
         (ragu ? '<small class="berkas-ragu" title="Berkas lama ini tertaut ke beberapa madrasah dengan soal yang sama. Pilih baris pemiliknya.">⚠ Belum jelas madrasahnya</small>' : '') +
         '<button class="button secondary small" type="button" data-unduh-berkas-kb="' + aman(f.id) + '">Unduh</button>' +
-        (ragu ? '<button class="button small" type="button" data-tetapkan-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-madrasah="' + aman(item.madrasah || '') + '" data-nama-berkas-kb="' + aman(f.nama) + '">✓ Milik ' + aman(item.madrasah || 'baris ini') + '</button>' : '') +
+        (ragu ? '<button class="button small" type="button" data-tetapkan-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-madrasah="' + aman(item.madrasah || '') + '" data-nama-berkas-kb="' + aman(f.nama) + '">✓ Milik ' + aman(item.madrasah || 'baris ini') + '</button>' +
+          '<button class="button secondary small" type="button" data-tolak-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-madrasah="' + aman(item.madrasah || '') + '" data-nama-berkas-kb="' + aman(f.nama) + '">✗ Bukan milik ' + aman(item.madrasah || 'baris ini') + '</button>' : '') +
+        (!ragu && soalSaudaraKB(item).length ? '<button class="button secondary small" type="button" data-pindah-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-nama-berkas-kb="' + aman(f.nama) + '" title="Pindahkan ke soal yang sama di madrasah lain">⇄ Pindahkan</button>' : '') +
         (bolehUnggah && !ragu ? '<button class="button secondary small" type="button" data-hapus-berkas-kb="' + aman(f.id) + '" data-nama-berkas-kb="' + aman(f.nama) + '">Hapus</button>' : '') +
         '</div>';
     }).join('');
     return (daftar || (bolehUnggah ? '' : '<small>–</small>')) + (bolehUnggah
       ? '<button class="button secondary small" type="button" data-unggah-berkas-kb="' + aman(kunci) + '" data-baris-berkas-kb="' + aman(item.nomorBaris || '') + '" data-tahap-berkas-kb="' + tahap + '">⬆ Unggah berkas</button>'
       : '');
+  }
+
+  // Baris lain dengan soal yang sama (anggota, tugas, kelas, tingkat) tetapi madrasah berbeda
+  function soalSaudaraKB(item) {
+    const k = function(x) { return [norm(x.nama), norm(x.tugas), String(x.kelas || '').trim(), norm(x.tingkat)].join('|'); };
+    const kunciSoal = k(item);
+    return ((dataAplikasiTersimpan || {}).semuaTugas || []).filter(function(t) { return t.kunci !== item.kunci && k(t) === kunciSoal; });
+  }
+  function aksiBerkasKB(fungsi, args, tombol) {
+    tombol.disabled = true;
+    const r = google.script.run
+      .withSuccessHandler(function(pesan) { tampilkanNotifikasi(pesan, 'success'); muatBerkasKB(); muatAplikasi(); })
+      .withFailureHandler(function(er) { tombol.disabled = false; tampilkanNotifikasi(er && er.message ? er.message : String(er), 'error'); });
+    r[fungsi].apply(r, args);
+  }
+  function bukaPindahBerkasKB(tombol) {
+    const asal = ((dataAplikasiTersimpan || {}).semuaTugas || []).filter(function(t) { return t.kunci === tombol.dataset.kunci; })[0];
+    if (!asal) { tampilkanNotifikasi('Tugas tidak ditemukan. Muat ulang halaman.', 'error'); return; }
+    const saudara = soalSaudaraKB(asal);
+    document.getElementById('pindahKBInfo').innerHTML = 'Berkas <b>' + aman(tombol.dataset.namaBerkasKb) + '</b> saat ini tertaut ke <b>' + aman(asal.madrasah || '-') +
+      '</b> (' + aman(asal.nama) + ' · ' + aman(asal.tugas) + ' · Kelas ' + aman(asal.kelas) + ' · ' + aman(asal.tingkat) + ').';
+    document.getElementById('pindahKBTujuan').innerHTML = saudara.map(function(t) {
+      return '<option value="' + aman(t.kunci) + '">' + aman(t.madrasah || '(tanpa madrasah)') + (t.tahapUjian ? ' · ' + aman(t.tahapUjian) : '') + '</option>';
+    }).join('');
+    document.getElementById('pindahKBError').textContent = '';
+    const ok = document.getElementById('pindahKBSimpan');
+    ok.disabled = false;
+    ok.onclick = function() {
+      const tujuan = document.getElementById('pindahKBTujuan').value;
+      ok.disabled = true;
+      google.script.run
+        .withSuccessHandler(function(pesan) { document.getElementById('pindahKBOverlay').hidden = true; tampilkanNotifikasi(pesan, 'success'); muatBerkasKB(); muatAplikasi(); })
+        .withFailureHandler(function(er) { ok.disabled = false; document.getElementById('pindahKBError').textContent = er && er.message ? er.message : String(er); })
+        .pindahkanBerkasKB(tombol.dataset.pindahBerkasKb, tujuan);
+    };
+    document.getElementById('pindahKBOverlay').hidden = false;
   }
 
   function muatBerkasKB() {
@@ -9943,6 +9998,17 @@
         });
         return;
       }
+      const tolak = event.target.closest('[data-tolak-berkas-kb]');
+      if (tolak) {
+        konfirmasi({ jenis: 'peringatan', judul: 'Bukan milik ' + (tolak.dataset.madrasah || 'baris ini') + '?', ya: 'Ya, lepaskan',
+          pesan: 'Berkas "' + tolak.dataset.namaBerkasKb + '" tidak akan tampil lagi di ' + (tolak.dataset.madrasah || 'baris ini') +
+            '. Bila hanya tersisa satu madrasah lain, berkas langsung ditetapkan milik madrasah tersebut. File tidak dihapus.' }).then(function(ok) {
+          if (ok) aksiBerkasKB('tolakBerkasKB', [tolak.dataset.tolakBerkasKb, tolak.dataset.kunci], tolak);
+        });
+        return;
+      }
+      const pindah = event.target.closest('[data-pindah-berkas-kb]');
+      if (pindah) { bukaPindahBerkasKB(pindah); return; }
       const tetap = event.target.closest('[data-tetapkan-berkas-kb]');
       if (tetap) {
         konfirmasi({ jenis: 'peringatan', judul: 'Tetapkan pemilik berkas?', ya: 'Ya, tetapkan',
