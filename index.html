@@ -4013,6 +4013,14 @@
           </div>
         </div>
 
+        <!-- 8b. Data Bank Soal (aplikasi eksternal: databanksoal) -->
+        <button class="nav-button sonik-sidebar-item" data-page="dataBankSoal" id="sidebarNavBankSoal">
+          <span class="nav-icon-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+          </span>
+          <span>Data Bank Soal</span>
+        </button>
+
         <!-- 9. Laporan Absensi (aplikasi absensi, masuk otomatis dengan akun Labsoma) -->
         <button class="nav-button sonik-sidebar-item" data-page="laporanAbsensi" id="sidebarNavAbsensi">
           <span class="nav-icon-inline">
@@ -4389,6 +4397,34 @@
         </div>
         <div class="card" style="padding:0; overflow:hidden; border-radius:var(--radius-lg); height:calc(100vh - 170px); min-height:560px; background:var(--panel);">
           <iframe id="absensiFrame" src="about:blank" data-src="https://labsomapps.github.io/absensi/" title="Laporan Absensi" style="display:block; width:100%; height:100%; border:0; background:transparent;" allow="fullscreen; clipboard-write"></iframe>
+        </div>
+      </section>
+
+      <!-- PAGE: DATA BANK SOAL (Aplikasi Eksternal: databanksoal) -->
+      <section class="page" id="page-dataBankSoal">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px; flex-wrap:wrap;">
+          <div>
+            <h1 class="page-heading" style="margin:0; font-size:22px; display:inline-flex; align-items:center; gap:8px;">
+              <span style="display:inline-flex; color:var(--aksen);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+              </span>
+              Data Bank Soal
+            </h1>
+            <p class="subheading" style="margin:2px 0 0; font-size:13px; color:var(--redup);">Aplikasi Data Bank Soal Labsoma PPS tanpa membuka tab baru.</p>
+          </div>
+          <div style="display:inline-flex; align-items:center; gap:8px;">
+            <button type="button" class="button secondary small" onclick="segarkanIframeBankSoal()" title="Muat ulang Data Bank Soal" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Segarkan
+            </button>
+            <a href="https://labsomapps.github.io/databanksoal/" target="_blank" rel="noopener noreferrer" class="button secondary small" title="Buka di tab baru" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Buka Tab Baru
+            </a>
+          </div>
+        </div>
+        <div class="card" style="padding:0; overflow:hidden; border-radius:var(--radius-lg); height:calc(100vh - 170px); min-height:560px; background:var(--panel);">
+          <iframe id="bankSoalFrame" src="about:blank" data-src="https://labsomapps.github.io/databanksoal/" title="Data Bank Soal" style="display:block; width:100%; height:100%; border:0; background:transparent;" allow="fullscreen; clipboard-read; clipboard-write;"></iframe>
         </div>
       </section>
 
@@ -6969,6 +7005,7 @@
   const PETA_HALAMAN = {
     analisa:        { tab: 'analisa' },
     laporanAbsensi: { tab: 'laporanAbsensi' },
+    dataBankSoal:   { tab: 'dataBankSoal' },
     inputNilai:     { tab: 'inputNilai' },
 
     hubTugas:       { tab: 'tugas' },
@@ -7060,6 +7097,10 @@
       if (timerAnggota) { clearInterval(timerAnggota); timerAnggota = null; }
     }
     if (nama === 'laporanAbsensi') bukaAplikasiAbsensi();
+    if (nama === 'dataBankSoal') {
+      const fb = document.getElementById('bankSoalFrame');
+      if (fb && (!fb.src || fb.src === 'about:blank')) fb.src = fb.dataset.src;
+    }
     if (nama === 'analisa') {
       const f = document.getElementById('analisaFrame');
       if (f && (f.src === 'about:blank' || !f.src || f.src.indexOf('inputnilaipk-umum') === -1)) {
@@ -7380,6 +7421,14 @@
   }
 
   /* (Slide switcher aktif dipindahkan dan disempurnakan dengan 7 slide di bawah) */
+  function segarkanIframeBankSoal() {
+    const f = document.getElementById('bankSoalFrame');
+    if (f) {
+      f.src = 'about:blank';
+      setTimeout(function() { f.src = f.dataset.src; }, 60);
+    }
+  }
+
   function segarkanIframeAnalisa() {
     const f = document.getElementById('analisaFrame');
     if (f) {
@@ -11360,6 +11409,7 @@
       grup('dokumen'),
       grup('tugas'),
       grup('inputNilai'),
+      ambil('#sidebarNavBankSoal'),
       ambil('#sidebarNavAbsensi') || ambil(':scope > button[data-page="laporanAbsensi"]'),
       ambil('#sidebarNavAnalisa') || ambil(':scope > button[data-page="analisa"]')
     ].filter(Boolean);
@@ -13857,6 +13907,7 @@ function simpanFile(f) {
     if (HALAMAN_SONIK.indexOf('cetakTemplate') < 0) HALAMAN_SONIK.push('cetakTemplate');
   if (HALAMAN_SONIK.indexOf('analisa') < 0) HALAMAN_SONIK.push('analisa');
   if (HALAMAN_SONIK.indexOf('laporanAbsensi') < 0) HALAMAN_SONIK.push('laporanAbsensi');
+  if (HALAMAN_SONIK.indexOf('dataBankSoal') < 0) HALAMAN_SONIK.push('dataBankSoal');
   } catch (e) { console.error('Template Soal: gagal mendaftarkan halaman', e); }
 
   const bukaSebelumnya = bukaHalaman;
