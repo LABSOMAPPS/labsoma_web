@@ -3230,6 +3230,125 @@
         font-size: 18px;
       }
     }
+
+    /* ===== Kartu ringkas Koreksi Bersama & Finishing ===== */
+    .kb-ringkas { display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 12px; }
+    .kb-ringkas span { font-size:12.5px; color:var(--redup); background:var(--panel2); border:1px solid var(--garis); padding:5px 12px; border-radius:999px; }
+    .kb-ringkas b { color:var(--teks); font-family:var(--font-mono); }
+    .kb-daftar { display:flex; flex-direction:column; gap:10px; }
+    .kb-kartu { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) auto; gap:12px 20px; align-items:center;
+      padding:14px 16px 14px 18px; background:var(--panel); border:1px solid var(--garis); border-radius:var(--radius-lg);
+      box-shadow:var(--bayangan-sm); position:relative; overflow:hidden; transition:border-color .15s ease, box-shadow .15s ease; }
+    .kb-kartu::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--kuning); }
+    .kb-kartu.selesai::before { background:var(--aksen); }
+    .kb-kartu:hover { border-color:var(--aksen-border); box-shadow:var(--bayangan); }
+    .kb-utama { display:flex; gap:12px; align-items:flex-start; min-width:0; }
+    .kb-avatar { flex:0 0 40px; width:40px; height:40px; border-radius:12px; color:#fff; font-weight:800; font-size:14px;
+      display:flex; align-items:center; justify-content:center; letter-spacing:.5px; }
+    .kb-info { min-width:0; display:flex; flex-direction:column; gap:4px; }
+    .kb-judul { font-weight:800; font-size:15px; color:var(--teks); line-height:1.3; overflow-wrap:anywhere; }
+    .kb-nama { font-size:12.5px; color:var(--redup); font-weight:600; }
+    .kb-chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
+    .kb-chip { font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; background:var(--panel2); color:var(--redup); border:1px solid var(--garis); white-space:nowrap; }
+    .kb-chip.tahap { background:var(--biru-soft); color:var(--biru); border-color:transparent; }
+    .kb-chip.madrasah { background:var(--aksen-soft); color:var(--aksen); border-color:transparent; }
+    .kb-meta { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:12px; color:var(--redup); margin-top:2px; }
+    .kb-meta span { display:inline-flex; align-items:center; gap:5px; }
+    .kb-meta svg { width:13px; height:13px; flex:0 0 13px; opacity:.8; }
+    .kb-berkas-daftar { display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .kb-file { display:flex; align-items:center; gap:8px; padding:6px 6px 6px 8px; border-radius:var(--radius-md); background:var(--panel2); border:1px solid var(--garis); min-width:0; flex-wrap:wrap; }
+    .kb-file.ragu { border-color:var(--kuning); }
+    .kb-file-jenis { flex:0 0 auto; font-size:9.5px; font-weight:800; letter-spacing:.4px; padding:3px 5px; border-radius:5px; background:var(--panel3); color:var(--redup); }
+    .kb-file-jenis.doc { background:#2563eb; color:#fff; } .kb-file-jenis.xls { background:#16a34a; color:#fff; } .kb-file-jenis.pdf { background:#dc2626; color:#fff; }
+    .kb-file-nama { flex:1 1 120px; min-width:0; font-size:12.5px; font-weight:600; color:var(--teks); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .kb-file-ukuran { flex:0 0 auto; font-size:11px; color:var(--redup); font-family:var(--font-mono); }
+    .kb-file-tombol { display:inline-flex; gap:4px; margin-left:auto; }
+    .kb-ikon-btn { width:28px; height:28px; display:inline-flex; align-items:center; justify-content:center; padding:0; border-radius:8px;
+      border:1px solid var(--garis); background:var(--panel); color:var(--teks); cursor:pointer; transition:all .15s ease; }
+    .kb-ikon-btn svg { width:14px; height:14px; }
+    .kb-ikon-btn:hover { border-color:var(--aksen); color:var(--aksen); background:var(--aksen-soft); }
+    .kb-ikon-btn.bahaya:hover { border-color:var(--merah); color:var(--merah); background:var(--merah-soft); }
+    .kb-ikon-btn:disabled { opacity:.5; cursor:wait; }
+    .kb-file-ragu { flex-basis:100%; display:flex; flex-wrap:wrap; gap:6px; align-items:center; color:var(--kuning); }
+    .kb-file-kosong { font-size:12px; color:var(--redup); font-style:italic; }
+    .kb-unggah { align-self:flex-start; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:6px 12px;
+      border-radius:8px; border:1.5px dashed var(--garis-terang, var(--garis)); background:transparent; color:var(--aksen); cursor:pointer; transition:all .15s ease; }
+    .kb-unggah svg { width:14px; height:14px; }
+    .kb-unggah:hover { border-color:var(--aksen); background:var(--aksen-soft); }
+    .kb-aksi { display:flex; flex-direction:column; align-items:stretch; gap:6px; min-width:170px; }
+    .kb-aksi .button { display:inline-flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; }
+    .kb-aksi .button svg { width:14px; height:14px; }
+    .kb-status { font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:999px; text-align:center; }
+    .kb-status.tunggu { background:var(--kuning-soft); color:var(--kuning); }
+    .kb-status.ok { background:var(--aksen-soft); color:var(--aksen); }
+    .kb-grup-selesai { margin-top:16px; }
+    .kb-grup-selesai > summary { cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:8px; font-weight:800; font-size:13.5px;
+      color:var(--teks); padding:8px 14px; border-radius:10px; background:var(--panel2); border:1px solid var(--garis); margin-bottom:10px; user-select:none; }
+    .kb-grup-selesai > summary::-webkit-details-marker { display:none; }
+    .kb-grup-selesai > summary::before { content:"▸"; transition:transform .15s ease; color:var(--aksen); }
+    .kb-grup-selesai[open] > summary::before { transform:rotate(90deg); }
+    .kb-hitung { font-family:var(--font-mono); font-size:11.5px; background:var(--aksen-soft); color:var(--aksen); padding:1px 8px; border-radius:999px; }
+    .kb-grup-selesai .kb-kartu { opacity:.92; }
+    .kb-kosong { padding:28px; text-align:center; color:var(--redup); background:var(--panel); border:1px dashed var(--garis); border-radius:var(--radius-lg); }
+    .kb-kosong.kecil { padding:14px; }
+    @media (max-width: 1180px) {
+      .kb-kartu { grid-template-columns:minmax(0,1fr) auto; }
+      .kb-berkas { grid-column:1 / -1; grid-row:2; }
+    }
+    @media (max-width: 640px) {
+      .kb-kartu { grid-template-columns:1fr; padding:12px 12px 12px 16px; }
+      .kb-berkas { grid-row:auto; }
+      .kb-aksi { min-width:0; flex-direction:row; flex-wrap:wrap; }
+      .kb-aksi .button { flex:1 1 auto; }
+      .kb-status { flex-basis:100%; }
+    }
+
+    /* nomor urut, jalur koreksi, status tambahan */
+    .kb-no { flex:0 0 auto; min-width:26px; height:26px; padding:0 6px; margin-top:7px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;
+      font-family:var(--font-mono); font-size:12px; font-weight:800; color:var(--redup); background:var(--panel2); border:1px solid var(--garis); }
+    .kb-kartu.telat::before { background:var(--merah); }
+    .kb-status.proses { background:var(--biru-soft); color:var(--biru); }
+    .kb-status.telat { background:var(--merah-soft); color:var(--merah); }
+    .kb-jalur { display:flex; align-items:center; flex-wrap:wrap; gap:4px 0; }
+    .kb-langkah { display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:999px;
+      color:var(--redup); background:var(--panel2); border:1px solid var(--garis); white-space:nowrap; }
+    .kb-langkah i { width:8px; height:8px; border-radius:50%; background:var(--garis-terang, var(--redup)); }
+    .kb-langkah.ok { color:var(--aksen); background:var(--aksen-soft); border-color:transparent; }
+    .kb-langkah.ok i { background:var(--aksen); }
+    .kb-langkah.kini { color:var(--kuning); background:var(--kuning-soft); border-color:var(--kuning); }
+    .kb-langkah.kini i { background:var(--kuning); box-shadow:0 0 0 3px var(--kuning-soft); }
+    .kb-jalur-garis { width:12px; height:2px; background:var(--garis); flex:0 0 12px; }
+
+    /* Manajemen Tugas: satu kartu per anggota */
+    .mt-daftar-kartu #isiManajemenTugas { display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+    .mt-kartu { background:var(--panel); border:1px solid var(--garis); border-radius:var(--radius-lg); box-shadow:var(--bayangan-sm);
+      padding:12px 16px 14px 18px; position:relative; overflow:hidden; transition:border-color .15s ease, box-shadow .15s ease; }
+    .mt-kartu::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--biru); }
+    .mt-kartu.tuntas::before { background:var(--aksen); }
+    .mt-kartu:hover { border-color:var(--aksen-border); box-shadow:var(--bayangan); }
+    .mt-kartu-kepala { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .mt-kartu-kepala .kb-no { margin-top:0; }
+    .mt-kartu-nama { flex:1 1 200px; min-width:0; display:flex; flex-direction:column; }
+    .mt-kartu-nama b { font-size:14.5px; font-weight:800; color:var(--teks); text-transform:uppercase; }
+    .mt-kartu-nama small { font-size:12px; color:var(--redup); font-weight:600; }
+    .mt-kartu-progres { display:flex; align-items:center; gap:8px; flex:0 1 220px; min-width:150px; }
+    .mt-kartu-progres b { font-family:var(--font-mono); font-size:13px; color:var(--aksen); min-width:38px; text-align:right; }
+    .mt-kartu-bar { flex:1; height:7px; border-radius:99px; background:var(--panel3); overflow:hidden; }
+    .mt-kartu-bar i { display:block; height:100%; border-radius:99px; background:var(--aksen); transition:width .4s ease; }
+    .mt-kartu .mt-chips { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:8px; margin-top:12px; padding-top:12px; border-top:1px dashed var(--garis); }
+    .mt-kartu .mt-chip { min-width:0; padding:7px 9px 7px 11px; border-radius:10px; position:relative; overflow:hidden; }
+    .mt-kartu .mt-chip::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--biru); }
+    .mt-kartu .mt-chip.pmid::before { background:var(--kuning); }
+    .mt-kartu .mt-chip.p100::before { background:var(--hijau); }
+    .mt-kartu .mt-chip-judul { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--teks); }
+    .mt-kartu .mt-chip { color:var(--teks); }
+    .mt-kartu .mt-chip-sub { letter-spacing:0; text-transform:none; }
+    @media (max-width: 640px) {
+      .mt-kartu-progres { flex-basis:100%; order:5; }
+      .mt-kartu-kepala .button { order:6; width:100%; }
+      .mt-kartu .mt-chips { grid-template-columns:1fr; }
+      .kb-utama .kb-no { margin-top:9px; }
+    }
 </style>
 <style id="mobile-input-standalone-page">
   @media (max-width: 768px) {
@@ -5504,8 +5623,7 @@
             <button type="button" class="button secondary small" id="mtSinkronInput" title="Samakan tugas Koreksi Hasil Ujian dengan hak input nilai guru">⇄ Sinkron Input Nilai</button>
           </div>
         </div>
-        <div class="mt-table">
-          <div class="mt-thead"><div>Anggota</div><div>Daftar tugas (model kartu)</div><div style="text-align:center">Progres</div><div style="text-align:right">Aksi</div></div>
+        <div class="mt-daftar-kartu">
           <div id="isiManajemenTugas"><div class="empty">Memuat daftar tugas…</div></div>
         </div>
       </section>
@@ -9871,95 +9989,68 @@
       </div>
     `;
 
-    const rows = daftar.map(function(item) {
-      const selesai = String(item.status || '').toLowerCase() === 'selesai';
+    const kartu = daftar.map(function(item, i) {
       const statusTampil = statusTampilanRekap(item);
-      return `
-        <tr>
-          <td>${aman(item.nama)}</td>
-          <td>${aman(item.tugas)}</td>
-          <td>${aman(item.kelas || '–')}</td>
-          <td>${aman(item.tahapUjian || '–')}</td>
-          <td>${aman(item.tingkat || '–')}</td>
-          <td>${aman(item.madrasah || '–')}</td>
-          <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
-          <td>${aman(statusTampil)}</td>
-          <td>${aman(item.statusK1 || 'Menunggu')}</td>
-          <td>${aman(item.statusK2 || 'Menunggu')}</td>
-          <td>${/IMNI/i.test(item.tahapUjian || '') ? aman(item.statusK3 || 'Menunggu') : '—'}</td>
-          <td>${aman(item.statusKoreksiBersama || 'Menunggu')}</td>
-        </tr>
-      `;
+      const kelas = statusTampil === 'Selesai' ? 'ok' : statusTampil === 'Proses' ? 'proses' : 'telat';
+      return kartuTugasKB(item, {
+        no: i + 1,
+        selesai: statusTampil === 'Selesai', telat: kelas === 'telat',
+        status: { teks: aman(statusTampil), kelas: kelas },
+        metaLabel: 'Selesai dikerjakan', metaTanggal: item.tanggalSelesaiPengerjaan,
+        tengah: htmlJalurKoreksi(item)
+      });
     });
 
     document.getElementById('isiRekap').innerHTML = ringkasan +
-      renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Status', 'Korektor 1', 'Korektor 2', 'Korektor 3', 'Koreksi Bersama'], rows);
+      daftarKartuSederhana(kartu, 'Tidak ada tugas yang sesuai filter.', 'tugas');
   }
 
   function tampilkanAntrianK1(daftar) {
     perbaruiDropdownFilterTugas('k1', dataK1Tersimpan || daftar);
     daftar = saringDaftarTugas(daftar, 'k1');
-    const rows = daftar.map(function(item) {
-      return `
-        <tr>
-          <td>${aman(item.nama)}</td>
-          <td>${aman(item.tugas)}</td>
-          <td>${aman(item.kelas || '–')}</td>
-          <td>${aman(item.tahapUjian || '–')}</td>
-          <td>${aman(item.tingkat || '–')}</td>
-          <td>${aman(item.madrasah || '–')}</td>
-          <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
-          <td>${formatTanggal(item.tanggalSelesaiPengerjaan)}</td>
-          <td><span class="badge waiting">Menunggu Korektor 1</span></td>
-          <td>
-            <button class="button" data-action="k1" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Tandai sudah dikoreksi</button>
-            <button class="button secondary" data-action="kembaliK1" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Kembalikan</button>
-          </td>
-        </tr>
-      `;
+    const kartu = daftar.map(function(item, i) {
+      return kartuTugasKB(item, {
+        no: i + 1,
+        status: { teks: 'Menunggu Korektor 1', kelas: 'tunggu' },
+        metaLabel: 'Selesai dikerjakan', metaTanggal: item.tanggalSelesaiPengerjaan,
+        tengah: htmlJalurKoreksi(item),
+        aksi: `<button class="button small kb-btn-utama" data-action="k1" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">${IKON_KB.cek} Tandai sudah dikoreksi</button>
+               <button class="button secondary small" data-action="kembaliK1" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" title="Kembalikan ke anggota">${IKON_KB.kembali} Kembalikan</button>`
+      });
     });
-    document.getElementById('isiKorektor1').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai dikerjakan', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKorektor1').innerHTML = daftarKartuSederhana(kartu, 'Tidak ada tugas yang menunggu Korektor 1.', 'menunggu');
   }
 
   function tampilkanAntrianK2(daftar) {
     perbaruiDropdownFilterTugas('k2', dataK2Tersimpan || daftar);
     daftar = saringDaftarTugas(daftar, 'k2');
-    const rows = daftar.map(function(item) {
-      return `
-        <tr>
-          <td>${aman(item.nama)}</td>
-          <td>${aman(item.tugas)}</td>
-          <td>${aman(item.kelas || '–')}</td>
-          <td>${aman(item.tahapUjian || '–')}</td>
-          <td>${aman(item.tingkat || '–')}</td>
-          <td>${aman(item.madrasah || '–')}</td>
-          <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
-          <td>${formatTanggal(item.tanggalK1)}</td>
-          <td><span class="badge waiting">Menunggu Korektor 2</span></td>
-          <td>
-            <button class="button" data-action="k2" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Tandai sudah dikoreksi</button>
-            <button class="button secondary" data-action="kembaliK2" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Kembalikan</button>
-          </td>
-        </tr>
-      `;
+    const kartu = daftar.map(function(item, i) {
+      return kartuTugasKB(item, {
+        no: i + 1,
+        status: { teks: 'Menunggu Korektor 2', kelas: 'tunggu' },
+        metaLabel: 'Korektor 1', metaTanggal: item.tanggalK1,
+        tengah: htmlJalurKoreksi(item),
+        aksi: `<button class="button small kb-btn-utama" data-action="k2" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">${IKON_KB.cek} Tandai sudah dikoreksi</button>
+               <button class="button secondary small" data-action="kembaliK2" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" title="Kembalikan ke anggota">${IKON_KB.kembali} Kembalikan</button>`
+      });
     });
-    document.getElementById('isiKorektor2').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai Korektor 1', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKorektor2').innerHTML = daftarKartuSederhana(kartu, 'Tidak ada tugas yang menunggu Korektor 2.', 'menunggu');
   }
 
   function tampilkanAntrianK3(daftar) {
     perbaruiDropdownFilterTugas('k3', dataK3Tersimpan || daftar);
     daftar = saringDaftarTugas(daftar, 'k3');
-    const rows = daftar.map(function(item) { return `
-      <tr>
-        <td>${aman(item.nama)}</td><td>${aman(item.tugas)}</td><td>${aman(item.kelas || '–')}</td>
-        <td>${aman(item.tahapUjian || '–')}</td><td>${aman(item.tingkat || '–')}</td><td>${aman(item.madrasah || '–')}</td>
-        <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td><td>${formatTanggal(item.tanggalK2)}</td>
-        <td><span class="badge waiting">Menunggu Korektor 3</span></td>
-        <td><button class="button" data-action="k3" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Tandai sudah dikoreksi</button>
-        <button class="button secondary" data-action="kembaliK3" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Kembalikan</button></td>
-      </tr>`;
+    const kartu = daftar.map(function(item, i) {
+      return kartuTugasKB(item, {
+        no: i + 1,
+        status: { teks: 'Menunggu Korektor 3', kelas: 'tunggu' },
+        metaLabel: 'Korektor 2', metaTanggal: item.tanggalK2,
+        tengah: htmlJalurKoreksi(item),
+        aksi: `<button class="button small kb-btn-utama" data-action="k3" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">${IKON_KB.cek} Tandai sudah dikoreksi</button>
+               <button class="button secondary small" data-action="kembaliK3" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" title="Kembalikan ke anggota">${IKON_KB.kembali} Kembalikan</button>`
+      });
     });
-    document.getElementById('isiKorektor3').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal tugas', 'Selesai Korektor 2', 'Status', 'Aksi'], rows);
+    document.getElementById('isiKorektor3').innerHTML = daftarKartuSederhana(kartu, 'Tidak ada tugas yang menunggu Korektor 3.', 'menunggu');
   }
 
   function tampilkanRingkasanKoreksi() {
@@ -10023,39 +10114,163 @@
     return menunggu.concat(selesai);
   }
 
+  // ===== Tampilan kartu ringkas untuk Koreksi Bersama & Finishing =====
+  // Satu tugas = satu kartu: info tugas | berkas | status & aksi. Di layar sempit kolomnya bertumpuk.
+  // Tombol memakai atribut data-* yang sama dengan tampilan lama, jadi semua aksi tetap berfungsi.
+
+  const IKON_KB = {
+    unduh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',
+    pindah: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4-4 4"/><path d="M3 7h18"/><path d="M7 21l-4-4 4-4"/><path d="M21 17H3"/></svg>',
+    hapus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+    unggah: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></svg>',
+    kalender: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+    cek: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    kembali: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>'
+  };
+
+  function inisialNamaKB(nama) {
+    const kata = String(nama || '').replace(/[.,]/g, ' ').split(/\s+/)
+      .filter(function (k) { return k && !/^(UST|USTADZ|USTAZ|USTADZAH|KH|K\.?H|M|MOH|MOCH|MUHAMMAD|H|HJ|DR|ABD|ABDUL)$/i.test(k); });
+    const ambil = kata.length ? kata : String(nama || '?').split(/\s+/);
+    return ambil.slice(0, 2).map(function (k) { return k.charAt(0); }).join('').toUpperCase() || '?';
+  }
+  function warnaInisialKB(nama) {
+    let h = 0; String(nama || '').split('').forEach(function (c) { h = (h * 31 + c.charCodeAt(0)) % 360; });
+    return 'hsl(' + h + ' 55% 45%)';
+  }
+  function jenisBerkasKB(nama) {
+    const ext = (String(nama || '').split('.').pop() || '').toLowerCase();
+    if (/^docx?$/.test(ext)) return { teks: 'DOC', kelas: 'doc' };
+    if (/^xlsx?$|^csv$/.test(ext)) return { teks: 'XLS', kelas: 'xls' };
+    if (ext === 'pdf') return { teks: 'PDF', kelas: 'pdf' };
+    return { teks: (ext || 'FILE').slice(0, 4).toUpperCase(), kelas: '' };
+  }
+
+  // Berkas ringkas: nama + ukuran + tombol ikon (Unduh / Pindahkan / Hapus)
+  function htmlBerkasKBRingkas(item, tahap, bolehUnggah) {
+    tahap = tahap || 'KB';
+    bolehUnggah = bolehUnggah !== false;
+    const kunci = item.kunci || '';
+    const berkas = berkasUntukBarisKB(item, tahap);
+    const adaSaudara = soalSaudaraKB(item).length > 0;
+    const daftar = berkas.map(function (f) {
+      const ragu = (f.kandidat || []).length > 0;
+      const j = jenisBerkasKB(f.nama);
+      return '<div class="kb-file' + (ragu ? ' ragu' : '') + '">' +
+        '<span class="kb-file-jenis ' + j.kelas + '">' + j.teks + '</span>' +
+        '<span class="kb-file-nama" title="' + aman(f.nama) + '\nDiunggah: ' + aman(f.pengunggah || '-') + ' · ' + aman(f.waktu || '') + '">' + aman(f.nama) + '</span>' +
+        '<small class="kb-file-ukuran">' + ukuranBerkasKB(f.ukuran) + '</small>' +
+        '<span class="kb-file-tombol">' +
+          '<button class="kb-ikon-btn" type="button" data-unduh-berkas-kb="' + aman(f.id) + '" title="Unduh" aria-label="Unduh ' + aman(f.nama) + '">' + IKON_KB.unduh + '</button>' +
+          (!ragu && adaSaudara ? '<button class="kb-ikon-btn" type="button" data-pindah-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-nama-berkas-kb="' + aman(f.nama) + '" title="Pindahkan ke soal yang sama di madrasah lain" aria-label="Pindahkan ' + aman(f.nama) + '">' + IKON_KB.pindah + '</button>' : '') +
+          (bolehUnggah && !ragu ? '<button class="kb-ikon-btn bahaya" type="button" data-hapus-berkas-kb="' + aman(f.id) + '" data-nama-berkas-kb="' + aman(f.nama) + '" title="Hapus berkas" aria-label="Hapus ' + aman(f.nama) + '">' + IKON_KB.hapus + '</button>' : '') +
+        '</span>' +
+        (ragu ? '<div class="kb-file-ragu"><small>⚠ Berkas lama ini belum jelas madrasahnya.</small>' +
+          '<button class="button small" type="button" data-tetapkan-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-madrasah="' + aman(item.madrasah || '') + '" data-nama-berkas-kb="' + aman(f.nama) + '">✓ Milik ' + aman(item.madrasah || 'baris ini') + '</button>' +
+          '<button class="button secondary small" type="button" data-tolak-berkas-kb="' + aman(f.id) + '" data-kunci="' + aman(kunci) + '" data-madrasah="' + aman(item.madrasah || '') + '" data-nama-berkas-kb="' + aman(f.nama) + '">✗ Bukan milik ' + aman(item.madrasah || 'baris ini') + '</button></div>' : '') +
+        '</div>';
+    }).join('');
+    const kosong = !daftar ? '<div class="kb-file-kosong">Belum ada berkas</div>' : '';
+    const unggah = bolehUnggah
+      ? '<button class="kb-unggah" type="button" data-unggah-berkas-kb="' + aman(kunci) + '" data-baris-berkas-kb="' + aman(item.nomorBaris || '') + '" data-tahap-berkas-kb="' + tahap + '">' + IKON_KB.unggah + ' Unggah berkas</button>'
+      : '';
+    return '<div class="kb-berkas-daftar">' + daftar + kosong + unggah + '</div>';
+  }
+
+  // Satu kartu tugas. opsi: { tahap, bolehUnggah, status: {teks, kelas}, metaLabel, metaTanggal, aksi }
+  function kartuTugasKB(item, opsi) {
+    const chip = function (teks, kelas) { return teks ? '<span class="kb-chip' + (kelas ? ' ' + kelas : '') + '">' + aman(teks) + '</span>' : ''; };
+    return '<article class="kb-kartu ' + (opsi.selesai ? 'selesai' : 'menunggu') + (opsi.telat ? ' telat' : '') + '">' +
+      '<div class="kb-utama">' +
+        (opsi.no ? '<span class="kb-no" title="Nomor urut">' + opsi.no + '</span>' : '') +
+        '<div class="kb-avatar" style="background:' + warnaInisialKB(item.nama) + '" title="' + aman(item.nama) + '">' + aman(inisialNamaKB(item.nama)) + '</div>' +
+        '<div class="kb-info">' +
+          '<div class="kb-judul">' + aman(item.tugas || '–') + '</div>' +
+          '<div class="kb-nama">' + aman(item.nama || '–') + '</div>' +
+          '<div class="kb-chips">' +
+            chip(item.kelas ? 'Kelas ' + item.kelas : '') + chip(item.tahapUjian, 'tahap') + chip(item.tingkat) + chip(item.madrasah, 'madrasah') +
+          '</div>' +
+          '<div class="kb-meta">' +
+            '<span title="Tanggal tugas">' + IKON_KB.kalender + ' ' + aman(rentangTanggalRingkas(item.mulai, item.selesai)) + '</span>' +
+            (opsi.metaTanggal ? '<span title="' + aman(opsi.metaLabel) + '">' + IKON_KB.cek + ' ' + aman(opsi.metaLabel) + ': ' + aman(formatTanggal(opsi.metaTanggal)) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="kb-berkas">' + (opsi.tengah !== undefined ? opsi.tengah : htmlBerkasKBRingkas(item, opsi.tahap, opsi.bolehUnggah)) + '</div>' +
+      '<div class="kb-aksi">' +
+        '<span class="kb-status ' + opsi.status.kelas + '">' + opsi.status.teks + '</span>' +
+        (opsi.aksi || '') +
+      '</div>' +
+    '</article>';
+  }
+
+  // Jalur koreksi: Dikerjakan → K1 → K2 → (K3 untuk IMNI) → Koreksi Bersama → Finishing
+  function htmlJalurKoreksi(item) {
+    const sel = function (v) { return String(v || '').toLowerCase() === 'selesai'; };
+    const langkah = [
+      { label: 'Dikerjakan', ok: sel(item.status), tgl: item.tanggalSelesaiPengerjaan },
+      { label: 'K1', ok: sel(item.statusK1), tgl: item.tanggalK1, judul: 'Korektor 1' },
+      { label: 'K2', ok: sel(item.statusK2), tgl: item.tanggalK2, judul: 'Korektor 2' }
+    ];
+    if (/IMNI/i.test(item.tahapUjian || '')) langkah.push({ label: 'K3', ok: sel(item.statusK3), tgl: item.tanggalK3, judul: 'Korektor 3 (IMNI)' });
+    langkah.push({ label: 'KB', ok: sel(item.statusKoreksiBersama), tgl: item.tanggalKoreksiBersama, judul: 'Koreksi Bersama' });
+    langkah.push({ label: 'Finishing', ok: sel(item.statusFinishing), tgl: item.tanggalFinishing });
+    let sekarangDitandai = false;
+    return '<div class="kb-jalur" aria-label="Jalur koreksi">' + langkah.map(function (l) {
+      let kelas = l.ok ? 'ok' : '';
+      if (!l.ok && !sekarangDitandai) { kelas = 'kini'; sekarangDitandai = true; }
+      const judul = (l.judul || l.label) + ': ' + (l.ok ? 'selesai' + (l.tgl ? ' · ' + formatTanggal(l.tgl) : '') : (kelas === 'kini' ? 'posisi sekarang' : 'belum'));
+      return '<span class="kb-langkah ' + kelas + '" title="' + aman(judul) + '"><i></i>' + l.label + '</span>';
+    }).join('<span class="kb-jalur-garis"></span>') + '</div>';
+  }
+
+  function daftarKartuSederhana(kartu, teksKosong, labelJumlah) {
+    if (!kartu.length) return '<div class="kb-kosong">' + teksKosong + '</div>';
+    return '<div class="kb-ringkas"><span><b>' + kartu.length + '</b> ' + labelJumlah + '</span></div><div class="kb-daftar">' + kartu.join('') + '</div>';
+  }
+
+  function daftarKartuKB(menunggu, selesai, teksKosong, labelSelesai) {
+    if (!menunggu.length && !selesai.length) return '<div class="kb-kosong">' + teksKosong + '</div>';
+    let html = '<div class="kb-ringkas"><span><b>' + menunggu.length + '</b> menunggu</span>' +
+      (selesai.length ? '<span><b>' + selesai.length + '</b> ' + labelSelesai + '</span>' : '') + '</div>';
+    html += menunggu.length ? '<div class="kb-daftar">' + menunggu.join('') + '</div>'
+      : '<div class="kb-kosong kecil">Semua tugas sudah selesai. 🎉</div>';
+    if (selesai.length) {
+      html += '<details class="kb-grup-selesai"' + (menunggu.length ? '' : ' open') + '><summary>' + labelSelesai.charAt(0).toUpperCase() + labelSelesai.slice(1) +
+        ' <span class="kb-hitung">' + selesai.length + '</span></summary><div class="kb-daftar">' + selesai.join('') + '</div></details>';
+    }
+    return html;
+  }
+
   function tampilkanAntrianKoreksiBersama() {
     if (!berkasKBSudahDimuat) { berkasKBSudahDimuat = true; muatBerkasKB(); }
     const daftar = daftarTampilKoreksiBersama();
     perbaruiDropdownFilterTugas('kb', daftar);
-    const dataFiltered = saringDaftarTugas(daftar, 'kb');
-    const rows = (dataFiltered || []).map(function(item) {
+    const dataFiltered = saringDaftarTugas(daftar, 'kb') || [];
+    const menunggu = [], selesai = [];
+    dataFiltered.forEach(function (item) {
       const kbSelesai = String(item.statusKoreksiBersama || '').toLowerCase() === 'selesai';
-      const status = kbSelesai
-        ? '<span class="badge">Selesai' + (item.tanggalKoreksiBersama ? ' · ' + formatTanggal(item.tanggalKoreksiBersama) : '') + '</span>'
-        : '<span class="badge waiting">Menunggu Koreksi Bersama</span>';
+      const imni = /IMNI/i.test(item.tahapUjian || '');
       const aksi = kbSelesai
-        ? '<span class="badge">Selesai</span>' + (adminAktif()
-            ? ` <button class="button secondary small" data-action="batalKB" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" data-nama="${aman(item.tugas)}" title="Kembalikan ke Menunggu Koreksi Bersama dan keluarkan dari Finishing">Batalkan</button>`
+        ? (adminAktif()
+            ? `<button class="button secondary small" data-action="batalKB" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" data-nama="${aman(item.tugas)}" title="Kembalikan ke Menunggu Koreksi Bersama dan keluarkan dari Finishing">Batalkan</button>`
             : '')
-        : `<button class="button" data-action="selesaiBersama" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Tandai Selesai</button>
-            <button class="button secondary" data-action="kembaliKB" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">Kembalikan</button>`;
-      return `
-        <tr>
-          <td>${aman(item.nama)}</td>
-          <td>${aman(item.tugas)}</td>
-          <td>${aman(item.kelas || '–')}</td>
-          <td>${aman(item.tahapUjian || '–')}</td>
-          <td>${aman(item.tingkat || '–')}</td>
-          <td>${aman(item.madrasah || '–')}</td>
-          <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td>
-          <td>${formatTanggal(/IMNI/i.test(item.tahapUjian || '') ? item.tanggalK3 : item.tanggalK2)}</td>
-          <td>${status}</td>
-          <td>${htmlBerkasKB(item, 'KB', !kbSelesai)}</td>
-          <td>${aksi}</td>
-        </tr>
-      `;
+        : `<button class="button small kb-btn-utama" data-action="selesaiBersama" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}">${IKON_KB.cek} Tandai Selesai</button>
+           <button class="button secondary small" data-action="kembaliKB" data-row="${item.nomorBaris}" data-kunci="${aman(item.kunci || '')}" title="Kembalikan ke anggota">${IKON_KB.kembali} Kembalikan</button>`;
+      const kartu = kartuTugasKB(item, {
+        no: (kbSelesai ? selesai : menunggu).length + 1,
+        tahap: 'KB', bolehUnggah: !kbSelesai, selesai: kbSelesai,
+        status: kbSelesai
+          ? { teks: 'Selesai' + (item.tanggalKoreksiBersama ? ' · ' + aman(formatTanggal(item.tanggalKoreksiBersama)) : ''), kelas: 'ok' }
+          : { teks: 'Menunggu Koreksi Bersama', kelas: 'tunggu' },
+        metaLabel: imni ? 'Korektor 3' : 'Korektor 2',
+        metaTanggal: imni ? item.tanggalK3 : item.tanggalK2,
+        aksi: aksi
+      });
+      (kbSelesai ? selesai : menunggu).push(kartu);
     });
-    document.getElementById('isiKoreksiBersama').innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Korektor Terakhir', 'Status', 'Berkas', 'Aksi'], rows);
+    document.getElementById('isiKoreksiBersama').innerHTML =
+      daftarKartuKB(menunggu, selesai, 'Tidak ada tugas Koreksi Bersama yang sesuai filter.', 'sudah selesai');
   }
 
   // ===== Finishing: tahap setelah Koreksi Bersama =====
@@ -10074,18 +10289,20 @@
     if (!wadah) return;
     if (!berkasKBSudahDimuat) { berkasKBSudahDimuat = true; muatBerkasKB(); }
     perbaruiDropdownFilterTugas('fin', dataFinishingTersimpan || daftar);
-    const dataFiltered = saringDaftarTugas(daftar, 'fin');
-    const rows = dataFiltered.map(function(item) {
-      const selesai = finishingSelesai(item);
-      return `<tr>
-        <td>${aman(item.nama)}</td><td>${aman(item.tugas)}</td><td>${aman(item.kelas || '–')}</td>
-        <td>${aman(item.tahapUjian || '–')}</td><td>${aman(item.tingkat || '–')}</td><td>${aman(item.madrasah || '–')}</td>
-        <td>${formatTanggal(item.mulai)} – ${formatTanggal(item.selesai)}</td><td>${formatTanggal(item.tanggalKoreksiBersama)}</td>
-        <td><span class="badge ${selesai ? '' : 'waiting'}">${selesai ? 'Selesai' + (item.tanggalFinishing ? ' · ' + formatTanggal(item.tanggalFinishing) : '') : 'Menunggu Berkas Finishing'}</span></td>
-        <td>${htmlBerkasKB(item, 'FIN', true)}</td>
-      </tr>`;
+    const dataFiltered = saringDaftarTugas(daftar, 'fin') || [];
+    const menunggu = [], selesai = [];
+    dataFiltered.forEach(function (item) {
+      const sudah = finishingSelesai(item);
+      (sudah ? selesai : menunggu).push(kartuTugasKB(item, {
+        no: (sudah ? selesai : menunggu).length + 1,
+        tahap: 'FIN', bolehUnggah: true, selesai: sudah,
+        status: sudah
+          ? { teks: 'Selesai' + (item.tanggalFinishing ? ' · ' + aman(formatTanggal(item.tanggalFinishing)) : ''), kelas: 'ok' }
+          : { teks: 'Menunggu Berkas Finishing', kelas: 'tunggu' },
+        metaLabel: 'Koreksi Bersama', metaTanggal: item.tanggalKoreksiBersama
+      }));
     });
-    wadah.innerHTML = renderTabel(['Anggota', 'Tugas/Soal', 'Kelas', 'Tahap Ujian', 'Tingkat', 'Madrasah', 'Tanggal Tugas', 'Selesai Koreksi Bersama', 'Status', 'Berkas Finishing'], rows);
+    wadah.innerHTML = daftarKartuKB(menunggu, selesai, 'Tidak ada tugas Finishing yang sesuai filter.', 'sudah selesai');
     if (typeof tampilkanRingkasanKoreksi === 'function') tampilkanRingkasanKoreksi();
     if (typeof perbaruiJumlahKartuAntrean === 'function') perbaruiJumlahKartuAntrean();
   }
@@ -10098,19 +10315,24 @@
     return n < 1024 * 1024 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
-  function htmlBerkasKB(item, tahap, bolehUnggah) {
-    tahap = tahap || 'KB';
-    bolehUnggah = bolehUnggah !== false;
+  // Berkas milik baris ini saja (madrasah harus sama bila tercatat), plus berkas lama yang pemiliknya belum pasti
+  function berkasUntukBarisKB(item, tahap) {
     const kunci = item.kunci || '';
     const madrasahBaris = norm(item.madrasah || '');
-    // berkas milik baris ini saja (madrasah harus sama bila tercatat), plus berkas lama yang pemiliknya belum pasti
-    const berkas = daftarBerkasKBTersimpan.filter(function(f) {
+    return (daftarBerkasKBTersimpan || []).filter(function(f) {
       if ((f.tahap || 'KB') !== tahap) return false;
       const kandidat = (f.kandidat || []).length > 0;
       if (kandidat) return f.kandidat.indexOf(kunci) >= 0;
       if (f.kunci !== kunci) return false;
       return !f.madrasah || !madrasahBaris || norm(f.madrasah) === madrasahBaris;
     });
+  }
+
+  function htmlBerkasKB(item, tahap, bolehUnggah) {
+    tahap = tahap || 'KB';
+    bolehUnggah = bolehUnggah !== false;
+    const kunci = item.kunci || '';
+    const berkas = berkasUntukBarisKB(item, tahap);
     const daftar = berkas.map(function(f) {
       const ragu = (f.kandidat || []).length > 0;
       return '<div class="berkas-kb' + (ragu ? ' ragu' : '') + '" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px;">' +
@@ -12290,11 +12512,11 @@
     const rincian = 'Pembuatan Soal: ' + (g.soal ? (selesaiItem(g.soal) ? 'Selesai' : 'Belum') : 'tidak ada') +
                     ' · Koreksi Ujian: ' + (g.ujian ? (selesaiItem(g.ujian) ? 'Selesai' : 'Belum') : 'tidak ada') +
                     ' · ' + formatTanggal(g.mulai) + ' – ' + formatTanggal(g.selesai);
-    return '<div class="mt-chip" title="' + aman(rincian) + '">' +
-      '<div class="mt-chip-top"><span>' + aman(labelTugasChip(g)) + '</span>' +
+    return '<div class="mt-chip ' + kls + '" title="' + aman(rincian) + '">' +
+      '<div class="mt-chip-top"><span class="mt-chip-judul">' + aman(labelTugasChip(g)) + '</span>' +
       '<span class="mt-pct ' + kls + '">' + g.persen + '%</span>' +
       '<button type="button" class="mt-x" data-mt-hapus="' + indeks + '" title="Hapus tugas" aria-label="Hapus tugas">×</button></div>' +
-      '<div class="mt-chip-sub"><span>' + aman(g.tahapUjian || '—') + '</span><span>' + aman(g.tingkat || '—') + '</span><span>' + aman(g.madrasah || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
+      '<div class="mt-chip-sub"><span>' + aman([g.tahapUjian, g.tingkat, g.madrasah].filter(Boolean).join(' · ') || '—') + '</span>' + tag(g.soal, 'Soal') + tag(g.ujian, 'Ujian') + '</div>' +
       '</div>';
   }
 
@@ -12366,17 +12588,20 @@
       mtAnggota.push(nama);
       milik.sort(function(a, b) { return urutTahap(normTahap(a.tahapUjian), normTahap(b.tahapUjian)); });
       milik.forEach(function(g) { mtTampil.push({ nama: nama, g: g }); });
+      const pct = tot ? Math.round(sel / tot * 100) : 0;
       baris.push(
-        '<div class="mt-row">' +
-          '<div class="mt-nama"><strong>' + aman(nama) + '</strong><small>ANGGOTA</small></div>' +
-          '<div class="mt-chips">' + (milik.length
-            ? milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('')
-            : '<span class="mt-kosong">Belum ada tugas</span>') + '</div>' +
-          '<div class="mt-prog">' + (tot
-            ? '<b>' + Math.round(sel / tot * 100) + '%</b><small>' + sel + ' / ' + tot + '</small>'
-            : '<b style="color:var(--redup)">—</b><small>0 / 0</small>') + '</div>' +
-          '<div class="mt-aksi"><button type="button" class="button small" data-mt-tambah="' + (mtAnggota.length - 1) + '">＋ Tambah Tugas</button></div>' +
-        '</div>');
+        '<article class="mt-kartu' + (tot && sel === tot ? ' tuntas' : '') + '">' +
+          '<div class="mt-kartu-kepala">' +
+            '<span class="kb-no" title="Nomor urut">' + mtAnggota.length + '</span>' +
+            '<div class="kb-avatar" style="background:' + warnaInisialKB(nama) + '">' + aman(inisialNamaKB(nama)) + '</div>' +
+            '<div class="mt-kartu-nama"><b>' + aman(nama) + '</b><small>' + (tot ? milik.length + ' tugas · ' + sel + '/' + tot + ' selesai' : 'Belum ada tugas') + '</small></div>' +
+            '<div class="mt-kartu-progres" title="' + sel + ' dari ' + tot + ' selesai"><div class="mt-kartu-bar"><i style="width:' + pct + '%"></i></div><b>' + (tot ? pct + '%' : '—') + '</b></div>' +
+            '<button type="button" class="button small" data-mt-tambah="' + (mtAnggota.length - 1) + '">＋ Tambah Tugas</button>' +
+          '</div>' +
+          (milik.length
+            ? '<div class="mt-chips">' + milik.map(function(g) { return chipTugasHtml(g, mtDaftar.indexOf(g.sumber || g)); }).join('') + '</div>'
+            : '') +
+        '</article>');
     });
 
     wadah.innerHTML = baris.length ? baris.join('') : '<div class="empty">Tidak ada anggota yang cocok.</div>';
